@@ -1,0 +1,10 @@
+<Solution>
+  <Project Path="../tests/QiblaNow.Core.Tests/QiblaNow.Core.Tests.csproj" />
+  <Project Path="QiblaNow.App/QiblaNow.App.csproj" />
+  <Project Path="QiblaNow.Core.Abstractions/QiblaNow.Core.Abstractions.csproj" />
+  <Project Path="QiblaNow.Core.Prayer/QiblaNow.Core.Prayer.csproj" />
+  <Project Path="QiblaNow.Core.Qibla/QiblaNow.Core.Qibla.csproj" />
+  <Project Path="QiblaNow.Core.ViewModels/QiblaNow.Core.ViewModels.csproj" />
+  <Project Path="QiblaNow.Infra.Android/QiblaNow.Infra.Android.csproj" />
+  <Project Path="QiblaNow.Infra/QiblaNow.Infra.csproj" />
+</Solution>
