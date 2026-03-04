@@ -1,16 +1,10 @@
 <Solution>
-  <Project Path="../tests/QiblaNow.App.Tests/QiblaNow.App.Tests.csproj" />
-  <Project Path="../tests/QiblaNow.Core.Tests/QiblaNow.Core.Tests.csproj" Id="234cdac0-e581-4605-8d49-026059b6a166" />
-  <Project Path="QiblaNow.App.Droid/QiblaNow.App.Droid.csproj">
-    <Deploy Solution="Debug|*" />
+  <Project Path="QiblaNow.App.Droid.OLD/QiblaNow.App.Droid.OLD.csproj">
+    <Deploy />
   </Project>
-  <Project Path="QiblaNow.App.iOS/QiblaNow.App.iOS.csproj">
-    <Deploy Solution="Debug|*" />
-  </Project>
-  <Project Path="QiblaNow.App.Mac/QiblaNow.App.Mac.csproj" />
-  <Project Path="QiblaNow.App.WinUI/QiblaNow.App.WinUI.csproj">
-    <Platform Project="x64" />
-  </Project>
-  <Project Path="QiblaNow.App/QiblaNow.App.csproj" />
+  <Project Path="QiblaNow.App.OLD/QiblaNow.App.OLD.csproj" />
+  <Project Path="QiblaNow.App/QiblaNow.App.csproj" Id="b99b0367-a871-495e-bd03-6bcbd4bf1638" />
   <Project Path="QiblaNow.Core/QiblaNow.Core.csproj" Id="04edf47d-d7b8-461f-a989-3c88720b6c3f" />
+  <Project Path="QiblaNow.Presentation.Tests/QiblaNow.Presentation.Tests.csproj" />
+  <Project Path="QiblaNow.Presentation/QiblaNow.Presentation.csproj" Id="48c6e15c-cb9a-4c9b-9291-a06bf1aefeeb" />
 </Solution>
