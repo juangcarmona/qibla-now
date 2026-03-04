@@ -1,9 +1,16 @@
-namespace QiblaNow.App;
+﻿using QiblaNow.App.Pages;
 
-public partial class AppShell : Shell
+namespace QiblaNow.App
 {
-    public AppShell()
+    public partial class AppShell : Shell
     {
-        InitializeComponent();
+        public AppShell()
+        {
+            InitializeComponent();
+            Routing.RegisterRoute("qibla", typeof(QiblaPage));
+            Routing.RegisterRoute("times", typeof(PrayerTimesPage));
+            Routing.RegisterRoute("settings", typeof(SettingsPage));
+            Routing.RegisterRoute("map", typeof(MapPage));          
+        }
     }
 }

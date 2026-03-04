@@ -1,10 +1,15 @@
-namespace QiblaNow.App;
-
-public partial class App : Application
+﻿namespace QiblaNow.App
 {
-    public App()
+    public partial class App : Application
     {
-        InitializeComponent();
-        MainPage = new AppShell();
+        public App()
+        {
+            InitializeComponent();
+        }
+
+        protected override Window CreateWindow(IActivationState? activationState)
+        {
+            return new Window(new AppShell());
+        }
     }
 }

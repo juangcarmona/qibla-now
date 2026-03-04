@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:QiblaNow.App.ViewModels;assembly=QiblaNow.App.ViewModels"
+             x:Class="QiblaNow.App.Pages.PrayerTimesPage"
+             x:DataType="viewmodels:TimesViewModel">
+    <VerticalStackLayout Spacing="10" Padding="10">
+        <Label Text="Times Page"
+               FontSize="24"
+               HorizontalOptions="Center" />
+    </VerticalStackLayout>
+</ContentPage>

@@ -1,10 +1,16 @@
 <Solution>
-  <Project Path="../tests/QiblaNow.Core.Tests/QiblaNow.Core.Tests.csproj" />
+  <Project Path="../tests/QiblaNow.App.Tests/QiblaNow.App.Tests.csproj" />
+  <Project Path="../tests/QiblaNow.Core.Tests/QiblaNow.Core.Tests.csproj" Id="234cdac0-e581-4605-8d49-026059b6a166" />
+  <Project Path="QiblaNow.App.Droid/QiblaNow.App.Droid.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
+  <Project Path="QiblaNow.App.iOS/QiblaNow.App.iOS.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
+  <Project Path="QiblaNow.App.Mac/QiblaNow.App.Mac.csproj" />
+  <Project Path="QiblaNow.App.WinUI/QiblaNow.App.WinUI.csproj">
+    <Platform Project="x64" />
+  </Project>
   <Project Path="QiblaNow.App/QiblaNow.App.csproj" />
-  <Project Path="QiblaNow.Core.Abstractions/QiblaNow.Core.Abstractions.csproj" />
-  <Project Path="QiblaNow.Core.Prayer/QiblaNow.Core.Prayer.csproj" />
-  <Project Path="QiblaNow.Core.Qibla/QiblaNow.Core.Qibla.csproj" />
-  <Project Path="QiblaNow.Core.ViewModels/QiblaNow.Core.ViewModels.csproj" />
-  <Project Path="QiblaNow.Infra.Android/QiblaNow.Infra.Android.csproj" />
-  <Project Path="QiblaNow.Infra/QiblaNow.Infra.csproj" />
+  <Project Path="QiblaNow.Core/QiblaNow.Core.csproj" Id="04edf47d-d7b8-461f-a989-3c88720b6c3f" />
 </Solution>

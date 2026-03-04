@@ -10,6 +10,7 @@
   * BootReceiver
   * TimeChangeReceiver
   * AlarmReceiver
+
 * No foreground service
 
 Locked.
@@ -46,6 +47,9 @@ Locked.
 * Cancel stale alarms before rescheduling
 * No busy background loops
 * Show warning if exact alarms denied
+* Core project must remain platform-independent
+* Alarm scheduling logic must live in QiblaNow.Core.
+* Android project only executes scheduled alarms.
 
 ---
 
@@ -61,7 +65,9 @@ Manual:
 Build:
 
 ```
+
 dotnet build
+
 ```
 
 ---
@@ -77,6 +83,7 @@ dotnet build
 
 ## Files Allowed
 
-* Infra.Android/Alarms
-* Core.Abstractions (IAlarmScheduler)
-* App Settings
+* QiblaNow.App.Droid (AlarmManager scheduler and receivers)
+* QiblaNow.Core (alarm planning logic)
+* QiblaNow.App (Settings UI and ViewModels)
+

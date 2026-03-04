@@ -1,35 +1,60 @@
-# M1 — MAUI Shell + DI Foundation
+# M01 — App Foundation
 
 <promise>COMPLETE</promise>
 
 ## Implementation Summary
 
-Created MAUI solution structure with:
-- **QiblaNow.App**: Android MAUI app with 3 tabs (Times, Compass, Map)
-- **QiblaNow.Core.ViewModels**: Shared ViewModels in QiblaNow.App namespace
-- **QiblaNow.Core.Abstractions**: Shared abstractions
-- **QiblaNow.Core.Prayer**: Prayer time calculation engine placeholder
-- **QiblaNow.Core.Qibla**: Qibla direction calculation engine placeholder
-- **QiblaNow.Infra**: Shared infrastructure placeholder
-- **QiblaNow.Infra.Android**: Android-specific infrastructure placeholder
-- **QiblaNow.Core.Tests**: Unit tests
+Established the initial application foundation and project structure.
+
+The solution now contains:
+
+- **QiblaNow.App** – Main MAUI application (UI, pages, view models, navigation)
+- **QiblaNow.App.\*** – Platform entry points (Android, iOS, Mac, WinUI)
+- **QiblaNow.Core** – Pure calculation logic (prayer times, qibla direction)
+- **Tests projects** – Basic test scaffolding for App and Core
+
+This milestone establishes the base architecture on which the rest of the features will be built.
 
 ## Key Features Implemented
 
-1. **MVVM Pattern**: All ViewModels inherit from ObservableObject
-2. **Dependency Injection**: DI configured in Program.cs with transient ViewModels
-3. **Shell Navigation**: 3 tabs with placeholder pages and ViewModels
-4. **No Code-Behind Logic**: Clean separation of concerns
-5. **DI Resolution**: ViewModels resolved via DI (no manual new())
+1. **Application Shell**
 
-## Build Status
+   - MAUI Shell configured
+   - Root navigation structure established
 
-- ✅ Core projects build successfully
-- ✅ Tests pass (4/4 tests passing)
-- ✅ DI configuration verified
-- ✅ MVVM pattern established
+2. **Page Structure**
 
-## Note
+   Initial pages created:
 
-MAUI app build requires Android SDK and Java SDK installed in the environment.
-The core architecture is complete and ready for M02.
+   - Home
+   - Prayer Times
+   - Qibla
+   - Map
+   - Settings
+
+3. **ViewModel Layer**
+
+   - ViewModels defined for each page
+   - Clear separation between UI and logic
+
+4. **Dependency Injection**
+
+   - Application services and ViewModels registered
+   - Pages resolve dependencies through DI
+
+5. **Core Library**
+
+   - Dedicated project for calculation logic
+   - No platform dependencies
+
+## Outcome
+
+The application starts successfully and displays the initial UI.
+
+Navigation, page structure, dependency injection, and the core project layout are now in place.
+
+This provides a stable base for implementing the functional milestones that follow.
+
+## Next Step
+
+M02 — Location acquisition and persistence.

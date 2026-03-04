@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="QiblaNow.App.Pages.HomePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodels="clr-namespace:QiblaNow.App.ViewModels"
+    x:DataType="viewmodels:HomeViewModel"
+    Title="Prayer Now">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="20" RowSpacing="16">
+
+        <!-- Next prayer -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="12">
+
+            <VerticalStackLayout Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Spacing="4">
+                <Label Text="Next prayer" Opacity="0.7" FontSize="13" />
+
+                <HorizontalStackLayout Spacing="12" VerticalOptions="Center">
+                    <Label Text="{Binding NextPrayerName}" FontSize="28" FontAttributes="Bold" />
+                    <Label Text="{Binding NextPrayerTime}" FontSize="22" Opacity="0.85" />
+                </HorizontalStackLayout>
+
+                <Label Text="{Binding NextPrayerCountdown}" FontSize="16" Opacity="0.85" />
+            </VerticalStackLayout>
+
+            <Button
+        Grid.Row="0"
+        Grid.Column="1"
+        Text="⚙"
+        FontSize="18"
+        WidthRequest="44"
+        HeightRequest="44"
+        CornerRadius="14"
+        Padding="0"
+        Command="{Binding GoSettingsCommand}" />
+        </Grid>
+
+        <!-- Primary actions -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="12">
+            <Button
+                Text="Qibla"
+                FontSize="18"
+                FontAttributes="Bold"
+                HeightRequest="54"
+                CornerRadius="16"
+                Command="{Binding GoQiblaCommand}" />
+            <Button
+                Grid.Column="1"
+                Text="Map"
+                FontSize="18"
+                HeightRequest="54"
+                CornerRadius="16"
+                Command="{Binding GoMapCommand}" />
+        </Grid>
+
+        <!-- Today's times (static placeholder for now) -->
+        <Frame Grid.Row="2" CornerRadius="18" Padding="16">
+            <VerticalStackLayout Spacing="12">
+
+                <HorizontalStackLayout>
+                    <Label Text="Today" FontSize="18" FontAttributes="Bold" />
+                    <Label Text=" " HorizontalOptions="FillAndExpand" />
+                    <Button
+                        Text="All"
+                        Padding="10,0"
+                        HeightRequest="32"
+                        CornerRadius="16"
+                        Command="{Binding GoTimesCommand}" />
+                </HorizontalStackLayout>
+
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+                      ColumnDefinitions="Auto,*,Auto"
+                      RowSpacing="10">
+
+                    <Label Grid.Row="0" Grid.Column="0" Text="Fajr" Opacity="0.85" />
+                    <BoxView Grid.Row="0" Grid.Column="1" HeightRequest="1" Opacity="0.12" VerticalOptions="Center" />
+                    <Label Grid.Row="0" Grid.Column="2" Text="06:21" FontAttributes="Bold" />
+
+                    <Label Grid.Row="1" Grid.Column="0" Text="Dhuhr" Opacity="0.85" />
+                    <BoxView Grid.Row="1" Grid.Column="1" HeightRequest="1" Opacity="0.12" VerticalOptions="Center" />
+                    <Label Grid.Row="1" Grid.Column="2" Text="13:58" FontAttributes="Bold" />
+
+                    <Label Grid.Row="2" Grid.Column="0" Text="Asr" Opacity="0.85" />
+                    <BoxView Grid.Row="2" Grid.Column="1" HeightRequest="1" Opacity="0.12" VerticalOptions="Center" />
+                    <Label Grid.Row="2" Grid.Column="2" Text="17:22" FontAttributes="Bold" />
+
+                    <Label Grid.Row="3" Grid.Column="0" Text="Maghrib" Opacity="0.85" />
+                    <BoxView Grid.Row="3" Grid.Column="1" HeightRequest="1" Opacity="0.12" VerticalOptions="Center" />
+                    <Label Grid.Row="3" Grid.Column="2" Text="19:42" FontAttributes="Bold" />
+
+                    <Label Grid.Row="4" Grid.Column="0" Text="Isha" Opacity="0.85" />
+                    <BoxView Grid.Row="4" Grid.Column="1" HeightRequest="1" Opacity="0.12" VerticalOptions="Center" />
+                    <Label Grid.Row="4" Grid.Column="2" Text="21:10" FontAttributes="Bold" />
+                </Grid>
+
+            </VerticalStackLayout>
+        </Frame>
+
+        <!-- Footer (static placeholder) -->
+        <HorizontalStackLayout Grid.Row="3" Spacing="12" Opacity="0.85">
+            <Label Text="Madrid" />
+            <Label Text="•" />
+            <Label Text="Method: MWL" />
+            <Label Text="•" />
+            <Label Text="Asr: Shafi" />
+        </HorizontalStackLayout>
+
+    </Grid>
+</ContentPage>

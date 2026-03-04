@@ -1,29 +1,15 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Shell
     x:Class="QiblaNow.App.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:QiblaNow.App"
-    FlyoutBehavior="Disabled">
+    xmlns:pages="clr-namespace:QiblaNow.App.Pages"
+    Shell.FlyoutBehavior="Disabled"
+    Title="QiblaNow.App">
 
-    <TabBar>
-        <Tab Title="Times" IconImageSource="clock.png">
-            <ShellContent
-                ContentTemplate="{DataTemplate local:TimesPage}"
-                Route="Times" />
-        </Tab>
 
-        <Tab Title="Compass" IconImageSource="compass.png">
-            <ShellContent
-                ContentTemplate="{DataTemplate local:CompassPage}"
-                Route="Compass" />
-        </Tab>
-
-        <Tab Title="Map" IconImageSource="map.png">
-            <ShellContent
-                ContentTemplate="{DataTemplate local:MapPage}"
-                Route="Map" />
-        </Tab>
-    </TabBar>
+    <ShellContent
+        Route="home"
+        ContentTemplate="{DataTemplate pages:HomePage}" />
 
 </Shell>

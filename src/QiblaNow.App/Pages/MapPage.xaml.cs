@@ -1,3 +1,4 @@
+using Microsoft.Maui.Controls;
 using QiblaNow.App.ViewModels;
 
 namespace QiblaNow.App.Pages;
