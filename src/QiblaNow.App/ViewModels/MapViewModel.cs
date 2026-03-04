@@ -1,0 +1,11 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace QiblaNow.App.ViewModels;
+
+public sealed partial class MapViewModel : ObservableObject
+{
+    public MapViewModel()
+    {
+        // Placeholder initialization
+    }
+}

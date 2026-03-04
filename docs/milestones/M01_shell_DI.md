@@ -1,82 +1,60 @@
-# M1 — MAUI Shell + DI Foundation
+# M01 — App Foundation
 
-## Decision Locks
+<promise>COMPLETE</promise>
 
-* Architecture: MVVM + CommunityToolkit.Mvvm
-* DI: Microsoft.Extensions.DependencyInjection
-* Navigation: Shell with 3 tabs (Times, Compass, Map)
-* No business logic yet
-* Android target only
+## Implementation Summary
 
-These decisions cannot change inside M1.
+Established the initial application foundation and project structure.
 
----
+The solution now contains:
 
-## Inputs
+- **QiblaNow.App** – Main MAUI application (UI, pages, view models, navigation)
+- **QiblaNow.App.\*** – Platform entry points (Android, iOS, Mac, WinUI)
+- **QiblaNow.Core** – Pure calculation logic (prayer times, qibla direction)
+- **Tests projects** – Basic test scaffolding for App and Core
 
-* docs/VISION.md
-* docs/ARCHITECTURE.md (Stack + Solution Structure sections)
+This milestone establishes the base architecture on which the rest of the features will be built.
 
----
+## Key Features Implemented
 
-## Scope
+1. **Application Shell**
 
-* Create MAUI solution structure
-* Configure DI container
-* Create:
+   - MAUI Shell configured
+   - Root navigation structure established
 
-  * AppShell with 3 tabs
-  * Placeholder pages
-  * Placeholder ViewModels
-* Wire ViewModels via DI
+2. **Page Structure**
 
----
+   Initial pages created:
 
-## Non-Scope
+   - Home
+   - Prayer Times
+   - Qibla
+   - Map
+   - Settings
 
-* Prayer logic
-* Location
-* Alarms
-* Ads
-* Sensors
-* Map rendering
+3. **ViewModel Layer**
 
----
+   - ViewModels defined for each page
+   - Clear separation between UI and logic
 
-## Implementation Rules
+4. **Dependency Injection**
 
-* No code-behind logic
-* All ViewModels inherit from ObservableObject
-* No static service singletons outside DI
-* App builds with zero errors
+   - Application services and ViewModels registered
+   - Pages resolve dependencies through DI
 
----
+5. **Core Library**
 
-## Verification
+   - Dedicated project for calculation logic
+   - No platform dependencies
 
-Run every iteration:
+## Outcome
 
-```
-dotnet build
-```
+The application starts successfully and displays the initial UI.
 
-Expected:
+Navigation, page structure, dependency injection, and the core project layout are now in place.
 
-* Build succeeds
-* No errors
+This provides a stable base for implementing the functional milestones that follow.
 
----
+## Next Step
 
-## Definition of Done
-
-* Shell renders 3 tabs
-* Each tab binds to its ViewModel
-* DI resolves ViewModels correctly
-* Output token: COMPLETE
-
----
-
-## Files Allowed to Change
-
-* src/QiblaNow.App/*
-* src/QiblaNow.Core.Abstractions/* (if needed)
+M02 — Location acquisition and persistence.

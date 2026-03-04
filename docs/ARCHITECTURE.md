@@ -1,118 +1,383 @@
-# Architecture — Qibla Now (.NET MAUI Android)
+# Qibla Now – Architecture
 
-## Stack
+## Overview
 
-- .NET MAUI
-- MVVM
-- CommunityToolkit.Mvvm
-- Microsoft.Extensions.DependencyInjection
-- Pure .NET Core engines
-- Android AlarmManager
-- AdMob SDK (Android)
+Qibla Now is an **Android-first, offline-first Islamic utility application** built with **.NET MAUI**.
+
+The architecture prioritizes:
+
+* **Local computation** (no backend)
+* **Deterministic prayer time calculations**
+* **Minimal platform dependencies**
+* **Clear separation between UI and domain logic**
+
+The solution is intentionally **simple and pragmatic**. Only one shared domain library exists (`QiblaNow.Core`). All UI and application logic lives in `QiblaNow.App`.
 
 ---
 
-## Solution Structure
+# Solution Structure
 
-qibla-now/
-
+```
 src/
-- QiblaNow.App/
-- QiblaNow.Core.Prayer/
-- QiblaNow.Core.Qibla/
-- QiblaNow.Core.Abstractions/
-- QiblaNow.Infra/
-- QiblaNow.Infra.Android/
+ ├─ QiblaNow.App
+ │   ├─ Pages
+ │   ├─ ViewModels
+ │   ├─ Resources
+ │   ├─ App.xaml
+ │   ├─ AppShell.xaml
+ │   └─ MauiProgramExtensions.cs
+ │
+ ├─ QiblaNow.App.Droid
+ │   ├─ AndroidManifest.xml
+ │   ├─ MainActivity.cs
+ │   ├─ MainApplication.cs
+ │   └─ MauiProgram.cs
+ │
+ ├─ QiblaNow.App.iOS
+ ├─ QiblaNow.App.Mac
+ ├─ QiblaNow.App.WinUI
+ │
+ └─ QiblaNow.Core
+     ├─ Domain
+     ├─ Services
+     └─ Math
+```
 
+Tests:
+
+```
 tests/
-- QiblaNow.Core.Tests/
+ ├─ QiblaNow.Core.Tests
+ └─ QiblaNow.App.Tests
+```
 
 ---
 
-## MVVM Pattern
+# Responsibilities
 
-- Each tab has ViewModel
-- ViewModels use ObservableObject
-- No code-behind logic
+## QiblaNow.App
 
----
+Contains **all UI and application logic**.
 
-## Dependency Injection
+Responsibilities:
 
-Configured in MauiProgram:
+* Pages
+* ViewModels
+* Navigation
+* Dependency Injection
+* Settings persistence
+* Binding between UI and Core services
 
-Singleton:
-- PrayerTimesService
-- QiblaService
-- SettingsStore
-- AlarmPlanService
-- AdBannerService
+Structure:
 
-Transient:
-- ViewModels
+```
+Pages/
+  HomePage
+  PrayerTimesPage
+  QiblaPage
+  MapPage
+  SettingsPage
 
----
+ViewModels/
+  HomeViewModel
+  PrayerTimesViewModel
+  QiblaViewModel
+  MapViewModel
+  SettingsViewModel
+```
 
-## Core Engines
+ViewModels interact with the **Core services** to obtain prayer times and Qibla direction.
 
-### QiblaNow.Core.Prayer
-
-- Deterministic prayer time engine
-- Computes PrayerTimesDay
-- Fully unit-tested
-
-### QiblaNow.Core.Qibla
-
-- Great-circle initial bearing
-- Kaaba constant:
-  Lat: 21.422487
-  Lon: 39.826206
+No heavy business logic lives here.
 
 ---
 
-## Android Infrastructure
+## QiblaNow.Core
 
-### Alarm System
+`QiblaNow.Core` contains **pure domain logic**.
 
-- AlarmManager
-- BroadcastReceivers:
-  - BootReceiver
-  - TimeChangeReceiver
-  - AlarmReceiver
-- WorkManager daily repair
+This project:
 
-Exact alarm permission:
-- Request capability
-- Fallback gracefully
+* Has **no MAUI dependencies**
+* Has **no platform dependencies**
+* Can be tested independently
+* Runs in any .NET environment
+
+It contains the **calculation engines** used by the application.
+
+Structure:
+
+```
+Domain/
+  Coordinates
+  PrayerName
+  PrayerTime
+  CalculationMethod
+  Madhab
+  HighLatitudeRule
+  PrayerCalculationSettings
+
+Services/
+  IPrayerTimesCalculator
+  PrayerTimesCalculator
+
+  IQiblaCalculator
+  QiblaCalculator
+
+  PrayerScheduleService
+
+Math/
+  SolarMath
+  GeoMath
+  AngleHelpers
+  ProjectionHelpers (optional map helpers)
+```
+
+Responsibilities:
+
+### Prayer Times Engine
+
+Implements deterministic prayer time calculations.
+
+Inputs:
+
+```
+date
+coordinates
+calculation method
+madhab
+high latitude rule
+timezone offset
+```
+
+Outputs:
+
+```
+Fajr
+Sunrise
+Dhuhr
+Asr
+Maghrib
+Isha
+```
 
 ---
 
-### Sensors
+### Qibla Engine
 
-- SensorManager
-- Accelerometer + magnetometer
-- Expose heading + accuracy
+Computes the **great-circle bearing to the Kaaba**.
+
+Constant coordinates:
+
+```
+Latitude: 21.4225
+Longitude: 39.8262
+```
+
+Returns:
+
+```
+bearing (0-360°)
+```
 
 ---
 
-### Map Rendering
+## Platform Projects
 
-- MAUI GraphicsView
-- Static world map bitmap
-- Custom projection
+Platform projects provide **integration with operating system APIs**.
+
+Examples:
+
+### Android (`QiblaNow.App.Droid`)
+
+Responsible for:
+
+* Prayer alarms (AlarmManager)
+* Compass sensors (SensorManager)
+* Location services
+* Notifications
+* AdMob integration
+
+These services are exposed to the shared application through interfaces and registered in DI.
 
 ---
 
-### Ads
+# Application Architecture
 
-Abstraction:
-- IAdBannerService
+The application follows a **simple MVVM architecture**.
 
-Android implementation:
-- AdMob SDK
-- NPA-only requests
-- UMP consent flow
-- One banner per tab
-- No app-driven refresh loops
+```
+Page
+  ↓
+ViewModel
+  ↓
+Core Services
+```
 
-Ads may show even without location configured.
+Example flow:
+
+```
+HomePage
+  ↓
+HomeViewModel
+  ↓
+PrayerScheduleService
+  ↓
+PrayerTimesCalculator
+```
+
+ViewModels never implement calculation logic themselves.
+
+---
+
+# Dependency Injection
+
+All services are registered during application startup.
+
+Location:
+
+```
+QiblaNow.App/MauiProgramExtensions.cs
+```
+
+Example:
+
+```csharp
+builder.Services.AddSingleton<IPrayerTimesCalculator, PrayerTimesCalculator>();
+builder.Services.AddSingleton<IQiblaCalculator, QiblaCalculator>();
+
+builder.Services.AddTransient<HomeViewModel>();
+builder.Services.AddTransient<QiblaViewModel>();
+builder.Services.AddTransient<MapViewModel>();
+builder.Services.AddTransient<PrayerTimesViewModel>();
+builder.Services.AddTransient<SettingsViewModel>();
+```
+
+Platform services are registered conditionally.
+
+Example (Android):
+
+```
+ILocationService → AndroidLocationService
+ICompassService → AndroidCompassService
+IAlarmService → AndroidAlarmService
+```
+
+---
+
+# Navigation Model
+
+Navigation is **Shell-based** with a Home entry point.
+
+Primary routes:
+
+```
+Home
+Qibla
+PrayerTimes
+Map
+Settings
+```
+
+Typical flow:
+
+```
+Notification → open Qibla page
+User opens app → Home
+Home → Qibla / Map / PrayerTimes
+Settings → configuration
+```
+
+---
+
+# Offline-First Model
+
+All functionality works **without internet connectivity**.
+
+Local data includes:
+
+* user settings
+* last known location
+* calculation parameters
+
+Persistence is implemented using **Preferences** or local storage.
+
+No backend exists.
+
+---
+
+# Testing Strategy
+
+## Core Tests
+
+Located in:
+
+```
+tests/QiblaNow.Core.Tests
+```
+
+Tests verify:
+
+* Prayer time calculations
+* Qibla direction accuracy
+* High latitude edge cases
+* Calculation method correctness
+
+These tests do **not require MAUI**.
+
+---
+
+## App Tests
+
+Located in:
+
+```
+tests/QiblaNow.App.Tests
+```
+
+Focus:
+
+* ViewModel behavior
+* Dependency injection wiring
+* basic navigation flows
+
+---
+
+# Design Principles
+
+### Deterministic
+
+Prayer calculations must produce the same results for the same inputs.
+
+### Local First
+
+All calculations occur on device.
+
+### Minimal Dependencies
+
+The project avoids unnecessary libraries and frameworks.
+
+### Clear Boundaries
+
+```
+UI logic → App
+Domain logic → Core
+Platform integration → Platform projects
+```
+
+---
+
+# Architecture Evolution
+
+The architecture is intentionally minimal for the initial release.
+
+Future changes may include:
+
+* additional calculation methods
+* offline map improvements
+* enhanced sensor filtering for compass
+* advanced alarm scheduling
+
+However, the core design goal remains:
+
+**Simple, reliable, and fully local.**

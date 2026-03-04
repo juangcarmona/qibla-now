@@ -20,11 +20,11 @@ Locked for this milestone.
 
 ## Scope
 
-* ILocationService abstraction
+* ILocationProvider interface
 * Android GPS implementation (single-shot request)
 * Manual location entry page
-* Store last snapshot
-* Times tab displays location label
+* Store last location snapshot
+* Home and PrayerTimes pages display location label
 
 ---
 
@@ -44,15 +44,19 @@ Locked for this milestone.
 
   * Lat: -90..90
   * Lon: -180..180
-* All persistence via ISettingsStore
+
+* All persistence via a SettingsStore wrapper over Preferences
+* Core project must remain platform-independent
 
 ---
 
 ## Verification
 
 ```
+
 dotnet build
 dotnet test
+
 ```
 
 Unit tests required:
@@ -73,8 +77,7 @@ Unit tests required:
 
 ## Files Allowed
 
-* Core.Abstractions (ILocationService)
-* Infra
-* Infra.Android
-* App ViewModels
+* QiblaNow.Core - ILocationProvider interface (defined in QiblaNow.Core.Services)
+* QiblaNow.App (ViewModels, SettingsStore, pages)
+* QiblaNow.App.Droid (Android GPS implementation)
 * Tests

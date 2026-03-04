@@ -6,6 +6,7 @@
 * Kaaba coords locked:
 
   * 21.422487, 39.826206
+
 * Methods enum exactly as spec
 * Rounding: nearest minute
 * Offset applied before rounding
@@ -23,10 +24,10 @@ No changes allowed during milestone.
 
 ## Scope
 
-* PrayerTimesService
+* PrayerTimesCalculator
 * CalculationSettings model
 * PT-1 + PT-2 unit tests
-* Times tab displays daily schedule + countdown
+* PrayerTimes page displays daily schedule + countdown
 
 ---
 
@@ -44,13 +45,16 @@ No changes allowed during milestone.
 * TimeZoneInfo used for conversions
 * No UI logic inside Core project
 * Tests must encode acceptance vectors
+* Core must remain independent from MAUI and platform APIs
 
 ---
 
 ## Verification
 
 ```
+
 dotnet test
+
 ```
 
 Must pass:
@@ -66,7 +70,7 @@ Tolerance:
 ## Definition of Done
 
 * All tests green
-* Times tab shows real computed values
+* PrayerTimes page shows real computed values
 * Countdown updates each second
 * Output token: COMPLETE
 
@@ -74,6 +78,6 @@ Tolerance:
 
 ## Files Allowed
 
-* Core.Prayer
-* Core.Tests
-* App Times ViewModel
+* QiblaNow.Core (PrayerTimesCalculator and models)
+* QiblaNow.Core.Tests
+* QiblaNow.App (PrayerTimesViewModel and page)

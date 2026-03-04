@@ -1,2 +1,8 @@
 .claude/settings.local.json
+.claude/
 CLAUDE.md
+.vs/
+
+# bin and obj folders
+bin/
+obj/
