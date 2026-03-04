@@ -1,6 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using QiblaNow.App.Pages;
 using QiblaNow.App.ViewModels;
+using QiblaNow.Core.Services;
+using QiblaNow.Core.Abstractions.Services;
 
 namespace QiblaNow.App
 {
@@ -18,8 +21,13 @@ namespace QiblaNow.App
                 });
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+		builder.Logging.AddDebug();
 #endif
+
+            // Core services (singleton)
+            builder.Services.AddSingleton<ISettingsStore, SettingsStore>();
+
+            // ViewModels
             builder.Services.AddTransient<HomeViewModel>();
             builder.Services.AddTransient<HomePage>();
 
@@ -34,6 +42,7 @@ namespace QiblaNow.App
 
             builder.Services.AddTransient<SettingsViewModel>();
             builder.Services.AddTransient<SettingsPage>();
+
             return builder;
         }
     }

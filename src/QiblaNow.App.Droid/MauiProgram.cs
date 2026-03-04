@@ -1,4 +1,7 @@
-﻿namespace QiblaNow.App.Droid
+﻿using QiblaNow.Core.Abstractions.Services;
+using QiblaNow.App.Droid.Services;
+
+namespace QiblaNow.App.Droid
 {
     public static class MauiProgram
     {
@@ -8,6 +11,9 @@
 
             builder
                 .UseSharedMauiApp();
+
+            // Register Android-specific services
+            builder.Services.AddSingleton<ILocationService, LocationService>();
 
             return builder.Build();
         }

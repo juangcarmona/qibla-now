@@ -103,7 +103,7 @@
                                FontAttributes="Bold"
                                TextColor="{StaticResource OnSurfaceLight}" />
                         <Label Grid.Column="1"
-                               Text="Madrid"
+                               Text="{Binding LocationLabel}"
                                FontSize="12"
                                Opacity="0.65"
                                VerticalOptions="Center"
