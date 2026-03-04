@@ -5,8 +5,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:QiblaNow.App.Pages"
     Shell.FlyoutBehavior="Disabled"
-    Title="QiblaNow.App">
-
+    Shell.NavBarHasShadow="True"
+    Shell.BackgroundColor="{StaticResource Primary}"
+    Shell.TitleColor="{StaticResource OnPrimary}"
+    Shell.ForegroundColor="{StaticResource OnPrimary}">
 
     <ShellContent
         Route="home"

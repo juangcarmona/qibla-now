@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net10.0-android</TargetFramework>
@@ -26,5 +26,13 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\QiblaNow.App\QiblaNow.App.csproj" />
 	</ItemGroup>
+
+	<!--<ItemGroup>
+	  <Folder Include="Resources\drawable-hdpi\" />
+	  <Folder Include="Resources\drawable-mdpi\" />
+	  <Folder Include="Resources\drawable-xhdpi\" />
+	  <Folder Include="Resources\drawable-xxhdpi\" />
+	  <Folder Include="Resources\drawable-xxxhdpi\" />
+	</ItemGroup>-->
 
 </Project>
