@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels"
+             x:Class="QiblaNow.App.Pages.SettingsPage"
+             Title="Settings"
+             x:DataType="viewmodels:SettingsViewModel">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,0" Spacing="20">
+
+            <!-- Location Mode Selection -->
+            <Frame HasShadow="True" Padding="16">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Location Mode" Style="{StaticResource BodyLarge}" FontAttributes="Bold"/>
+                    <Picker ItemsSource="{Binding LocationModeOptions}"
+                            Title="Select Location Mode"
+                            SelectedItem="{Binding LocationMode}"
+                            HorizontalOptions="Fill"/>
+
+                    <!-- Manual Location Section -->
+                    <Grid IsVisible="{Binding IsManualLocation}" RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="Auto,*" ColumnSpacing="12" RowSpacing="8">
+                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Manual Coordinates" Style="{StaticResource Body}" FontAttributes="Bold"/>
+                        <Label Grid.Row="1" Grid.Column="0" Text="Latitude:" Style="{StaticResource Caption}"/>
+                        <Entry Grid.Row="1" Grid.Column="1"
+                               Placeholder="-90 to 90"
+                               Text="{Binding Latitude}"
+                               Keyboard="Numeric"
+                               ReturnType="Next"/>
+                        <Label Grid.Row="2" Grid.Column="0" Text="Longitude:" Style="{StaticResource Caption}"/>
+                        <Entry Grid.Row="2" Grid.Column="1"
+                               Placeholder="-180 to 180"
+                               Text="{Binding Longitude}"
+                               Keyboard="Numeric"
+                               ReturnType="Done"/>
+                    </Grid>
+
+                    <!-- GPS Section -->
+                    <StackLayout IsVisible="{Binding IsGpsLocation}" Spacing="12">
+                        <Label Text="Use GPS to automatically detect your location"
+                               Style="{StaticResource Body}"
+                               LineBreakMode="WordWrap"/>
+                        <Button Text="Request GPS Location"
+                                Command="{Binding RequestGpsLocationCommand}"
+                                IsEnabled="{Binding !IsSaving}"
+                                HorizontalOptions="Fill"/>
+                    </StackLayout>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Manual Location Save -->
+            <Button Text="Save Location"
+                    Command="{Binding SaveManualLocationCommand}"
+                    IsEnabled="{Binding !IsSaving}"
+                    HorizontalOptions="Fill"
+                    Padding="20"/>
+
+            <!-- Error Message -->
+            <Label Text="{Binding ErrorMessage}"
+                   IsVisible="{Binding HasError}"
+                   TextColor="Red"
+                   LineBreakMode="WordWrap"
+                   HorizontalTextAlignment="Center"/>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

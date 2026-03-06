@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- Legacy names (por si alguna parte del tema los referencia) -->
+	<color name="colorPrimary">#0B6E4F</color>
+	<color name="colorPrimaryDark">#064E3B</color>
+	<color name="colorAccent">#C8A64B</color>
+
+	<!-- MAUI Android theme colors (estos son los importantes) -->
+	<color name="maui_primary">#0B6E4F</color>
+	<color name="maui_primary_dark">#064E3B</color>
+	<color name="maui_primary_text">#FFFFFF</color>
+
+	<color name="maui_secondary">#F5F3E7</color>
+	<color name="maui_secondary_dark">#E7E2CF</color>
+	<color name="maui_tertiary">#C8A64B</color>
+
+	<!-- Splash background -->
+	<color name="maui_splash_color">#0B6E4F</color>
+</resources>
