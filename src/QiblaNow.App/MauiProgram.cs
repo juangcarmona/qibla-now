@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using QiblaNow.App.Pages;
 using QiblaNow.Presentation.ViewModels;
-using QiblaNow.Core.Services;
 using QiblaNow.App.Services;
 using CommunityToolkit.Maui;
 using QiblaNow.Core.Abstractions;
@@ -30,7 +29,6 @@ namespace QiblaNow.App
 #endif
 
             // Core services (singleton)
-            builder.Services.AddSingleton<IPreferencesService, PreferencesService>();
             builder.Services.AddSingleton<ISettingsStore, SettingsStore>();
             builder.Services.AddSingleton<ILocationService, LocationService>();
 
