@@ -27,29 +27,32 @@ public sealed class PrayerCalculationSettings
     }
 
     /// <summary>
-    /// Applies all configured offsets to prayer times
+    /// Creates a new schedule with offsets applied
     /// </summary>
-    public void ApplyOffsets(DailyPrayerSchedule schedule)
+    public DailyPrayerSchedule ApplyOffsets(DailyPrayerSchedule source)
     {
-        var fajr = schedule.GetPrayer(PrayerType.Fajr);
-        var dhuhr = schedule.GetPrayer(PrayerType.Dhuhr);
-        var asr = schedule.GetPrayer(PrayerType.Asr);
-        var maghrib = schedule.GetPrayer(PrayerType.Maghrib);
-        var isha = schedule.GetPrayer(PrayerType.Isha);
+        var result = new DailyPrayerSchedule(source.Date, source.TimeZone);
 
-        if (fajr != null) fajr = new PrayerTime(PrayerType.Fajr, fajr.DateTime.AddMinutes(FajrOffsetMinutes), FajrOffsetMinutes);
-        if (dhuhr != null) dhuhr = new PrayerTime(PrayerType.Dhuhr, dhuhr.DateTime.AddMinutes(DhuhrOffsetMinutes), DhuhrOffsetMinutes);
-        if (asr != null) asr = new PrayerTime(PrayerType.Asr, asr.DateTime.AddMinutes(AsrOffsetMinutes), AsrOffsetMinutes);
-        if (maghrib != null) maghrib = new PrayerTime(PrayerType.Maghrib, maghrib.DateTime.AddMinutes(MaghribOffsetMinutes), MaghribOffsetMinutes);
-        if (isha != null) isha = new PrayerTime(PrayerType.Isha, isha.DateTime.AddMinutes(IshaOffsetMinutes), IshaOffsetMinutes);
+        var fajr = source.GetPrayer(PrayerType.Fajr);
+        if (fajr != null)
+            result.Prayers.Add(new PrayerTime(PrayerType.Fajr, fajr.DateTime.AddMinutes(FajrOffsetMinutes), FajrOffsetMinutes));
 
-        // Rebuild schedule with offset times
-        schedule.Prayers.Clear();
-        if (fajr != null) schedule.Prayers.Add(fajr);
-        schedule.Prayers.Add(new PrayerTime(PrayerType.Sunrise, fajr.DateTime.AddMinutes(15), 0)); // Sunrise is 15 min after Fajr (approximate)
-        if (dhuhr != null) schedule.Prayers.Add(dhuhr);
-        if (asr != null) schedule.Prayers.Add(asr);
-        if (maghrib != null) schedule.Prayers.Add(maghrib);
-        if (isha != null) schedule.Prayers.Add(isha);
+        var dhuhr = source.GetPrayer(PrayerType.Dhuhr);
+        if (dhuhr != null)
+            result.Prayers.Add(new PrayerTime(PrayerType.Dhuhr, dhuhr.DateTime.AddMinutes(DhuhrOffsetMinutes), DhuhrOffsetMinutes));
+
+        var asr = source.GetPrayer(PrayerType.Asr);
+        if (asr != null)
+            result.Prayers.Add(new PrayerTime(PrayerType.Asr, asr.DateTime.AddMinutes(AsrOffsetMinutes), AsrOffsetMinutes));
+
+        var maghrib = source.GetPrayer(PrayerType.Maghrib);
+        if (maghrib != null)
+            result.Prayers.Add(new PrayerTime(PrayerType.Maghrib, maghrib.DateTime.AddMinutes(MaghribOffsetMinutes), MaghribOffsetMinutes));
+
+        var isha = source.GetPrayer(PrayerType.Isha);
+        if (isha != null)
+            result.Prayers.Add(new PrayerTime(PrayerType.Isha, isha.DateTime.AddMinutes(IshaOffsetMinutes), IshaOffsetMinutes));
+
+        return result;
     }
 }

@@ -13,16 +13,18 @@ namespace QiblaNow.App.Platforms.Android;
 public sealed class AndroidNotificationScheduler : INotificationScheduler
 {
     private readonly Context _context;
-    private readonly IPrayerSettingsStore _prayerSettingsStore;
+    private readonly ISettingsStore _settingsStore;
     private readonly IPrayerTimesCalculator _calculator;
 
     private const string AlarmAction = "com.qiblanow.PRAYER_ALARM";
     private const string PrayerTypeExtra = "prayer_type";
+    private const string NotificationChannelId = "prayer_notifications";
+    private const string NotificationChannelName = "Prayer Notifications";
 
-    public AndroidNotificationScheduler(Context context, IPrayerSettingsStore prayerSettingsStore, IPrayerTimesCalculator calculator)
+    public AndroidNotificationScheduler(Context context, ISettingsStore settingsStore, IPrayerTimesCalculator calculator)
     {
         _context = context;
-        _prayerSettingsStore = prayerSettingsStore;
+        _settingsStore = settingsStore;
         _calculator = calculator;
     }
 
@@ -32,6 +34,9 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
         {
             // Cancel any existing alarms
             await CancelAllNotificationsAsync();
+
+            // Create notification channel for Android O+
+            CreateNotificationChannel();
 
             // Create intent for alarm
             var intent = new Intent(AlarmAction);
@@ -43,7 +48,7 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
                 _context,
                 0,
                 intent,
-                PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable);
+                PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable | PendingIntentFlags.CancelCurrent);
 
             // Get AlarmManager
             var alarmManager = _context.GetSystemService(Context.AlarmService) as AlarmManager;
@@ -81,7 +86,7 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
                 _context,
                 0,
                 intent,
-                PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable);
+                PendingIntentFlags.UpdateCurrent | PendingIntentFlags.CancelCurrent);
 
             alarmManager.Cancel(pendingIntent);
         }
@@ -95,7 +100,7 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
     {
         try
         {
-            var notificationSettings = _prayerSettingsStore.GetNotificationSettings();
+            var notificationSettings = _settingsStore.GetNotificationSettings();
 
             if (!notificationSettings.IsAnyEnabled)
             {
@@ -104,7 +109,7 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
                 return;
             }
 
-            var location = _prayerSettingsStore.GetLastValidLocation();
+            var location = _settingsStore.GetLastValidLocation();
             if (location == null)
             {
                 // No valid location, cannot schedule
@@ -112,7 +117,7 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
                 return;
             }
 
-            var calculationSettings = _prayerSettingsStore.GetCalculationSettings();
+            var calculationSettings = _settingsStore.GetCalculationSettings();
             var date = DateTimeOffset.UtcNow;
             var schedule = await _calculator.CalculateDailyScheduleAsync(location, date, calculationSettings);
 
@@ -134,17 +139,17 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
     {
         try
         {
-            // Dispatch notification (will be implemented with platform-specific notification API)
-            System.Diagnostics.Debug.WriteLine($"Prayer alarm fired for {prayerType}");
+            // Show notification
+            ShowPrayerNotification(prayerType);
 
             // Recalculate and schedule next notification
             _ = Task.Run(async () =>
             {
-                var location = _prayerSettingsStore.GetLastValidLocation();
+                var location = _settingsStore.GetLastValidLocation();
                 if (location == null) return;
 
-                var calculationSettings = _prayerSettingsStore.GetCalculationSettings();
-                var notificationSettings = _prayerSettingsStore.GetNotificationSettings();
+                var calculationSettings = _settingsStore.GetCalculationSettings();
+                var notificationSettings = _settingsStore.GetNotificationSettings();
 
                 var schedule = await _calculator.CalculateDailyScheduleAsync(location, DateTimeOffset.UtcNow, calculationSettings);
 
@@ -183,24 +188,77 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
         return Task.CompletedTask;
     }
 
+    private void CreateNotificationChannel()
+    {
+        if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+        {
+            return;
+        }
+
+        var channel = new NotificationChannel(
+            NotificationChannelId,
+            NotificationChannelName,
+            NotificationImportance.Default)
+        {
+            Description = "Prayer time notifications"
+        };
+
+        var notificationManager = _context.GetSystemService(Context.NotificationService) as NotificationManager;
+        notificationManager?.CreateNotificationChannel(channel);
+    }
+
+    private void ShowPrayerNotification(PrayerType prayerType)
+    {
+        var prayerName = prayerType switch
+        {
+            PrayerType.Fajr => "Fajr",
+            PrayerType.Sunrise => "Sunrise",
+            PrayerType.Dhuhr => "Dhuhr",
+            PrayerType.Asr => "Asr",
+            PrayerType.Maghrib => "Maghrib",
+            PrayerType.Isha => "Isha",
+            _ => "Prayer"
+        };
+
+        var notification = new Notification.Builder(_context, NotificationChannelId)
+            .SetSmallIcon(Resource.Drawable.MaterialIcons)
+            .SetContentTitle(prayerName)
+            .SetContentText("Time to pray")
+            .SetPriority(NotificationPriority.Default)
+            .Build();
+
+        var notificationManager = _context.GetSystemService(Context.NotificationService) as NotificationManager;
+        notificationManager?.Notify((int)prayerType, notification);
+    }
+
     private void SaveSchedulingMetadata(PrayerType prayerType, DateTimeOffset scheduledTime)
     {
         try
         {
-            _prayerSettingsStore.SaveNotificationSettings(new PrayerNotificationSettings
-            {
-                FajrEnabled = prayerType == PrayerType.Fajr,
-                DhuhrEnabled = prayerType == PrayerType.Dhuhr,
-                AsrEnabled = prayerType == PrayerType.Asr,
-                MaghribEnabled = prayerType == PrayerType.Maghrib,
-                IshaEnabled = prayerType == PrayerType.Isha
-            });
+            // Save notification settings with this prayer enabled
+            var settings = _settingsStore.GetNotificationSettings();
+            settings.Reset();
 
-            _prayerSettingsStore.SaveLastValidLocation(new LocationSnapshot(
-                LocationMode.Manual,
-                51.5074, -0.1278,  // London (example)
-                null
-            ));
+            switch (prayerType)
+            {
+                case PrayerType.Fajr:
+                    settings.FajrEnabled = true;
+                    break;
+                case PrayerType.Dhuhr:
+                    settings.DhuhrEnabled = true;
+                    break;
+                case PrayerType.Asr:
+                    settings.AsrEnabled = true;
+                    break;
+                case PrayerType.Maghrib:
+                    settings.MaghribEnabled = true;
+                    break;
+                case PrayerType.Isha:
+                    settings.IshaEnabled = true;
+                    break;
+            }
+
+            _settingsStore.SaveNotificationSettings(settings);
         }
         catch (Exception ex)
         {

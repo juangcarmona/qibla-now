@@ -1,9 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using QiblaNow.App.Pages;
 using QiblaNow.Presentation.ViewModels;
-using QiblaNow.App.Services;
+using QiblaNow.Presentation.DI;
 using CommunityToolkit.Maui;
 using QiblaNow.Core.Abstractions;
+using QiblaNow.Core.Services;
 
 namespace QiblaNow.App
 {
@@ -31,28 +32,13 @@ namespace QiblaNow.App
             // Core services (singleton)
             builder.Services.AddSingleton<ISettingsStore, SettingsStore>();
             builder.Services.AddSingleton<ILocationService, LocationService>();
-            builder.Services.AddSingleton<IPrayerSettingsStore, SettingsStore>();
             builder.Services.AddSingleton<IPrayerTimesCalculator, PrayerTimesCalculator>();
 
-            // ViewModels
-            builder.Services.AddTransient<HomeViewModel>();
-            builder.Services.AddTransient<HomePage>();
+            // Register presentation services
+            builder.Services.AddPresentationServices();
 
-            builder.Services.AddTransient<PrayerTimesViewModel>();
-            builder.Services.AddTransient<PrayerTimesPage>();
-
+            // Android notification scheduler (singleton)
             builder.Services.AddSingleton<INotificationScheduler, AndroidNotificationScheduler>();
-
-            builder.Services.AddTransient<QiblaViewModel>();
-            builder.Services.AddTransient<QiblaPage>();
-
-            builder.Services.AddTransient<MapViewModel>();
-            builder.Services.AddTransient<MapPage>();
-
-            builder.Services.AddTransient<SettingsViewModel>();
-            builder.Services.AddTransient<SettingsPage>();
-
-
 
             return builder.Build();
         }

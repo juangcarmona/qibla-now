@@ -16,11 +16,12 @@ public interface IPrayerTimesCalculator
         PrayerCalculationSettings settings);
 
     /// <summary>
-    /// Calculates the next prayer after the current time
+    /// Calculates the next prayer after the given reference time
     /// </summary>
     Task<NextPrayerResult> CalculateNextPrayerAsync(
         DailyPrayerSchedule schedule,
-        PrayerNotificationSettings notificationSettings);
+        PrayerNotificationSettings notificationSettings,
+        DateTimeOffset? referenceTime = null);
 
     /// <summary>
     /// Calculates the next notification candidate based on enabled prayer notifications
@@ -34,5 +35,6 @@ public interface IPrayerTimesCalculator
     /// </summary>
     Task<CountdownTargetResult> CalculateCountdownAsync(
         DailyPrayerSchedule schedule,
-        PrayerNotificationSettings notificationSettings);
+        PrayerNotificationSettings notificationSettings,
+        DateTimeOffset? referenceTime = null);
 }

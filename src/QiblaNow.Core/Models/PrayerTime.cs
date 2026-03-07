@@ -27,6 +27,10 @@ public struct PrayerTime : IEquatable<PrayerTime>
 
     public override int GetHashCode() => HashCode.Combine(Type, DateTime, OffsetMinutes);
 
+    public static bool operator ==(PrayerTime left, PrayerTime right) => left.Equals(right);
+
+    public static bool operator !=(PrayerTime left, PrayerTime right) => !left.Equals(right);
+
     public override string ToString() =>
         $"{Type}: {DateTime:HH:mm} (offset: {OffsetMinutes:+#;-#;0} min)";
 

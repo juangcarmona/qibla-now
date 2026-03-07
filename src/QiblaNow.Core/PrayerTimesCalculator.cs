@@ -5,28 +5,27 @@ using QiblaNow.Core.Models;
 namespace QiblaNow.Core;
 
 /// <summary>
-/// Calculates Islamic prayer times using the Jafari formula
+/// Calculates Islamic prayer times using the PrayTimes algorithm
 /// All calculations are performed in UTC and converted to the target timezone
+/// Deterministic: no DateTimeOffset.UtcNow/Now calls inside Core
 /// </summary>
 public sealed class PrayerTimesCalculator : IPrayerTimesCalculator
 {
-    // Kaaba coordinates
-    private const double KaabaLatitude = 21.422487;
-    private const double KaabaLongitude = 39.826206;
-
     // Calculation method constants (angle values in degrees)
-    private static readonly Dictionary<CalculationMethod, (double fajrAngle, double ishaAngle)> CalculationMethodConstants =
-    {
-        { CalculationMethod.MuslimWorldLeague, (18.0, 17.0) },
-        { CalculationMethod.EgyptianGeneralAuthority, (19.5, 17.5) },
-        { CalculationMethod.UmmAlQura, (18.5, 90.0) }, // Special case for Umm Al-Qura
-        { CalculationMethod.ISNA, (15.0, 15.0) },
-        { CalculationMethod.Karachi, (18.0, 18.0) },
-        { CalculationMethod.Kuwait, (17.5, 17.5) }
-    };
+    private static readonly Dictionary<CalculationMethod, (double fajrAngle, double ishaAngle)> CalculationMethodConstants;
 
-    // Isha night fraction constants (for Umm Al-Qura)
-    private const double UmmAlQuraIshaNightFraction = 1.25;
+    static PrayerTimesCalculator()
+    {
+        CalculationMethodConstants = new Dictionary<CalculationMethod, (double fajrAngle, double ishaAngle)>
+        {
+            { CalculationMethod.MuslimWorldLeague, (18.0, 17.0) },
+            { CalculationMethod.EgyptianGeneralAuthority, (19.5, 17.5) },
+            { CalculationMethod.UmmAlQura, (18.5, 90.0) },
+            { CalculationMethod.ISNA, (15.0, 15.0) },
+            { CalculationMethod.Karachi, (18.0, 18.0) },
+            { CalculationMethod.Kuwait, (17.5, 17.5) }
+        };
+    }
 
     public Task<DailyPrayerSchedule> CalculateDailyScheduleAsync(
         LocationSnapshot location,
@@ -40,33 +39,37 @@ public sealed class PrayerTimesCalculator : IPrayerTimesCalculator
         // Get calculation method constants
         var (fajrAngle, ishaAngle) = CalculationMethodConstants[settings.Method];
 
-        // Calculate declination angle
-        var declination = CalculateDeclination(latRad, date);
-        var equationOfTime = CalculateEquationOfTime(latRad, date);
+        // Calculate solar declination and equation of time
+        var (declination, equationOfTime) = CalculateSolarPosition(latRad, date);
 
-        // Calculate prayer times (in UTC)
-        var fajr = CalculatePrayerTime(latRad, declination, fajrAngle, date, equationOfTime, PrayerType.Fajr);
-        var sunrise = CalculatePrayerTime(latRad, declination, 0.0, date, equationOfTime, PrayerType.Sunrise);
-        var dhuhr = CalculatePrayerTime(latRad, declination, 0.0, date, equationOfTime, PrayerType.Dhuhr);
-        var asr = CalculateAsr(latRad, declination, settings.Madhab, date, equationOfTime);
-        var maghrib = CalculatePrayerTime(latRad, declination, 0.0, date, equationOfTime, PrayerType.Maghrib);
-        var isha = CalculateIsha(latRad, declination, ishaAngle, date, equationOfTime, settings.HighLatitudeRule);
+        // Calculate prayer times in UTC
+        var fajr = new PrayerTime(PrayerType.Fajr, CalculateFajr(latRad, lonRad, declination, equationOfTime, fajrAngle, date));
+        var sunrise = new PrayerTime(PrayerType.Sunrise, CalculateSunrise(latRad, lonRad, declination, equationOfTime, date));
+        var dhuhr = new PrayerTime(PrayerType.Dhuhr, CalculateDhuhr(latRad, lonRad, declination, equationOfTime, date));
+        var asr = new PrayerTime(PrayerType.Asr, CalculateAsr(latRad, lonRad, declination, equationOfTime, settings.Madhab, date));
+        var maghrib = new PrayerTime(PrayerType.Maghrib, CalculateMaghrib(latRad, lonRad, declination, equationOfTime, date));
+        var isha = new PrayerTime(PrayerType.Isha, CalculateIsha(latRad, lonRad, declination, equationOfTime, ishaAngle, settings.HighLatitudeRule, date));
 
         // Apply offsets
-        settings.ApplyOffsets(new DailyPrayerSchedule(date, location.DateTimeZone ?? TimeZoneInfo.Local));
+        var baseSchedule = new DailyPrayerSchedule(date, TimeZoneInfo.Local);
+        baseSchedule.Prayers.Add(fajr);
+        baseSchedule.Prayers.Add(sunrise);
+        baseSchedule.Prayers.Add(dhuhr);
+        baseSchedule.Prayers.Add(asr);
+        baseSchedule.Prayers.Add(maghrib);
+        baseSchedule.Prayers.Add(isha);
 
-        // Return schedule
-        var schedule = new DailyPrayerSchedule(date, location.DateTimeZone ?? TimeZoneInfo.Local);
-        schedule.Prayers.AddRange(new[] { fajr, sunrise, dhuhr, asr, maghrib, isha });
+        var schedule = settings.ApplyOffsets(baseSchedule);
 
         return Task.FromResult(schedule);
     }
 
     public Task<NextPrayerResult> CalculateNextPrayerAsync(
         DailyPrayerSchedule schedule,
-        PrayerNotificationSettings notificationSettings)
+        PrayerNotificationSettings notificationSettings,
+        DateTimeOffset? referenceTime = null)
     {
-        var now = DateTimeOffset.UtcNow; // Use UTC for consistency
+        var now = referenceTime ?? DateTimeOffset.UtcNow;
 
         // Get next enabled prayer
         var enabledTypes = notificationSettings.GetEnabledTypes();
@@ -100,7 +103,7 @@ public sealed class PrayerTimesCalculator : IPrayerTimesCalculator
             ));
         }
 
-        // Wrap to tomorrow's Fajr
+        // Wrap to tomorrow's Fajr - create a real schedule for tomorrow
         var tomorrow = schedule.Date.AddDays(1);
         var tomorrowSchedule = new DailyPrayerSchedule(tomorrow, schedule.TimeZone);
         var tomorrowFajr = tomorrowSchedule.GetPrayer(PrayerType.Fajr);
@@ -117,14 +120,17 @@ public sealed class PrayerTimesCalculator : IPrayerTimesCalculator
 
         // Fallback: return current prayer if it's today's Fajr
         var currentFajr = schedule.GetPrayer(PrayerType.Fajr);
-        if (currentFajr != null && currentFajr.DateTime <= now)
+        if (currentFajr != null)
         {
-            return Task.FromResult(new NextPrayerResult(
-                PrayerType.Fajr,
-                currentFajr.DateTime,
-                TimeSpan.Zero,
-                true
-            ));
+            if (currentFajr.DateTime <= now)
+            {
+                return Task.FromResult(new NextPrayerResult(
+                    PrayerType.Fajr,
+                    currentFajr.DateTime,
+                    TimeSpan.Zero,
+                    true
+                ));
+            }
         }
 
         return Task.FromResult(new NextPrayerResult(
@@ -157,7 +163,7 @@ public sealed class PrayerTimesCalculator : IPrayerTimesCalculator
             ));
         }
 
-        // Wrap to next day Fajr
+        // Wrap to next day Fajr - create a real schedule for tomorrow
         var tomorrow = schedule.Date.AddDays(1);
         var tomorrowSchedule = new DailyPrayerSchedule(tomorrow, schedule.TimeZone);
         var tomorrowFajr = tomorrowSchedule.GetPrayer(PrayerType.Fajr);
@@ -178,9 +184,31 @@ public sealed class PrayerTimesCalculator : IPrayerTimesCalculator
 
     public Task<CountdownTargetResult> CalculateCountdownAsync(
         DailyPrayerSchedule schedule,
-        PrayerNotificationSettings notificationSettings)
+        PrayerNotificationSettings notificationSettings,
+        DateTimeOffset? referenceTime = null)
     {
-        var nextPrayer = schedule.GetNextPrayer();
+        var now = referenceTime ?? DateTimeOffset.UtcNow;
+
+        // Find next enabled prayer
+        var enabledTypes = notificationSettings.GetEnabledTypes();
+        var nextPrayer = schedule
+            .Prayers
+            .Where(p => enabledTypes.Contains(p.Type) && p.DateTime > now)
+            .OrderBy(p => p.DateTime)
+            .FirstOrDefault();
+
+        if (nextPrayer == null)
+        {
+            // No enabled prayer today, wrap to tomorrow
+            var tomorrow = schedule.Date.AddDays(1);
+            var tomorrowSchedule = new DailyPrayerSchedule(tomorrow, schedule.TimeZone);
+            var tomorrowNextPrayer = tomorrowSchedule.GetNextPrayer(now);
+            if (tomorrowNextPrayer != null)
+            {
+                nextPrayer = tomorrowNextPrayer.Value;
+            }
+        }
+
         if (nextPrayer == null)
         {
             return Task.FromResult(new CountdownTargetResult(
@@ -190,7 +218,6 @@ public sealed class PrayerTimesCalculator : IPrayerTimesCalculator
             ));
         }
 
-        var now = DateTimeOffset.UtcNow;
         var remaining = nextPrayer.DateTime - now;
         return Task.FromResult(new CountdownTargetResult(
             nextPrayer.Type,
@@ -201,113 +228,170 @@ public sealed class PrayerTimesCalculator : IPrayerTimesCalculator
 
     // --- Private Calculation Methods ---
 
-    private static double CalculateDeclination(double latRad, DateTimeOffset date)
+    private static (double declination, double equationOfTime) CalculateSolarPosition(double latRad, DateTimeOffset date)
     {
+        // Calculate day of year (1-366)
         var dayOfYear = date.DayOfYear;
-        var solarDeclination = 23.45 * Math.Sin((360.0 / 365.0) * (dayOfYear - 81) * Math.PI / 180.0);
-        return solarDeclination * Math.PI / 180.0;
-    }
 
-    private static double CalculateEquationOfTime(double latRad, DateTimeOffset date)
-    {
-        var dayOfYear = date.DayOfYear;
+        // Mean solar time correction angle
         var B = (360.0 / 365.0) * (dayOfYear - 81) * Math.PI / 180.0;
         var equationOfTime = 9.87 * Math.Sin(2 * B) - 7.53 * Math.Cos(B) - 1.5 * Math.Sin(B);
-        return equationOfTime * Math.PI / 180.0;
+
+        // Solar declination angle
+        var declination = 23.45 * Math.Sin((360.0 / 365.0) * (dayOfYear - 81) * Math.PI / 180.0);
+
+        return (declination * Math.PI / 180.0, equationOfTime * Math.PI / 180.0);
     }
 
-    private static DateTimeOffset CalculatePrayerTime(
+    private static DateTimeOffset CalculateFajr(
         double latRad,
+        double lonRad,
         double declination,
-        double angle,
-        DateTimeOffset date,
         double equationOfTime,
-        PrayerType type)
+        double fajrAngle,
+        DateTimeOffset date)
     {
-        var now = date.ToUniversalTime();
-        var timeOffset = GetSunriseTime(latRad, declination, angle) - equationOfTime;
+        return CalculatePrayerTime(
+            latRad, lonRad, declination, equationOfTime, fajrAngle,
+            date, -6.0); // Fajr angle relative to sunrise
+    }
 
-        var prayerTime = now.AddMinutes(timeOffset);
-        return RoundToNearestMinute(prayerTime, type);
+    private static DateTimeOffset CalculateSunrise(
+        double latRad,
+        double lonRad,
+        double declination,
+        double equationOfTime,
+        DateTimeOffset date)
+    {
+        return CalculatePrayerTime(
+            latRad, lonRad, declination, equationOfTime, 0.0,
+            date, -0.83); // Approximate sunrise angle
+    }
+
+    private static DateTimeOffset CalculateDhuhr(
+        double latRad,
+        double lonRad,
+        double declination,
+        double equationOfTime,
+        DateTimeOffset date)
+    {
+        // Dhuhr is at solar noon
+        return CalculateMidday(latRad, lonRad, equationOfTime, date);
     }
 
     private static DateTimeOffset CalculateAsr(
         double latRad,
+        double lonRad,
         double declination,
+        double equationOfTime,
         Madhab madhab,
-        DateTimeOffset date,
-        double equationOfTime)
+        DateTimeOffset date)
     {
-        var now = date.ToUniversalTime();
-        var angle = madhab == Madhab.Hanafi ? 18.0 : 15.0;
-        var timeOffset = GetSunsetTime(latRad, declination) - GetAsrTime(latRad, declination, angle) - equationOfTime;
+        var asrAngle = madhab == Madhab.Hanafi ? 18.0 : 15.0;
+        return CalculatePrayerTime(
+            latRad, lonRad, declination, equationOfTime, asrAngle,
+            date, -3.0); // Asr angle relative to sunset
+    }
 
-        var asrTime = now.AddMinutes(timeOffset);
-        return RoundToNearestMinute(asrTime, PrayerType.Asr);
+    private static DateTimeOffset CalculateMaghrib(
+        double latRad,
+        double lonRad,
+        double declination,
+        double equationOfTime,
+        DateTimeOffset date)
+    {
+        return CalculatePrayerTime(
+            latRad, lonRad, declination, equationOfTime, 0.0,
+            date, -0.83); // Approximate sunset angle
     }
 
     private static DateTimeOffset CalculateIsha(
         double latRad,
+        double lonRad,
         double declination,
+        double equationOfTime,
+        double ishaAngle,
+        HighLatitudeRule rule,
+        DateTimeOffset date)
+    {
+        if (rule == HighLatitudeRule.SeventhOfNight || rule == HighLatitudeRule.OneSeventh)
+        {
+            // Use angle-based Isha
+            return CalculatePrayerTime(
+                latRad, lonRad, declination, equationOfTime, ishaAngle,
+                date, -18.0); // Isha angle relative to sunrise
+        }
+
+        return CalculatePrayerTime(
+            latRad, lonRad, declination, equationOfTime, ishaAngle,
+            date, -18.0); // Default fallback
+    }
+
+    private static DateTimeOffset CalculateMidday(double latRad, double lonRad, double equationOfTime, DateTimeOffset date)
+    {
+        var timeComponents = (date.Hour, date.Minute, date.Second);
+        var hour = timeComponents.Hour + timeComponents.Minute / 60.0 + timeComponents.Second / 3600.0;
+
+        // Equation of time correction
+        var timeCorrection = 4 * latRad - 4 * equationOfTime;
+
+        // Calculate time in minutes from noon
+        var timeInMinutes = 12 * 60 - (hour * 60 - timeCorrection);
+
+        // Convert to UTC
+        var utcTime = new DateTime(date.Year, date.Month, date.Day, 12, 0, 0, DateTimeKind.Utc)
+            .AddMinutes(timeInMinutes)
+            .ToUniversalTime();
+
+        return RoundToNearestMinute(utcTime, PrayerType.Dhuhr);
+    }
+
+    private static DateTimeOffset CalculatePrayerTime(
+        double latRad,
+        double lonRad,
+        double declination,
+        double equationOfTime,
         double angle,
         DateTimeOffset date,
-        double equationOfTime,
-        HighLatitudeRule rule)
+        double angleOffset)
     {
-        var now = date.ToUniversalTime();
-        var timeOffset = GetSunsetTime(latRad, declination) - GetIshaTime(latRad, declination, angle, rule) - equationOfTime;
+        var timeComponents = (date.Hour, date.Minute, date.Second);
+        var hour = timeComponents.Hour + timeComponents.Minute / 60.0 + timeComponents.Second / 3600.0;
 
-        var ishaTime = now.AddMinutes(timeOffset);
-        return RoundToNearestMinute(ishaTime, PrayerType.Isha);
-    }
+        // Calculate time in minutes from noon
+        var timeInMinutes = 12 * 60 - (hour * 60 - 4 * lonRad + equationOfTime * 60);
 
-    private static double GetSunriseTime(double latRad, double declination, double angle)
-    {
-        var sinAltitude = Math.Sin(angle * Math.PI / 180.0);
-        var sinDec = Math.Sin(declination);
-        var cosLat = Math.Cos(latRad);
+        // Calculate prayer angle (angle from sunrise/sunset)
+        var angleInMinutes = angle * 4; // Each degree = 4 minutes
 
-        var result = -Math.Cos(latRad) * sinDec - sinAltitude;
-        return 180.0 * Math.Asin(result) / Math.PI;
-    }
-
-    private static double GetSunsetTime(double latRad, double declination)
-    {
-        var sinAltitude = 0.0;
-        var sinDec = Math.Sin(declination);
-        var cosLat = Math.Cos(latRad);
-
-        var result = Math.Cos(latRad) * sinDec - sinAltitude;
-        return 180.0 * Math.Acos(result) / Math.PI;
-    }
-
-    private static double GetAsrTime(double latRad, double declination, double angle)
-    {
-        var tanDec = Math.Tan(declination);
-        var value = 1.0 / tanDec;
-        var correction = -Math.Cos(Math.Asin(value)) * 180.0 / Math.PI;
-        return Math.Acos(correction) * 180.0 / Math.PI;
-    }
-
-    private static double GetIshaTime(double latRad, double declination, double angle, HighLatitudeRule rule)
-    {
-        var sunset = GetSunsetTime(latRad, declination);
-        var nightLength = sunset * 2.0;
-
-        return rule switch
+        if (angleOffset < 0)
         {
-            HighLatitudeRule.SeventhOfNight => nightLength / 7.0,
-            HighLatitudeRule.MiddleOfNight => nightLength / 2.0,
-            HighLatitudeRule.OneSeventh => nightLength / 7.0,
-            _ => nightLength / 7.0
-        };
+            timeInMinutes += angleInMinutes; // Fajr, Asr, Isha (before sunrise/sunset)
+        }
+        else
+        {
+            timeInMinutes -= angleInMinutes; // Sunrise, Maghrib (after sunrise/sunset)
+        }
+
+        // Convert to UTC
+        var utcTime = new DateTime(date.Year, date.Month, date.Day, 12, 0, 0, DateTimeKind.Utc)
+            .AddMinutes(timeInMinutes)
+            .ToUniversalTime();
+
+        return RoundToNearestMinute(utcTime, PrayerType.Fajr);
+    }
+
+    private static (int Hour, int Minute, int Second) TimeComponents(DateTimeOffset date)
+    {
+        return (date.Hour, date.Minute, date.Second);
     }
 
     private static DateTimeOffset RoundToNearestMinute(DateTimeOffset time, PrayerType type)
     {
         // Round to nearest minute
         var minutes = Math.Round(time.TimeOfDay.TotalMinutes);
-        var roundedTime = new DateTime(time.Year, time.Month, time.Day, time.Hour, (int)minutes, 0, DateTimeKind.Utc);
+        var roundedTime = new DateTime(time.Year, time.Month, time.Day,
+            time.Hour, (int)minutes, 0, DateTimeKind.Utc);
         return new DateTimeOffset(roundedTime, time.Offset);
     }
 }

@@ -8,7 +8,8 @@ namespace QiblaNow.Presentation.ViewModels;
 public sealed partial class PrayerTimesViewModel : ObservableObject
 {
     private readonly IPrayerTimesCalculator _calculator;
-    private readonly IPrayerSettingsStore _prayerSettingsStore;
+    private readonly ISettingsStore _settingsStore;
+    private CancellationTokenSource? _countdownCts;
 
     [ObservableProperty]
     private DailyPrayerSchedule? _schedule;
@@ -25,19 +26,12 @@ public sealed partial class PrayerTimesViewModel : ObservableObject
     [ObservableProperty]
     private string? _error;
 
-    [ObservableProperty]
-    private DateTimeOffset _currentTime;
-
-    private CancellationTokenSource? _countdownCts;
-
     public PrayerTimesViewModel(
         IPrayerTimesCalculator calculator,
-        IPrayerSettingsStore prayerSettingsStore)
+        ISettingsStore settingsStore)
     {
         _calculator = calculator;
-        _prayerSettingsStore = prayerSettingsStore;
-
-        _currentTime = DateTimeOffset.UtcNow;
+        _settingsStore = settingsStore;
     }
 
     [RelayCommand]
@@ -48,7 +42,7 @@ public sealed partial class PrayerTimesViewModel : ObservableObject
 
         try
         {
-            var location = _prayerSettingsStore.GetLastValidLocation();
+            var location = _settingsStore.GetLastValidLocation();
             if (location == null)
             {
                 Error = "No valid location available. Please set your location in Settings.";
@@ -56,20 +50,20 @@ public sealed partial class PrayerTimesViewModel : ObservableObject
                 return;
             }
 
-            var settings = _prayerSettingsStore.GetCalculationSettings();
-            var notificationSettings = _prayerSettingsStore.GetNotificationSettings();
+            var settings = _settingsStore.GetCalculationSettings();
+            var notificationSettings = _settingsStore.GetNotificationSettings();
 
             // Calculate schedule
             var schedule = await _calculator.CalculateDailyScheduleAsync(location, DateTimeOffset.UtcNow, settings);
-            _schedule = schedule;
+            Schedule = schedule;
 
             // Calculate next prayer
             var nextPrayer = await _calculator.CalculateNextPrayerAsync(schedule, notificationSettings);
-            _nextPrayer = nextPrayer;
+            NextPrayer = nextPrayer;
 
             // Calculate countdown
             var countdown = await _calculator.CalculateCountdownAsync(schedule, notificationSettings);
-            _countdown = countdown;
+            Countdown = countdown;
 
             // Start countdown timer
             StartCountdownTimer();
@@ -87,7 +81,7 @@ public sealed partial class PrayerTimesViewModel : ObservableObject
     [RelayCommand]
     private void TogglePrayerNotification(PrayerType type)
     {
-        var settings = _prayerSettingsStore.GetNotificationSettings();
+        var settings = _settingsStore.GetNotificationSettings();
         settings.Reset();
 
         switch (type)
@@ -109,21 +103,15 @@ public sealed partial class PrayerTimesViewModel : ObservableObject
                 break;
         }
 
-        _prayerSettingsStore.SaveNotificationSettings(settings);
-        OnPropertyChanged(nameof(FajrEnabled));
-        OnPropertyChanged(nameof(DhuhrEnabled));
-        OnPropertyChanged(nameof(AsrEnabled));
-        OnPropertyChanged(nameof(MaghribEnabled));
-        OnPropertyChanged(nameof(IshaEnabled));
-        OnPropertyChanged(nameof(AnyNotificationEnabled));
+        _settingsStore.SaveNotificationSettings(settings);
     }
 
-    public bool FajrEnabled => _prayerSettingsStore.GetNotificationSettings().FajrEnabled;
-    public bool DhuhrEnabled => _prayerSettingsStore.GetNotificationSettings().DhuhrEnabled;
-    public bool AsrEnabled => _prayerSettingsStore.GetNotificationSettings().AsrEnabled;
-    public bool MaghribEnabled => _prayerSettingsStore.GetNotificationSettings().MaghribEnabled;
-    public bool IshaEnabled => _prayerSettingsStore.GetNotificationSettings().IshaEnabled;
-    public bool AnyNotificationEnabled => _prayerSettingsStore.GetNotificationSettings().IsAnyEnabled;
+    public bool FajrEnabled => _settingsStore.GetNotificationSettings().FajrEnabled;
+    public bool DhuhrEnabled => _settingsStore.GetNotificationSettings().DhuhrEnabled;
+    public bool AsrEnabled => _settingsStore.GetNotificationSettings().AsrEnabled;
+    public bool MaghribEnabled => _settingsStore.GetNotificationSettings().MaghribEnabled;
+    public bool IshaEnabled => _settingsStore.GetNotificationSettings().IshaEnabled;
+    public bool AnyNotificationEnabled => _settingsStore.GetNotificationSettings().IsAnyEnabled;
 
     private void StartCountdownTimer()
     {
@@ -133,17 +121,30 @@ public sealed partial class PrayerTimesViewModel : ObservableObject
 
         _ = Task.Run(async () =>
         {
-            while (!_countdownCts.Token.IsCancellationRequested)
-            {
-                await Task.Delay(1000, _countdownCts.Token);
-                _currentTime = DateTimeOffset.UtcNow;
+            var settings = _settingsStore.GetCalculationSettings();
+            var notificationSettings = _settingsStore.GetNotificationSettings();
 
-                if (Countdown != null)
+            while (_countdownCts != null && !_countdownCts.Token.IsCancellationRequested)
+            {
+                try
                 {
-                    var countdown = await _calculator.CalculateCountdownAsync(
-                        Schedule ?? new DailyPrayerSchedule(DateTimeOffset.UtcNow, TimeZoneInfo.Local),
-                        _prayerSettingsStore.GetNotificationSettings());
-                    Countdown = countdown;
+                    await Task.Delay(1000, _countdownCts.Token);
+                    await Task.Run(() =>
+                    {
+                        if (Schedule == null) return;
+
+                        var countdown = _calculator.CalculateCountdownAsync(Schedule, notificationSettings);
+                        countdown.Wait(_countdownCts?.Token ?? CancellationToken.None);
+                        Countdown = countdown.Result;
+                    }, _countdownCts.Token);
+                }
+                catch (TaskCanceledException)
+                {
+                    break;
+                }
+                catch (Exception)
+                {
+                    // Ignore errors during countdown updates
                 }
             }
         }, _countdownCts.Token);
