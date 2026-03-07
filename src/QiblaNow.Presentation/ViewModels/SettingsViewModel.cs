@@ -9,13 +9,17 @@ public sealed partial class SettingsViewModel : ObservableObject
 {
     private readonly ISettingsStore _settingsStore;
     private readonly ILocationService _locationService;
+    private readonly IPrayerSettingsStore _prayerSettingsStore;
 
-    public SettingsViewModel(ISettingsStore settingsStore, ILocationService locationService)
+    public SettingsViewModel(ISettingsStore settingsStore, ILocationService locationService, IPrayerSettingsStore prayerSettingsStore)
     {
         _settingsStore = settingsStore;
         _locationService = locationService;
+        _prayerSettingsStore = prayerSettingsStore;
 
         LocationMode = _settingsStore.GetLocationMode();
+        NotificationSettings = _prayerSettingsStore.GetNotificationSettings();
+        CalculationSettings = _prayerSettingsStore.GetCalculationSettings();
     }
 
     [ObservableProperty]
@@ -46,6 +50,42 @@ public sealed partial class SettingsViewModel : ObservableObject
     public bool IsManualLocation => LocationMode == LocationMode.Manual;
     public bool IsGpsLocation => LocationMode == LocationMode.GPS;
     public bool HasError => !string.IsNullOrEmpty(ErrorMessage);
+
+    // Prayer notification settings
+    [ObservableProperty]
+    private PrayerNotificationSettings _notificationSettings;
+
+    [ObservableProperty]
+    private PrayerCalculationSettings _calculationSettings;
+
+    [ObservableProperty]
+    private bool _isLoading;
+
+    public bool IsNotLoading => !IsLoading;
+
+    partial void OnIsLoadingChanged(bool value)
+    {
+        OnPropertyChanged(nameof(IsNotLoading));
+    }
+
+    // Prayer calculation settings
+    public IEnumerable<CalculationMethod> CalculationMethodOptions =>
+        Enum.GetValues(typeof(CalculationMethod)).Cast<CalculationMethod>();
+
+    public IEnumerable<Madhab> MadhabOptions =>
+        Enum.GetValues(typeof(Madhab)).Cast<Madhab>();
+
+    public IEnumerable<HighLatitudeRule> HighLatitudeRuleOptions =>
+        Enum.GetValues(typeof(HighLatitudeRule)).Cast<HighLatitudeRule>();
+
+    // Prayer notification toggles
+    public bool FajrEnabled => NotificationSettings.FajrEnabled;
+    public bool DhuhrEnabled => NotificationSettings.DhuhrEnabled;
+    public bool AsrEnabled => NotificationSettings.AsrEnabled;
+    public bool MaghribEnabled => NotificationSettings.MaghribEnabled;
+    public bool IshaEnabled => NotificationSettings.IshaEnabled;
+
+    public bool AnyNotificationEnabled => NotificationSettings.IsAnyEnabled;
 
     partial void OnLocationModeChanged(LocationMode value)
     {
@@ -149,6 +189,47 @@ public sealed partial class SettingsViewModel : ObservableObject
         finally
         {
             IsSaving = false;
+        }
+    }
+
+    [RelayCommand]
+    private Task ApplySettingsAsync()
+    {
+        IsLoading = true;
+
+        try
+        {
+            _prayerSettingsStore.SaveCalculationSettings(CalculationSettings);
+            _prayerSettingsStore.SaveNotificationSettings(NotificationSettings);
+
+            return Task.CompletedTask;
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    [RelayCommand]
+    private void TogglePrayerNotification(PrayerType type)
+    {
+        switch (type)
+        {
+            case PrayerType.Fajr:
+                NotificationSettings.FajrEnabled = !NotificationSettings.FajrEnabled;
+                break;
+            case PrayerType.Dhuhr:
+                NotificationSettings.DhuhrEnabled = !NotificationSettings.DhuhrEnabled;
+                break;
+            case PrayerType.Asr:
+                NotificationSettings.AsrEnabled = !NotificationSettings.AsrEnabled;
+                break;
+            case PrayerType.Maghrib:
+                NotificationSettings.MaghribEnabled = !NotificationSettings.MaghribEnabled;
+                break;
+            case PrayerType.Isha:
+                NotificationSettings.IshaEnabled = !NotificationSettings.IshaEnabled;
+                break;
         }
     }
 }

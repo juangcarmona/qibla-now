@@ -31,6 +31,8 @@ namespace QiblaNow.App
             // Core services (singleton)
             builder.Services.AddSingleton<ISettingsStore, SettingsStore>();
             builder.Services.AddSingleton<ILocationService, LocationService>();
+            builder.Services.AddSingleton<IPrayerSettingsStore, SettingsStore>();
+            builder.Services.AddSingleton<IPrayerTimesCalculator, PrayerTimesCalculator>();
 
             // ViewModels
             builder.Services.AddTransient<HomeViewModel>();
@@ -38,6 +40,8 @@ namespace QiblaNow.App
 
             builder.Services.AddTransient<PrayerTimesViewModel>();
             builder.Services.AddTransient<PrayerTimesPage>();
+
+            builder.Services.AddSingleton<INotificationScheduler, AndroidNotificationScheduler>();
 
             builder.Services.AddTransient<QiblaViewModel>();
             builder.Services.AddTransient<QiblaPage>();
