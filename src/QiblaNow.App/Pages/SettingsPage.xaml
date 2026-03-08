@@ -44,6 +44,10 @@
                                 Command="{Binding RequestGpsLocationCommand}"
                                 IsEnabled="{Binding IsNotSaving}"
                                 HorizontalOptions="Fill"/>
+                        <Label Text="{Binding LocationName}"
+                               IsVisible="{Binding HasLocationName}"
+                               Style="{DynamicResource Caption}"
+                               LineBreakMode="WordWrap"/>
                     </StackLayout>
                 </VerticalStackLayout>
             </Frame>
@@ -53,7 +57,29 @@
                     Command="{Binding SaveManualLocationCommand}"
                     IsEnabled="{Binding !IsSaving}"
                     HorizontalOptions="Fill"
-                    Padding="20"/>
+                    Padding="20"
+                    IsVisible="{Binding IsManualLocation}"/>
+
+            <!-- Prayer Notifications -->
+            <Frame HasShadow="True" Padding="16">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Prayer Notifications" Style="{DynamicResource Title}" FontAttributes="Bold"/>
+                    <Grid ColumnDefinitions="*,Auto"
+                          RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+                          RowSpacing="10">
+                        <Label Grid.Row="0" Grid.Column="0" Text="Fajr"    VerticalOptions="Center"/>
+                        <Switch Grid.Row="0" Grid.Column="1" IsToggled="{Binding FajrEnabled}"/>
+                        <Label Grid.Row="1" Grid.Column="0" Text="Dhuhr"   VerticalOptions="Center"/>
+                        <Switch Grid.Row="1" Grid.Column="1" IsToggled="{Binding DhuhrEnabled}"/>
+                        <Label Grid.Row="2" Grid.Column="0" Text="Asr"     VerticalOptions="Center"/>
+                        <Switch Grid.Row="2" Grid.Column="1" IsToggled="{Binding AsrEnabled}"/>
+                        <Label Grid.Row="3" Grid.Column="0" Text="Maghrib" VerticalOptions="Center"/>
+                        <Switch Grid.Row="3" Grid.Column="1" IsToggled="{Binding MaghribEnabled}"/>
+                        <Label Grid.Row="4" Grid.Column="0" Text="Isha"    VerticalOptions="Center"/>
+                        <Switch Grid.Row="4" Grid.Column="1" IsToggled="{Binding IshaEnabled}"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
 
             <!-- Error Message -->
             <Label Text="{Binding ErrorMessage}"
