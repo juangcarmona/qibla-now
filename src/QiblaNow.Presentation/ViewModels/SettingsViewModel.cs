@@ -7,35 +7,21 @@ namespace QiblaNow.Presentation.ViewModels;
 
 public sealed partial class SettingsViewModel : ObservableObject
 {
-    private readonly ISettingsStore _settingsStore;
+    private readonly ISettingsStore   _settingsStore;
     private readonly ILocationService _locationService;
 
-    [ObservableProperty]
-    private LocationMode _locationMode;
+    [ObservableProperty] private LocationMode _locationMode;
+    [ObservableProperty] private string _latitude  = string.Empty;
+    [ObservableProperty] private string _longitude = string.Empty;
+    [ObservableProperty] private string _errorMessage = string.Empty;
+    [ObservableProperty] private bool   _isSaving;
+    [ObservableProperty] private bool   _isLoading;
+    [ObservableProperty] private PrayerCalculationSettings  _calculationSettings;
+    [ObservableProperty] private PrayerNotificationSettings _notificationSettings;
 
-    [ObservableProperty]
-    private string _latitude = string.Empty;
-
-    [ObservableProperty]
-    private string _longitude = string.Empty;
-
-    [ObservableProperty]
-    private string _errorMessage = string.Empty;
-
-    [ObservableProperty]
-    private bool _isSaving;
-
-    public bool IsNotSaving => !IsSaving;
-
-    [ObservableProperty]
-    private PrayerCalculationSettings _calculationSettings;
-
-    [ObservableProperty]
-    private bool _isLoading;
-
+    public bool IsNotSaving  => !IsSaving;
     public bool IsNotLoading => !IsLoading;
 
-    // Prayer calculation settings
     public IEnumerable<CalculationMethod> CalculationMethodOptions =>
         Enum.GetValues(typeof(CalculationMethod)).Cast<CalculationMethod>();
 
@@ -45,14 +31,24 @@ public sealed partial class SettingsViewModel : ObservableObject
     public IEnumerable<HighLatitudeRule> HighLatitudeRuleOptions =>
         Enum.GetValues(typeof(HighLatitudeRule)).Cast<HighLatitudeRule>();
 
-    // Prayer notification toggles
-    public bool FajrEnabled => CalculationSettings.FajrEnabled;
-    public bool DhuhrEnabled => CalculationSettings.DhuhrEnabled;
-    public bool AsrEnabled => CalculationSettings.AsrEnabled;
-    public bool MaghribEnabled => CalculationSettings.MaghribEnabled;
-    public bool IshaEnabled => CalculationSettings.IshaEnabled;
+    // Notification toggle convenience properties bound from NotificationSettings
+    public bool FajrEnabled    => NotificationSettings.FajrEnabled;
+    public bool DhuhrEnabled   => NotificationSettings.DhuhrEnabled;
+    public bool AsrEnabled     => NotificationSettings.AsrEnabled;
+    public bool MaghribEnabled => NotificationSettings.MaghribEnabled;
+    public bool IshaEnabled    => NotificationSettings.IshaEnabled;
+    public bool AnyNotificationEnabled => NotificationSettings.IsAnyEnabled;
 
-    public bool AnyNotificationEnabled => CalculationSettings.IsAnyEnabled;
+    public SettingsViewModel(ISettingsStore settingsStore, ILocationService locationService)
+    {
+        _settingsStore   = settingsStore;
+        _locationService = locationService;
+
+        // Initialise from persisted state
+        _calculationSettings  = _settingsStore.GetCalculationSettings();
+        _notificationSettings = _settingsStore.GetNotificationSettings();
+        _locationMode         = _settingsStore.GetLocationMode();
+    }
 
     partial void OnLocationModeChanged(LocationMode value)
     {
@@ -63,12 +59,12 @@ public sealed partial class SettingsViewModel : ObservableObject
             var snapshot = _settingsStore.GetLastSnapshot();
             if (snapshot != null)
             {
-                Latitude = snapshot.Latitude.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                Latitude  = snapshot.Latitude.ToString(System.Globalization.CultureInfo.InvariantCulture);
                 Longitude = snapshot.Longitude.ToString(System.Globalization.CultureInfo.InvariantCulture);
             }
             else
             {
-                Latitude = string.Empty;
+                Latitude  = string.Empty;
                 Longitude = string.Empty;
             }
         }
@@ -85,7 +81,6 @@ public sealed partial class SettingsViewModel : ObservableObject
             return Task.CompletedTask;
         }
 
-        // Parse using invariant culture (avoids comma/period issues)
         if (!double.TryParse(Latitude, System.Globalization.NumberStyles.Float,
                 System.Globalization.CultureInfo.InvariantCulture, out var lat) ||
             !double.TryParse(Longitude, System.Globalization.NumberStyles.Float,
@@ -96,32 +91,20 @@ public sealed partial class SettingsViewModel : ObservableObject
         }
 
         if (lat is < -90 or > 90)
-        {
-            ErrorMessage = "Latitude must be between -90 and 90";
-            return Task.CompletedTask;
-        }
+        { ErrorMessage = "Latitude must be between -90 and 90"; return Task.CompletedTask; }
 
         if (lon is < -180 or > 180)
-        {
-            ErrorMessage = "Longitude must be between -180 and 180";
-            return Task.CompletedTask;
-        }
+        { ErrorMessage = "Longitude must be between -180 and 180"; return Task.CompletedTask; }
 
         IsSaving = true;
         try
         {
-            var snapshot = new LocationSnapshot(LocationMode.Manual, lat, lon);
-
             _settingsStore.SetLocationMode(LocationMode.Manual);
-            _settingsStore.SaveSnapshot(snapshot);
-
-            Latitude = string.Empty;
+            _settingsStore.SaveSnapshot(new LocationSnapshot(LocationMode.Manual, lat, lon));
+            Latitude  = string.Empty;
             Longitude = string.Empty;
         }
-        finally
-        {
-            IsSaving = false;
-        }
+        finally { IsSaving = false; }
 
         return Task.CompletedTask;
     }
@@ -130,47 +113,32 @@ public sealed partial class SettingsViewModel : ObservableObject
     private async Task RequestGpsLocationAsync()
     {
         ErrorMessage = string.Empty;
-        IsSaving = true;
-
+        IsSaving     = true;
         try
         {
             var location = await _locationService.RequestGpsLocationAsync();
-
             if (location is null)
-            {
-                ErrorMessage = "Unable to get location. Please check GPS and permissions.";
-                return;
-            }
+            { ErrorMessage = "Unable to get location. Please check GPS and permissions."; return; }
 
             _settingsStore.SetLocationMode(LocationMode.GPS);
             _settingsStore.SaveSnapshot(location);
         }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Error requesting location: {ex.Message}";
-        }
-        finally
-        {
-            IsSaving = false;
-        }
+        catch (Exception ex) { ErrorMessage = $"Error requesting location: {ex.Message}"; }
+        finally { IsSaving = false; }
     }
 
     [RelayCommand]
     private Task ApplySettingsAsync()
     {
         IsLoading = true;
-
         try
         {
+            // Save calculation settings and notification settings independently
             _settingsStore.SaveCalculationSettings(CalculationSettings);
-            _settingsStore.SaveNotificationSettings(CalculationSettings);
-
+            _settingsStore.SaveNotificationSettings(NotificationSettings);
             return Task.CompletedTask;
         }
-        finally
-        {
-            IsLoading = false;
-        }
+        finally { IsLoading = false; }
     }
 
     [RelayCommand]
@@ -178,21 +146,17 @@ public sealed partial class SettingsViewModel : ObservableObject
     {
         switch (type)
         {
-            case PrayerType.Fajr:
-                CalculationSettings.FajrEnabled = !CalculationSettings.FajrEnabled;
-                break;
-            case PrayerType.Dhuhr:
-                CalculationSettings.DhuhrEnabled = !CalculationSettings.DhuhrEnabled;
-                break;
-            case PrayerType.Asr:
-                CalculationSettings.AsrEnabled = !CalculationSettings.AsrEnabled;
-                break;
-            case PrayerType.Maghrib:
-                CalculationSettings.MaghribEnabled = !CalculationSettings.MaghribEnabled;
-                break;
-            case PrayerType.Isha:
-                CalculationSettings.IshaEnabled = !CalculationSettings.IshaEnabled;
-                break;
+            case PrayerType.Fajr:    NotificationSettings.FajrEnabled    = !NotificationSettings.FajrEnabled;    break;
+            case PrayerType.Dhuhr:   NotificationSettings.DhuhrEnabled   = !NotificationSettings.DhuhrEnabled;   break;
+            case PrayerType.Asr:     NotificationSettings.AsrEnabled     = !NotificationSettings.AsrEnabled;     break;
+            case PrayerType.Maghrib: NotificationSettings.MaghribEnabled = !NotificationSettings.MaghribEnabled; break;
+            case PrayerType.Isha:    NotificationSettings.IshaEnabled    = !NotificationSettings.IshaEnabled;    break;
         }
+        OnPropertyChanged(nameof(FajrEnabled));
+        OnPropertyChanged(nameof(DhuhrEnabled));
+        OnPropertyChanged(nameof(AsrEnabled));
+        OnPropertyChanged(nameof(MaghribEnabled));
+        OnPropertyChanged(nameof(IshaEnabled));
+        OnPropertyChanged(nameof(AnyNotificationEnabled));
     }
 }

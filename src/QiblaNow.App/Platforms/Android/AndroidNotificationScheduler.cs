@@ -43,12 +43,12 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
             intent.SetPackage(_context.PackageName);
             intent.PutExtra(PrayerTypeExtra, (int)candidate.Type);
 
-            // Use PendingIntent for alarm trigger
+            // Use PendingIntent for alarm trigger — stable request code per prayer type
             var pendingIntent = PendingIntent.GetBroadcast(
                 _context,
-                0,
+                (int)candidate.Type,
                 intent,
-                PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable | PendingIntentFlags.CancelCurrent);
+                PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable);
 
             // Get AlarmManager
             var alarmManager = _context.GetSystemService(Context.AlarmService) as AlarmManager;
@@ -62,8 +62,14 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
                 candidate.ScheduledTime.ToUnixTimeMilliseconds(),
                 pendingIntent);
 
-            // Save scheduling metadata for reconciliation
-            SaveSchedulingMetadata(candidate.Type, candidate.ScheduledTime);
+            // Persist scheduling metadata for reconciliation after reboot/kill
+            _settingsStore.SaveSchedulingState(new SchedulingState
+            {
+                LastPlannedPrayer = candidate.Type.ToString(),
+                LastPlannedTriggerUtc = candidate.ScheduledTime.ToUnixTimeMilliseconds(),
+                LastPlannedRequestCode = (int)candidate.Type,
+                LastReconciledUtc = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+            });
         }
         catch (Exception ex)
         {
@@ -86,7 +92,7 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
                 _context,
                 0,
                 intent,
-                PendingIntentFlags.UpdateCurrent | PendingIntentFlags.CancelCurrent);
+                PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable);
 
             alarmManager.Cancel(pendingIntent);
         }
@@ -100,6 +106,19 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
     {
         try
         {
+            // Show notification if a scheduled alarm just fired (within last 30 minutes)
+            var state = _settingsStore.GetSchedulingState();
+            if (state.LastPlannedTriggerUtc.HasValue && state.LastPlannedPrayer != null)
+            {
+                var triggerTime = DateTimeOffset.FromUnixTimeMilliseconds(state.LastPlannedTriggerUtc.Value);
+                var utcNow = DateTimeOffset.UtcNow;
+                if (triggerTime <= utcNow && (utcNow - triggerTime).TotalMinutes < 30)
+                {
+                    if (Enum.TryParse<PrayerType>(state.LastPlannedPrayer, out var firedPrayer))
+                        ShowPrayerNotification(firedPrayer);
+                }
+            }
+
             var notificationSettings = _settingsStore.GetNotificationSettings();
 
             if (!notificationSettings.IsAnyEnabled)
@@ -122,7 +141,7 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
             var schedule = await _calculator.CalculateDailyScheduleAsync(location, date, calculationSettings);
 
             // Calculate next notification candidate
-            var candidate = await _calculator.CalculateNextNotificationCandidateAsync(schedule, notificationSettings);
+            var candidate = await _calculator.CalculateNextNotificationCandidateAsync(schedule, notificationSettings, date);
 
             if (candidate != null)
             {
@@ -133,59 +152,6 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
         {
             System.Diagnostics.Debug.WriteLine($"Error reconciling on startup: {ex.Message}");
         }
-    }
-
-    public Task HandleAlarmFiredAsync(PrayerType prayerType)
-    {
-        try
-        {
-            // Show notification
-            ShowPrayerNotification(prayerType);
-
-            // Recalculate and schedule next notification
-            _ = Task.Run(async () =>
-            {
-                var location = _settingsStore.GetLastValidLocation();
-                if (location == null) return;
-
-                var calculationSettings = _settingsStore.GetCalculationSettings();
-                var notificationSettings = _settingsStore.GetNotificationSettings();
-
-                var schedule = await _calculator.CalculateDailyScheduleAsync(location, DateTimeOffset.UtcNow, calculationSettings);
-
-                // Calculate next notification candidate
-                var candidate = await _calculator.CalculateNextNotificationCandidateAsync(schedule, notificationSettings);
-
-                if (candidate != null)
-                {
-                    await ScheduleNextNotificationAsync(candidate);
-                }
-            });
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error handling alarm fire: {ex.Message}");
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public Task HandleBootCompletedAsync()
-    {
-        try
-        {
-            // Reconcile scheduling after reboot
-            _ = Task.Run(async () =>
-            {
-                await ReconcileOnStartupAsync();
-            });
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error handling boot completed: {ex.Message}");
-        }
-
-        return Task.CompletedTask;
     }
 
     private void CreateNotificationChannel()
@@ -231,38 +197,4 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
         notificationManager?.Notify((int)prayerType, notification);
     }
 
-    private void SaveSchedulingMetadata(PrayerType prayerType, DateTimeOffset scheduledTime)
-    {
-        try
-        {
-            // Save notification settings with this prayer enabled
-            var settings = _settingsStore.GetNotificationSettings();
-            settings.Reset();
-
-            switch (prayerType)
-            {
-                case PrayerType.Fajr:
-                    settings.FajrEnabled = true;
-                    break;
-                case PrayerType.Dhuhr:
-                    settings.DhuhrEnabled = true;
-                    break;
-                case PrayerType.Asr:
-                    settings.AsrEnabled = true;
-                    break;
-                case PrayerType.Maghrib:
-                    settings.MaghribEnabled = true;
-                    break;
-                case PrayerType.Isha:
-                    settings.IshaEnabled = true;
-                    break;
-            }
-
-            _settingsStore.SaveNotificationSettings(settings);
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error saving scheduling metadata: {ex.Message}");
-        }
-    }
 }

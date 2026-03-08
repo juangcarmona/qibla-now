@@ -9,333 +9,241 @@ public class PrayerTimesCalculatorTests
 {
     private readonly IPrayerTimesCalculator _calculator;
 
+    // Fixed "now" anchored before all prayers on the test date (UTC midnight).
+    // All tests that don't simulate a specific wall-clock position use this value
+    // so results are fully deterministic and independent of the system clock.
+    private static readonly DateTimeOffset TestNowMidnight =
+        new(2026, 3, 2, 0, 0, 0, TimeSpan.Zero);
+
+    private static readonly LocationSnapshot LondonLocation = new(
+        LocationMode.Manual, 51.5074, -0.1278, "London");
+
+    private static readonly LocationSnapshot ReykjavikLocation = new(
+        LocationMode.Manual, 64.1265, -21.8174, "Reykjavik");
+
+    private static readonly PrayerCalculationSettings LondonSettings = new()
+    {
+        Method            = CalculationMethod.MuslimWorldLeague,
+        Madhab            = Madhab.Shafi,
+        HighLatitudeRule  = HighLatitudeRule.SeventhOfNight
+    };
+
+    private static readonly PrayerCalculationSettings ReykjavikSettings = new()
+    {
+        Method            = CalculationMethod.ISNA,
+        Madhab            = Madhab.Shafi,
+        HighLatitudeRule  = HighLatitudeRule.SeventhOfNight
+    };
+
+    private static readonly PrayerNotificationSettings AllEnabled = new()
+    {
+        FajrEnabled    = true,
+        DhuhrEnabled   = true,
+        AsrEnabled     = true,
+        MaghribEnabled = true,
+        IshaEnabled    = true
+    };
+
     public PrayerTimesCalculatorTests()
     {
         _calculator = new PrayerTimesCalculator();
     }
 
-    // PT-1: London test case
+    // ── PT-1 London ────────────────────────────────────────────────────────
+
     [Fact]
     public async Task PT1_London_2026_03_02_ReturnsExpectedPrayerTimes()
     {
-        // Arrange
-        var location = new LocationSnapshot(
-            LocationMode.Manual,
-            51.5074,
-            -0.1278,
-            "London"
-        );
-        var date = new DateTimeOffset(2026, 3, 2, 0, 0, 0, TimeSpan.Zero);
-        var settings = new PrayerCalculationSettings
-        {
-            Method = CalculationMethod.MuslimWorldLeague,
-            Madhab = Madhab.Shafi,
-            HighLatitudeRule = HighLatitudeRule.SeventhOfNight
-        };
+        var schedule = await _calculator.CalculateDailyScheduleAsync(
+            LondonLocation, TestNowMidnight, LondonSettings);
 
-        // Act
-        var schedule = await _calculator.CalculateDailyScheduleAsync(location, date, settings);
-
-        // Assert
         Assert.NotNull(schedule);
-        Assert.Equal(date, schedule.Date);
-        Assert.NotNull(schedule.TimeZone);
-        Assert.Equal(6, schedule.Prayers.Count); // Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha
+        Assert.Equal(TestNowMidnight, schedule.Date);
+        Assert.Equal(6, schedule.Prayers.Count);
 
-        var fajr = schedule.GetPrayer(PrayerType.Fajr);
-        var dhuhr = schedule.GetPrayer(PrayerType.Dhuhr);
-        var asr = schedule.GetPrayer(PrayerType.Asr);
-        var maghrib = schedule.GetPrayer(PrayerType.Maghrib);
-        var isha = schedule.GetPrayer(PrayerType.Isha);
-        var sunrise = schedule.GetPrayer(PrayerType.Sunrise);
+        var fajr    = schedule.GetPrayer(PrayerType.Fajr)!.Value;
+        var dhuhr   = schedule.GetPrayer(PrayerType.Dhuhr)!.Value;
+        var asr     = schedule.GetPrayer(PrayerType.Asr)!.Value;
+        var maghrib = schedule.GetPrayer(PrayerType.Maghrib)!.Value;
+        var isha    = schedule.GetPrayer(PrayerType.Isha)!.Value;
+        var sunrise = schedule.GetPrayer(PrayerType.Sunrise)!.Value;
 
-        Assert.NotNull(fajr);
-        Assert.NotNull(dhuhr);
-        Assert.NotNull(asr);
-        Assert.NotNull(maghrib);
-        Assert.NotNull(isha);
-        Assert.NotNull(sunrise);
+        // ACCEPTANCE_TESTS.md PT-1 (tolerance ±1 min — tests use exact time strings)
+        static string Fmt(DateTimeOffset t) => t.ToString("HH:mm", CultureInfo.InvariantCulture);
 
-        // Expected values from docs/ACCEPTANCE_TESTS.md
-        // Tolerance: ±1 minute
-        var fajrTime = fajr.DateTime.ToString("HH:mm", CultureInfo.InvariantCulture);
-        var dhuhrTime = dhuhr.DateTime.ToString("HH:mm", CultureInfo.InvariantCulture);
-        var asrTime = asr.DateTime.ToString("HH:mm", CultureInfo.InvariantCulture);
-        var maghribTime = maghrib.DateTime.ToString("HH:mm", CultureInfo.InvariantCulture);
-        var ishaTime = isha.DateTime.ToString("HH:mm", CultureInfo.InvariantCulture);
+        Assert.Equal("05:04", Fmt(fajr.DateTime));
+        Assert.Equal("12:18", Fmt(dhuhr.DateTime));
+        Assert.Equal("15:06", Fmt(asr.DateTime));
+        Assert.Equal("17:46", Fmt(maghrib.DateTime));
+        Assert.Equal("19:12", Fmt(isha.DateTime));
 
-        Assert.Equal("05:04", fajrTime);
-        Assert.Equal("12:18", dhuhrTime);
-        Assert.Equal("15:06", asrTime);
-        Assert.Equal("17:46", maghribTime);
-        Assert.Equal("19:12", ishaTime);
+        // Sunrise is display-only; verify ordering
+        Assert.True(sunrise.DateTime > fajr.DateTime);
+        Assert.True(sunrise.DateTime < dhuhr.DateTime);
     }
 
-    // PT-2: Reykjavik test case
+    // ── PT-2 Reykjavik ─────────────────────────────────────────────────────
+
     [Fact]
-    public async Task PT2_Reykjavik_ReturnsExpectedPrayerTimes()
+    public async Task PT2_Reykjavik_2026_03_02_PrayerTimesAreChronologicallyOrdered()
     {
-        // Arrange
-        var location = new LocationSnapshot(
-            LocationMode.Manual,
-            64.1265,
-            -21.8174,
-            "Reykjavik"
-        );
-        var date = new DateTimeOffset(2026, 3, 2, 0, 0, 0, TimeSpan.Zero);
-        var settings = new PrayerCalculationSettings
-        {
-            Method = CalculationMethod.ISNA,
-            Madhab = Madhab.Shafi,
-            HighLatitudeRule = HighLatitudeRule.SeventhOfNight
-        };
+        var schedule = await _calculator.CalculateDailyScheduleAsync(
+            ReykjavikLocation, TestNowMidnight, ReykjavikSettings);
 
-        // Act
-        var schedule = await _calculator.CalculateDailyScheduleAsync(location, date, settings);
-
-        // Assert
         Assert.NotNull(schedule);
-        Assert.Equal(date, schedule.Date);
 
-        var fajr = schedule.GetPrayer(PrayerType.Fajr);
-        var dhuhr = schedule.GetPrayer(PrayerType.Dhuhr);
-        var asr = schedule.GetPrayer(PrayerType.Asr);
-        var maghrib = schedule.GetPrayer(PrayerType.Maghrib);
-        var isha = schedule.GetPrayer(PrayerType.Isha);
+        var fajr    = schedule.GetPrayer(PrayerType.Fajr)!.Value;
+        var sunrise = schedule.GetPrayer(PrayerType.Sunrise)!.Value;
+        var dhuhr   = schedule.GetPrayer(PrayerType.Dhuhr)!.Value;
+        var asr     = schedule.GetPrayer(PrayerType.Asr)!.Value;
+        var maghrib = schedule.GetPrayer(PrayerType.Maghrib)!.Value;
+        var isha    = schedule.GetPrayer(PrayerType.Isha)!.Value;
 
-        Assert.NotNull(fajr);
-        Assert.NotNull(dhuhr);
-        Assert.NotNull(asr);
-        Assert.NotNull(maghrib);
-        Assert.NotNull(isha);
-
-        // Verify times are reasonable (not before sunrise or after midnight)
-        var now = DateTimeOffset.UtcNow;
-        Assert.True(fajr.DateTime < dhuhr.DateTime);
-        Assert.True(dhuhr.DateTime < asr.DateTime);
-        Assert.True(asr.DateTime < maghrib.DateTime);
+        Assert.True(fajr.DateTime    < sunrise.DateTime);
+        Assert.True(sunrise.DateTime < dhuhr.DateTime);
+        Assert.True(dhuhr.DateTime   < asr.DateTime);
+        Assert.True(asr.DateTime     < maghrib.DateTime);
         Assert.True(maghrib.DateTime < isha.DateTime);
     }
 
+    // ── Next-prayer resolution ─────────────────────────────────────────────
+
     [Fact]
-    public async Task CalculateNextPrayer_ReturnsCorrectNextPrayer()
+    public async Task CalculateNextPrayer_BeforeAnyPrayer_ReturnsFajr()
     {
-        // Arrange
-        var location = new LocationSnapshot(
-            LocationMode.Manual,
-            51.5074,
-            -0.1278,
-            "London"
-        );
-        var date = new DateTimeOffset(2026, 3, 2, 0, 0, 0, TimeSpan.Zero);
-        var settings = new PrayerCalculationSettings
-        {
-            Method = CalculationMethod.MuslimWorldLeague,
-            Madhab = Madhab.Shafi,
-            HighLatitudeRule = HighLatitudeRule.SeventhOfNight
-        };
-        var notificationSettings = new PrayerNotificationSettings
-        {
-            FajrEnabled = true,
-            DhuhrEnabled = true,
-            AsrEnabled = true,
-            MaghribEnabled = true,
-            IshaEnabled = true
-        };
+        var schedule = await _calculator.CalculateDailyScheduleAsync(
+            LondonLocation, TestNowMidnight, LondonSettings);
 
-        // Act
-        var schedule = await _calculator.CalculateDailyScheduleAsync(location, date, settings);
-        var nextPrayer = await _calculator.CalculateNextPrayerAsync(schedule, notificationSettings);
+        // 00:00 UTC is before Fajr (~05:04) → next prayer is Fajr
+        var result = await _calculator.CalculateNextPrayerAsync(
+            schedule, AllEnabled, TestNowMidnight);
 
-        // Assert
-        Assert.NotNull(nextPrayer);
-        Assert.True(nextPrayer.Remaining > TimeSpan.Zero);
+        Assert.NotNull(result);
+        Assert.Equal(PrayerType.Fajr, result!.Type);
+        Assert.True(result.Remaining > TimeSpan.Zero);
+        Assert.True(result.IsToday);
     }
 
     [Fact]
     public async Task CalculateNextPrayer_WrapsToNextDayFajrAfterIsha()
     {
-        // Arrange
-        var location = new LocationSnapshot(
-            LocationMode.Manual,
-            51.5074,
-            -0.1278,
-            "London"
-        );
-        var date = new DateTimeOffset(2026, 3, 2, 0, 0, 0, TimeSpan.Zero);
-        var settings = new PrayerCalculationSettings
-        {
-            Method = CalculationMethod.MuslimWorldLeague,
-            Madhab = Madhab.Shafi,
-            HighLatitudeRule = HighLatitudeRule.SeventhOfNight
-        };
+        var schedule = await _calculator.CalculateDailyScheduleAsync(
+            LondonLocation, TestNowMidnight, LondonSettings);
 
-        // Simulate time after Isha (19:30)
-        var afterIshaDate = new DateTimeOffset(2026, 3, 2, 19, 30, 0, TimeSpan.Zero);
-        var notificationSettings = new PrayerNotificationSettings
-        {
-            FajrEnabled = true,
-            DhuhrEnabled = true,
-            AsrEnabled = true,
-            MaghribEnabled = true,
-            IshaEnabled = true
-        };
+        // After Isha ~19:12 UTC (use 20:00 to be safely past it)
+        var afterIsha = new DateTimeOffset(2026, 3, 2, 20, 0, 0, TimeSpan.Zero);
 
-        // Act
-        var schedule = await _calculator.CalculateDailyScheduleAsync(location, date, settings);
-        var nextPrayer = await _calculator.CalculateNextPrayerAsync(schedule, notificationSettings);
+        var result = await _calculator.CalculateNextPrayerAsync(
+            schedule, AllEnabled, afterIsha);
 
-        // Assert
-        Assert.NotNull(nextPrayer);
-        Assert.Equal(PrayerType.Fajr, nextPrayer.Type);
-        Assert.False(nextPrayer.IsToday);
+        Assert.NotNull(result);
+        Assert.Equal(PrayerType.Fajr, result!.Type);
+        Assert.False(result.IsToday);
+        Assert.True(result.Remaining > TimeSpan.Zero);
     }
 
     [Fact]
     public async Task CalculateNextPrayer_FiltersDisabledPrayers()
     {
-        // Arrange
-        var location = new LocationSnapshot(
-            LocationMode.Manual,
-            51.5074,
-            -0.1278,
-            "London"
-        );
-        var date = new DateTimeOffset(2026, 3, 2, 0, 0, 0, TimeSpan.Zero);
-        var settings = new PrayerCalculationSettings
-        {
-            Method = CalculationMethod.MuslimWorldLeague,
-            Madhab = Madhab.Shafi,
-            HighLatitudeRule = HighLatitudeRule.SeventhOfNight
-        };
+        var schedule = await _calculator.CalculateDailyScheduleAsync(
+            LondonLocation, TestNowMidnight, LondonSettings);
 
-        // Only Fajr is enabled
-        var notificationSettings = new PrayerNotificationSettings
-        {
-            FajrEnabled = true,
-            DhuhrEnabled = false,
-            AsrEnabled = false,
-            MaghribEnabled = false,
-            IshaEnabled = false
-        };
+        var onlyFajr = new PrayerNotificationSettings { FajrEnabled = true };
 
-        // Act
-        var schedule = await _calculator.CalculateDailyScheduleAsync(location, date, settings);
-        var nextPrayer = await _calculator.CalculateNextPrayerAsync(schedule, notificationSettings);
+        // At midnight, with only Fajr enabled, next prayer must be Fajr
+        var result = await _calculator.CalculateNextPrayerAsync(
+            schedule, onlyFajr, TestNowMidnight);
 
-        // Assert
-        Assert.NotNull(nextPrayer);
-        Assert.Equal(PrayerType.Fajr, nextPrayer.Type);
+        Assert.NotNull(result);
+        Assert.Equal(PrayerType.Fajr, result!.Type);
     }
+
+    [Fact]
+    public async Task CalculateNextPrayer_AllDisabled_ReturnsNull()
+    {
+        var schedule = await _calculator.CalculateDailyScheduleAsync(
+            LondonLocation, TestNowMidnight, LondonSettings);
+
+        var noneEnabled = new PrayerNotificationSettings();
+        var result = await _calculator.CalculateNextPrayerAsync(
+            schedule, noneEnabled, TestNowMidnight);
+
+        Assert.Null(result);
+    }
+
+    // ── Notification candidate selection ──────────────────────────────────
 
     [Fact]
     public async Task CalculateNextNotificationCandidate_RespectsEnabledPrayers()
     {
-        // Arrange
-        var location = new LocationSnapshot(
-            LocationMode.Manual,
-            51.5074,
-            -0.1278,
-            "London"
-        );
-        var date = new DateTimeOffset(2026, 3, 2, 0, 0, 0, TimeSpan.Zero);
-        var settings = new PrayerCalculationSettings
+        var schedule = await _calculator.CalculateDailyScheduleAsync(
+            LondonLocation, TestNowMidnight, LondonSettings);
+
+        var dhuhrAndMaghrib = new PrayerNotificationSettings
         {
-            Method = CalculationMethod.MuslimWorldLeague,
-            Madhab = Madhab.Shafi,
-            HighLatitudeRule = HighLatitudeRule.SeventhOfNight
+            DhuhrEnabled   = true,
+            MaghribEnabled = true
         };
 
-        // Only Dhuhr and Maghrib enabled
-        var notificationSettings = new PrayerNotificationSettings
-        {
-            FajrEnabled = false,
-            DhuhrEnabled = true,
-            AsrEnabled = false,
-            MaghribEnabled = true,
-            IshaEnabled = false
-        };
+        // At midnight, the next enabled prayer is Dhuhr
+        var candidate = await _calculator.CalculateNextNotificationCandidateAsync(
+            schedule, dhuhrAndMaghrib, TestNowMidnight);
 
-        // Act
-        var schedule = await _calculator.CalculateDailyScheduleAsync(location, date, settings);
-        var candidate = await _calculator.CalculateNextNotificationCandidateAsync(schedule, notificationSettings);
-
-        // Assert
         Assert.NotNull(candidate);
-        Assert.True(candidate.Type == PrayerType.Dhuhr || candidate.Type == PrayerType.Maghrib);
+        Assert.Equal(PrayerType.Dhuhr, candidate!.Type);
     }
 
     [Fact]
-    public async Task CalculateCountdown_UpdatesEverySecond()
+    public async Task CalculateNextNotificationCandidate_AllDisabled_ReturnsNull()
     {
-        // Arrange
-        var location = new LocationSnapshot(
-            LocationMode.Manual,
-            51.5074,
-            -0.1278,
-            "London"
-        );
-        var date = new DateTimeOffset(2026, 3, 2, 0, 0, 0, TimeSpan.Zero);
-        var settings = new PrayerCalculationSettings
-        {
-            Method = CalculationMethod.MuslimWorldLeague,
-            Madhab = Madhab.Shafi,
-            HighLatitudeRule = HighLatitudeRule.SeventhOfNight
-        };
-        var notificationSettings = new PrayerNotificationSettings
-        {
-            FajrEnabled = true,
-            DhuhrEnabled = true,
-            AsrEnabled = true,
-            MaghribEnabled = true,
-            IshaEnabled = true
-        };
+        var schedule = await _calculator.CalculateDailyScheduleAsync(
+            LondonLocation, TestNowMidnight, LondonSettings);
 
-        // Act
-        var schedule = await _calculator.CalculateDailyScheduleAsync(location, date, settings);
-        var countdown = await _calculator.CalculateCountdownAsync(schedule, notificationSettings);
+        var candidate = await _calculator.CalculateNextNotificationCandidateAsync(
+            schedule, new PrayerNotificationSettings(), TestNowMidnight);
 
-        // Assert
-        Assert.NotNull(countdown);
-        Assert.True(countdown.RemainingSeconds > 0);
+        Assert.Null(candidate);
     }
+
+    // ── Countdown ─────────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task CalculateCountdown_BeforeAnyPrayer_ReturnsPositiveSeconds()
+    {
+        var schedule = await _calculator.CalculateDailyScheduleAsync(
+            LondonLocation, TestNowMidnight, LondonSettings);
+
+        var countdown = await _calculator.CalculateCountdownAsync(
+            schedule, AllEnabled, TestNowMidnight);
+
+        Assert.NotNull(countdown);
+        Assert.True(countdown!.RemainingSeconds > 0);
+    }
+
+    // ── Offset application ─────────────────────────────────────────────────
 
     [Fact]
     public async Task ApplyOffsets_AdjustsPrayerTimes()
     {
-        // Arrange
-        var location = new LocationSnapshot(
-            LocationMode.Manual,
-            51.5074,
-            -0.1278,
-            "London"
-        );
-        var date = new DateTimeOffset(2026, 3, 2, 0, 0, 0, TimeSpan.Zero);
         var settings = new PrayerCalculationSettings
         {
-            Method = CalculationMethod.MuslimWorldLeague,
-            Madhab = Madhab.Shafi,
+            Method           = CalculationMethod.MuslimWorldLeague,
+            Madhab           = Madhab.Shafi,
             HighLatitudeRule = HighLatitudeRule.SeventhOfNight,
-            FajrOffsetMinutes = 5,
-            DhuhrOffsetMinutes = 0,
-            AsrOffsetMinutes = 0,
-            MaghribOffsetMinutes = 0,
-            IshaOffsetMinutes = 0
+            FajrOffsetMinutes = 5
         };
 
-        // Act
-        await _calculator.CalculateDailyScheduleAsync(location, date, settings);
+        var schedule = await _calculator.CalculateDailyScheduleAsync(
+            LondonLocation, TestNowMidnight, settings);
 
-        // Assert
-        var schedule = await _calculator.CalculateDailyScheduleAsync(location, date, settings);
-        var fajr = schedule.GetPrayer(PrayerType.Fajr);
-        var dhuhr = schedule.GetPrayer(PrayerType.Dhuhr);
+        var fajr  = schedule.GetPrayer(PrayerType.Fajr)!.Value;
+        var dhuhr = schedule.GetPrayer(PrayerType.Dhuhr)!.Value;
 
-        Assert.NotNull(fajr);
-        Assert.NotNull(dhuhr);
-
-        // Fajr should be shifted by +5 minutes
         Assert.Equal(5, fajr.OffsetMinutes);
-        Assert.True(fajr.DateTime.Hour == 5 && fajr.DateTime.Minute >= 4); // Should be around 05:09
+        Assert.Equal(0, dhuhr.OffsetMinutes);
+
+        // Fajr should be shifted forward by +5 minutes from its unshifted base
+        Assert.Equal("05:09", fajr.DateTime.ToString("HH:mm", CultureInfo.InvariantCulture));
     }
 }
+

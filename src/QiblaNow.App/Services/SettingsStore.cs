@@ -5,15 +5,25 @@ using QiblaNow.Core.Models;
 namespace QiblaNow.App.Services;
 
 /// <summary>
-/// Implementation of ISettingsStore using MAUI Preferences
+/// Implementation of ISettingsStore using MAUI Preferences.
+/// Key names follow the naming convention defined in DATA_MODEL.md.
 /// </summary>
 public sealed class SettingsStore : ISettingsStore
 {
-    private const string KeyLocationMode = "location_mode";
-    private const string KeyLatitude = "latitude";
-    private const string KeyLongitude = "longitude";
-    private const string KeyLabel = "location_label";
-    private const string KeyTimestamp = "timestamp";
+    // ── Location keys ────────────────────────────────────────────────────────
+    private const string KeyLocationMode  = "location_mode";
+    private const string KeyManualLat     = "manual.lat";
+    private const string KeyManualLon     = "manual.lon";
+    private const string KeyLastLat       = "last.lat";
+    private const string KeyLastLon       = "last.lon";
+    private const string KeyLastLabel     = "last.label";
+    private const string KeyLastTimestamp = "last.timestampUtc";
+
+    // ── Scheduling recovery keys (DATA_MODEL.md) ──────────────────────────────
+    private const string KeySchedPrayer    = "scheduling.lastPlannedPrayer";
+    private const string KeySchedTrigger   = "scheduling.lastPlannedTriggerUtc";
+    private const string KeySchedReqCode   = "scheduling.lastPlannedRequestCode";
+    private const string KeySchedReconcile = "scheduling.lastReconciledUtc";
 
     public LocationMode GetLocationMode()
     {
@@ -46,48 +56,45 @@ public sealed class SettingsStore : ISettingsStore
     {
         try
         {
-            if (!Preferences.Default.ContainsKey(KeyLatitude) ||
-                !Preferences.Default.ContainsKey(KeyLongitude) ||
-                !Preferences.Default.ContainsKey(KeyTimestamp))
-            {
+            if (!Preferences.Default.ContainsKey(KeyLastLat) ||
+                !Preferences.Default.ContainsKey(KeyLastLon))
                 return null;
-            }
 
-            var latitude = Preferences.Default.Get(KeyLatitude, 0.0);
-            var longitude = Preferences.Default.Get(KeyLongitude, 0.0);
-            var label = Preferences.Default.Get(KeyLabel, string.Empty);
-            var timestampStr = Preferences.Default.Get(KeyTimestamp, string.Empty);
+            var latitude  = Preferences.Default.Get(KeyLastLat, 0.0);
+            var longitude = Preferences.Default.Get(KeyLastLon, 0.0);
+            var label     = Preferences.Default.Get(KeyLastLabel, string.Empty);
+            var tsStr     = Preferences.Default.Get(KeyLastTimestamp, string.Empty);
 
-            if (!DateTimeOffset.TryParse(timestampStr, out DateTimeOffset timestamp))
-            {
-                return null;
-            }
+            if (!DateTimeOffset.TryParse(tsStr, out var timestamp))
+                timestamp = DateTimeOffset.UtcNow;
 
-            return new LocationSnapshot(LocationMode.Manual, latitude, longitude, string.IsNullOrEmpty(label) ? null : label)
+            return new LocationSnapshot(
+                LocationMode.Manual, latitude, longitude,
+                string.IsNullOrEmpty(label) ? null : label)
             {
                 Timestamp = timestamp
             };
         }
-        catch
-        {
-            return null;
-        }
+        catch { return null; }
     }
 
     public void SaveSnapshot(LocationSnapshot snapshot)
     {
         try
         {
-            Preferences.Default.Set(KeyLatitude, snapshot.Latitude);
-            Preferences.Default.Set(KeyLongitude, snapshot.Longitude);
-            Preferences.Default.Set(KeyLabel, snapshot.Label ?? string.Empty);
-            Preferences.Default.Set(KeyTimestamp, snapshot.Timestamp.ToString("o"));
+            Preferences.Default.Set(KeyLastLat,       snapshot.Latitude);
+            Preferences.Default.Set(KeyLastLon,       snapshot.Longitude);
+            Preferences.Default.Set(KeyLastLabel,     snapshot.Label ?? string.Empty);
+            Preferences.Default.Set(KeyLastTimestamp, snapshot.Timestamp.ToString("o"));
             SetLocationMode(snapshot.Mode);
+
+            if (snapshot.Mode == LocationMode.Manual)
+            {
+                Preferences.Default.Set(KeyManualLat, snapshot.Latitude);
+                Preferences.Default.Set(KeyManualLon, snapshot.Longitude);
+            }
         }
-        catch
-        {
-            // Ignore storage errors
-        }
+        catch { /* ignore storage errors */ }
     }
 
     public PrayerCalculationSettings GetCalculationSettings()
@@ -177,13 +184,47 @@ public sealed class SettingsStore : ISettingsStore
         }
     }
 
-    public LocationSnapshot? GetLastValidLocation()
+    public LocationSnapshot? GetLastValidLocation() => GetLastSnapshot();
+
+    public void SaveLastValidLocation(LocationSnapshot location) => SaveSnapshot(location);
+
+    public SchedulingState GetSchedulingState()
     {
-        return GetLastSnapshot();
+        try
+        {
+            return new SchedulingState
+            {
+                LastPlannedPrayer     = Preferences.Default.Get(KeySchedPrayer,    (string?)null),
+                LastPlannedTriggerUtc = Preferences.Default.ContainsKey(KeySchedTrigger)
+                    ? Preferences.Default.Get(KeySchedTrigger, 0L)
+                    : null,
+                LastPlannedRequestCode = Preferences.Default.ContainsKey(KeySchedReqCode)
+                    ? Preferences.Default.Get(KeySchedReqCode, 0)
+                    : null,
+                LastReconciledUtc = Preferences.Default.ContainsKey(KeySchedReconcile)
+                    ? Preferences.Default.Get(KeySchedReconcile, 0L)
+                    : null
+            };
+        }
+        catch { return new SchedulingState(); }
     }
 
-    public void SaveLastValidLocation(LocationSnapshot location)
+    /// <summary>
+    /// Persists scheduling metadata ONLY — never touches notification preference flags.
+    /// </summary>
+    public void SaveSchedulingState(SchedulingState state)
     {
-        SaveSnapshot(location);
+        try
+        {
+            if (state.LastPlannedPrayer != null)
+                Preferences.Default.Set(KeySchedPrayer, state.LastPlannedPrayer);
+            if (state.LastPlannedTriggerUtc.HasValue)
+                Preferences.Default.Set(KeySchedTrigger, state.LastPlannedTriggerUtc.Value);
+            if (state.LastPlannedRequestCode.HasValue)
+                Preferences.Default.Set(KeySchedReqCode, state.LastPlannedRequestCode.Value);
+            if (state.LastReconciledUtc.HasValue)
+                Preferences.Default.Set(KeySchedReconcile, state.LastReconciledUtc.Value);
+        }
+        catch { /* ignore */ }
     }
 }

@@ -9,13 +9,12 @@ public sealed class LocationSnapshot
     public double Latitude { get; }
     public double Longitude { get; }
     public string? Label { get; }
-    public DateTimeOffset Timestamp { get; }
+    public DateTimeOffset Timestamp { get; init; } = DateTimeOffset.UtcNow;
 
     public LocationSnapshot(
         LocationMode mode,
         double latitude,
         double longitude,
-        DateTimeOffset timestamp,
         string? label = null)
     {
         if (latitude < -90 || latitude > 90)
@@ -28,7 +27,6 @@ public sealed class LocationSnapshot
         Latitude = latitude;
         Longitude = longitude;
         Label = label;
-        Timestamp = timestamp;
     }
 
     public bool IsValidLatitude => Latitude >= -90 && Latitude <= 90;

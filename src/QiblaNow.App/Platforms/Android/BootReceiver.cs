@@ -1,40 +1,44 @@
 using Android.Content;
-using Android.OS;
+using Microsoft.Extensions.DependencyInjection;
 using QiblaNow.Core.Abstractions;
 
 namespace QiblaNow.App.Platforms.Android;
 
 /// <summary>
-/// BroadcastReceiver that handles device boot completion
-/// Registered in AndroidManifest.xml
+/// BroadcastReceiver that restores prayer alarm scheduling after device reboot.
+/// Must be Exported=true so the Android system can deliver BOOT_COMPLETED.
 /// </summary>
-[BroadcastReceiver(Enabled = true, Exported = false)]
+[BroadcastReceiver(Enabled = true, Exported = true)]
 [IntentFilter(new[] { "android.intent.action.BOOT_COMPLETED" })]
 public class BootReceiver : BroadcastReceiver
 {
     public override void OnReceive(Context? context, Intent? intent)
     {
-        if (context == null || intent == null) return;
+        if (context == null || intent?.Action != "android.intent.action.BOOT_COMPLETED")
+            return;
 
-        try
+        var pending = GoAsync();
+        _ = Task.Run(async () =>
         {
-            // Only handle BOOT_COMPLETED action
-            if (intent.Action != "android.intent.action.BOOT_COMPLETED")
+            try
             {
-                return;
+                var scheduler = IPlatformApplication.Current?.Services
+                    .GetService<INotificationScheduler>();
+
+                if (scheduler != null)
+                    await scheduler.ReconcileOnStartupAsync();
+                else
+                    System.Diagnostics.Debug.WriteLine("BootReceiver: INotificationScheduler not available");
             }
-
-            // Handle boot completion
-            // TODO: Implement proper boot handling
-            // For now, just log the boot event
-            System.Diagnostics.Debug.WriteLine("Device booted, will reconcile scheduling");
-
-            // TODO: Call scheduler to reconcile scheduling after reboot
-            // This will be implemented after fixing the DI issue
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"BootReceiver error: {ex.Message}");
-        }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"BootReceiver error: {ex.Message}");
+            }
+            finally
+            {
+                pending.Finish();
+            }
+        });
     }
 }
+

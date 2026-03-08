@@ -11,26 +11,15 @@ public sealed partial class PrayerTimesViewModel : ObservableObject
     private readonly ISettingsStore _settingsStore;
     private CancellationTokenSource? _countdownCts;
 
-    [ObservableProperty]
-    private DailyPrayerSchedule? _schedule;
+    [ObservableProperty] private DailyPrayerSchedule? _schedule;
+    [ObservableProperty] private NextPrayerResult?     _nextPrayer;
+    [ObservableProperty] private CountdownTargetResult? _countdown;
+    [ObservableProperty] private bool   _isLoading;
+    [ObservableProperty] private string? _error;
 
-    [ObservableProperty]
-    private NextPrayerResult? _nextPrayer;
-
-    [ObservableProperty]
-    private CountdownTargetResult? _countdown;
-
-    [ObservableProperty]
-    private bool _isLoading;
-
-    [ObservableProperty]
-    private string? _error;
-
-    public PrayerTimesViewModel(
-        IPrayerTimesCalculator calculator,
-        ISettingsStore settingsStore)
+    public PrayerTimesViewModel(IPrayerTimesCalculator calculator, ISettingsStore settingsStore)
     {
-        _calculator = calculator;
+        _calculator    = calculator;
         _settingsStore = settingsStore;
     }
 
@@ -38,116 +27,81 @@ public sealed partial class PrayerTimesViewModel : ObservableObject
     private async Task RefreshAsync()
     {
         IsLoading = true;
-        Error = null;
-
+        Error     = null;
         try
         {
             var location = _settingsStore.GetLastValidLocation();
-            if (location == null)
-            {
-                Error = "No valid location available. Please set your location in Settings.";
-                IsLoading = false;
-                return;
-            }
+            if (location == null) { Error = "No valid location available. Please set your location in Settings."; return; }
 
-            var settings = _settingsStore.GetCalculationSettings();
-            var notificationSettings = _settingsStore.GetNotificationSettings();
+            var calcSettings  = _settingsStore.GetCalculationSettings();
+            var notifSettings = _settingsStore.GetNotificationSettings();
+            var now           = DateTimeOffset.UtcNow;
 
-            // Calculate schedule
-            var schedule = await _calculator.CalculateDailyScheduleAsync(location, DateTimeOffset.UtcNow, settings);
-            Schedule = schedule;
+            Schedule   = await _calculator.CalculateDailyScheduleAsync(location, now, calcSettings);
+            NextPrayer = await _calculator.CalculateNextPrayerAsync(Schedule, notifSettings, now);
+            Countdown  = await _calculator.CalculateCountdownAsync(Schedule, notifSettings, now);
 
-            // Calculate next prayer
-            var nextPrayer = await _calculator.CalculateNextPrayerAsync(schedule, notificationSettings);
-            NextPrayer = nextPrayer;
-
-            // Calculate countdown
-            var countdown = await _calculator.CalculateCountdownAsync(schedule, notificationSettings);
-            Countdown = countdown;
-
-            // Start countdown timer
             StartCountdownTimer();
         }
-        catch (Exception ex)
-        {
-            Error = $"Error loading prayer times: {ex.Message}";
-        }
-        finally
-        {
-            IsLoading = false;
-        }
+        catch (Exception ex) { Error = $"Error loading prayer times: {ex.Message}"; }
+        finally { IsLoading = false; }
     }
 
+    /// <summary>
+    /// Toggles the notification flag for a specific prayer and persists it.
+    /// Does NOT call Reset() — toggles only the targeted prayer.
+    /// </summary>
     [RelayCommand]
     private void TogglePrayerNotification(PrayerType type)
     {
-        var settings = _settingsStore.GetNotificationSettings();
-        settings.Reset();
-
+        var s = _settingsStore.GetNotificationSettings();
         switch (type)
         {
-            case PrayerType.Fajr:
-                settings.FajrEnabled = !settings.FajrEnabled;
-                break;
-            case PrayerType.Dhuhr:
-                settings.DhuhrEnabled = !settings.DhuhrEnabled;
-                break;
-            case PrayerType.Asr:
-                settings.AsrEnabled = !settings.AsrEnabled;
-                break;
-            case PrayerType.Maghrib:
-                settings.MaghribEnabled = !settings.MaghribEnabled;
-                break;
-            case PrayerType.Isha:
-                settings.IshaEnabled = !settings.IshaEnabled;
-                break;
+            case PrayerType.Fajr:    s.FajrEnabled    = !s.FajrEnabled;    break;
+            case PrayerType.Dhuhr:   s.DhuhrEnabled   = !s.DhuhrEnabled;   break;
+            case PrayerType.Asr:     s.AsrEnabled     = !s.AsrEnabled;     break;
+            case PrayerType.Maghrib: s.MaghribEnabled = !s.MaghribEnabled; break;
+            case PrayerType.Isha:    s.IshaEnabled    = !s.IshaEnabled;    break;
         }
-
-        _settingsStore.SaveNotificationSettings(settings);
+        _settingsStore.SaveNotificationSettings(s);
+        OnPropertyChanged(nameof(FajrEnabled));
+        OnPropertyChanged(nameof(DhuhrEnabled));
+        OnPropertyChanged(nameof(AsrEnabled));
+        OnPropertyChanged(nameof(MaghribEnabled));
+        OnPropertyChanged(nameof(IshaEnabled));
+        OnPropertyChanged(nameof(AnyNotificationEnabled));
     }
 
-    public bool FajrEnabled => _settingsStore.GetNotificationSettings().FajrEnabled;
-    public bool DhuhrEnabled => _settingsStore.GetNotificationSettings().DhuhrEnabled;
-    public bool AsrEnabled => _settingsStore.GetNotificationSettings().AsrEnabled;
-    public bool MaghribEnabled => _settingsStore.GetNotificationSettings().MaghribEnabled;
-    public bool IshaEnabled => _settingsStore.GetNotificationSettings().IshaEnabled;
+    public bool FajrEnabled            => _settingsStore.GetNotificationSettings().FajrEnabled;
+    public bool DhuhrEnabled           => _settingsStore.GetNotificationSettings().DhuhrEnabled;
+    public bool AsrEnabled             => _settingsStore.GetNotificationSettings().AsrEnabled;
+    public bool MaghribEnabled         => _settingsStore.GetNotificationSettings().MaghribEnabled;
+    public bool IshaEnabled            => _settingsStore.GetNotificationSettings().IshaEnabled;
     public bool AnyNotificationEnabled => _settingsStore.GetNotificationSettings().IsAnyEnabled;
 
     private void StartCountdownTimer()
     {
         StopCountdownTimer();
-
         _countdownCts = new CancellationTokenSource();
+        var token = _countdownCts.Token;
 
         _ = Task.Run(async () =>
         {
-            var settings = _settingsStore.GetCalculationSettings();
-            var notificationSettings = _settingsStore.GetNotificationSettings();
-
-            while (_countdownCts != null && !_countdownCts.Token.IsCancellationRequested)
+            while (!token.IsCancellationRequested)
             {
-                try
-                {
-                    await Task.Delay(1000, _countdownCts.Token);
-                    await Task.Run(() =>
-                    {
-                        if (Schedule == null) return;
+                try   { await Task.Delay(1000, token); }
+                catch (TaskCanceledException) { break; }
 
-                        var countdown = _calculator.CalculateCountdownAsync(Schedule, notificationSettings);
-                        countdown.Wait(_countdownCts?.Token ?? CancellationToken.None);
-                        Countdown = countdown.Result;
-                    }, _countdownCts.Token);
-                }
-                catch (TaskCanceledException)
-                {
-                    break;
-                }
-                catch (Exception)
-                {
-                    // Ignore errors during countdown updates
-                }
+                if (Schedule == null) continue;
+
+                var notifSettings = _settingsStore.GetNotificationSettings();
+                var updated = await _calculator.CalculateCountdownAsync(
+                    Schedule, notifSettings, DateTimeOffset.UtcNow);
+
+                Microsoft.Maui.ApplicationModel.MainThread.BeginInvokeOnMainThread(
+                    () => Countdown = updated);
             }
-        }, _countdownCts.Token);
+        }, token);
     }
 
     private void StopCountdownTimer()

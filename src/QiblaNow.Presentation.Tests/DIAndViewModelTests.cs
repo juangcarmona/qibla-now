@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using QiblaNow.Presentation.ViewModels;
 
-namespace QiblaNow.Core.Tests;
+namespace QiblaNow.Presentation.Tests;
 
 public class DIAndViewModelTests
 {

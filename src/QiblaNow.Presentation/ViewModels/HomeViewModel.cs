@@ -10,13 +10,13 @@ public sealed partial class HomeViewModel : ObservableObject
     private readonly ILocationService _locationService;
 
     [ObservableProperty]
-    private string _nextPrayerName = "Maghrib";
+    private string _nextPrayerName = string.Empty;
 
     [ObservableProperty]
-    private string _nextPrayerTime = "19:42";
+    private string _nextPrayerTime = string.Empty;
 
     [ObservableProperty]
-    private string _nextPrayerCountdown = "In 12 min";
+    private string _nextPrayerCountdown = string.Empty;
 
     [ObservableProperty]
     private string _locationLabel = "Detecting...";

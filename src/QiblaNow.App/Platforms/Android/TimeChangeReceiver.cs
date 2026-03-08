@@ -5,18 +5,22 @@ using QiblaNow.Core.Abstractions;
 namespace QiblaNow.App.Platforms.Android;
 
 /// <summary>
-/// BroadcastReceiver that fires when a scheduled prayer alarm triggers.
-/// Shows the notification and schedules the next alarm via ReconcileOnStartupAsync.
-/// Exported=false: only the AlarmManager (same app) can trigger this.
+/// BroadcastReceiver that reacts to timezone and time-set changes.
+/// Reconciles prayer alarm scheduling so alarms remain accurate after
+/// clock adjustments or travel across timezones.
+/// Must be Exported=true so Android system can deliver these broadcasts.
 /// </summary>
-[BroadcastReceiver(Enabled = true, Exported = false)]
-public class PrayerAlarmReceiver : BroadcastReceiver
+[BroadcastReceiver(Enabled = true, Exported = true)]
+[IntentFilter(new[]
 {
-    internal const string ExtraPrayerType = "prayer_type";
-
+    "android.intent.action.TIMEZONE_CHANGED",
+    "android.intent.action.TIME_SET"
+})]
+public class TimeChangeReceiver : BroadcastReceiver
+{
     public override void OnReceive(Context? context, Intent? intent)
     {
-        if (context == null || intent == null) return;
+        if (context == null) return;
 
         var pending = GoAsync();
         _ = Task.Run(async () =>
@@ -29,11 +33,11 @@ public class PrayerAlarmReceiver : BroadcastReceiver
                 if (scheduler != null)
                     await scheduler.ReconcileOnStartupAsync();
                 else
-                    System.Diagnostics.Debug.WriteLine("PrayerAlarmReceiver: INotificationScheduler not available");
+                    System.Diagnostics.Debug.WriteLine("TimeChangeReceiver: INotificationScheduler not available");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"PrayerAlarmReceiver error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"TimeChangeReceiver error: {ex.Message}");
             }
             finally
             {

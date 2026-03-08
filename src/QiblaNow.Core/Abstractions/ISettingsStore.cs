@@ -56,4 +56,15 @@ public interface ISettingsStore
     /// Saves the last known valid location
     /// </summary>
     void SaveLastValidLocation(LocationSnapshot location);
+
+    /// <summary>
+    /// Gets the persisted alarm scheduling state used for recovery after reboot or process death.
+    /// </summary>
+    SchedulingState GetSchedulingState();
+
+    /// <summary>
+    /// Persists alarm scheduling state for deterministic recovery.
+    /// Must NOT modify user notification preference flags.
+    /// </summary>
+    void SaveSchedulingState(SchedulingState state);
 }
