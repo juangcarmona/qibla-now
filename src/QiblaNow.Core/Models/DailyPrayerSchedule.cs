@@ -1,5 +1,4 @@
 using System.Globalization;
-using QiblaNow.Core.Models;
 
 namespace QiblaNow.Core.Models;
 
@@ -20,49 +19,68 @@ public sealed class DailyPrayerSchedule
     }
 
     /// <summary>
-    /// Gets the next prayer after the given reference time (default: now)
+    /// Gets the next prayer after the given reference time
     /// </summary>
-    public PrayerTime? GetNextPrayer(DateTimeOffset? referenceTime = null)
+    public PrayerTime? GetNextPrayer(DateTimeOffset referenceTime)
     {
-        var now = referenceTime ?? DateTimeOffset.Now;
-        return Prayers
-            .Where(p => p.DateTime > now)
-            .OrderBy(p => p.DateTime)
-            .FirstOrDefault();
-    }
-
-    /// <summary>
-    /// Gets the current or next prayer
-    /// </summary>
-    public PrayerTime? GetCurrentOrNextPrayer()
-    {
-        var now = DateTimeOffset.Now;
-        var next = GetNextPrayer(now);
-        if (next != null) return next;
-
-        // If no next prayer today, wrap to next day Fajr
-        var fajrToday = Prayers.FirstOrDefault(p => p.Type == PrayerType.Fajr);
-        if (fajrToday != null && fajrToday.DateTime <= now)
+        foreach (var prayer in Prayers.OrderBy(p => p.DateTime))
         {
-            return fajrToday;
+            if (prayer.DateTime > referenceTime)
+                return prayer;
         }
 
         return null;
     }
 
     /// <summary>
-    /// Gets prayer by type
+    /// Gets the current or next prayer for the given reference time.
+    /// If the day is finished, returns today's Fajr as the wrap marker.
     /// </summary>
-    public PrayerTime GetPrayer(PrayerType type) =>
-        Prayers.FirstOrDefault(p => p.Type == type);
+    public PrayerTime? GetCurrentOrNextPrayer(DateTimeOffset referenceTime)
+    {
+        var next = GetNextPrayer(referenceTime);
+        if (next.HasValue)
+            return next;
+
+        return GetPrayer(PrayerType.Fajr);
+    }
 
     /// <summary>
-    /// Validates all prayer times are within valid ranges
+    /// Gets prayer by type
+    /// </summary>
+    public PrayerTime? GetPrayer(PrayerType type)
+    {
+        foreach (var prayer in Prayers)
+        {
+            if (prayer.Type == type)
+                return prayer;
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Validates all prayer times are within valid ranges and ordered
     /// </summary>
     public bool IsValid()
     {
-        if (Prayers.Count < 5) return false; // Need Fajr through Isha
-        return Prayers.All(p => true); // All prayer times are valid by construction
+        if (Prayers.Count < 6)
+            return false;
+
+        var ordered = Prayers.OrderBy(p => p.DateTime).ToList();
+
+        for (var i = 1; i < ordered.Count; i++)
+        {
+            if (ordered[i - 1].DateTime >= ordered[i].DateTime)
+                return false;
+        }
+
+        return ordered.Any(p => p.Type == PrayerType.Fajr)
+            && ordered.Any(p => p.Type == PrayerType.Sunrise)
+            && ordered.Any(p => p.Type == PrayerType.Dhuhr)
+            && ordered.Any(p => p.Type == PrayerType.Asr)
+            && ordered.Any(p => p.Type == PrayerType.Maghrib)
+            && ordered.Any(p => p.Type == PrayerType.Isha);
     }
 
     /// <summary>
@@ -70,7 +88,7 @@ public sealed class DailyPrayerSchedule
     /// </summary>
     public IEnumerable<string> GetDisplayTimes()
     {
-        foreach (var prayer in Prayers)
+        foreach (var prayer in Prayers.OrderBy(p => p.DateTime))
         {
             yield return $"{prayer.Type}: {prayer.ToShortString()}{(prayer.OffsetMinutes != 0 ? $" ({prayer.OffsetMinutes:+#;-#;0} min)" : "")}";
         }

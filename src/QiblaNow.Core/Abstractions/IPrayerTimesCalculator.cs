@@ -3,38 +3,22 @@ using QiblaNow.Core.Models;
 namespace QiblaNow.Core.Abstractions;
 
 /// <summary>
-/// Calculates Islamic prayer times from location and calculation settings
+/// Contract for prayer time calculation and related queries.
+/// Implementations must be deterministic and must not access system time.
+/// All reference times must be provided explicitly by the caller.
 /// </summary>
 public interface IPrayerTimesCalculator
 {
     /// <summary>
-    /// Calculates the complete daily prayer schedule for a specific date and location
+    /// Calculates the complete prayer schedule for a given date and location.
     /// </summary>
+    /// <param name="location">Geographic location snapshot.</param>
+    /// <param name="date">Target date (UTC day reference).</param>
+    /// <param name="settings">Calculation configuration.</param>
+    /// <returns>Daily prayer schedule.</returns>
     Task<DailyPrayerSchedule> CalculateDailyScheduleAsync(
         LocationSnapshot location,
         DateTimeOffset date,
         PrayerCalculationSettings settings);
 
-    /// <summary>
-    /// Calculates the next prayer after the given reference time
-    /// </summary>
-    Task<NextPrayerResult> CalculateNextPrayerAsync(
-        DailyPrayerSchedule schedule,
-        PrayerNotificationSettings notificationSettings,
-        DateTimeOffset? referenceTime = null);
-
-    /// <summary>
-    /// Calculates the next notification candidate based on enabled prayer notifications
-    /// </summary>
-    Task<NextNotificationCandidateResult> CalculateNextNotificationCandidateAsync(
-        DailyPrayerSchedule schedule,
-        PrayerNotificationSettings notificationSettings);
-
-    /// <summary>
-    /// Calculates the countdown to the next prayer
-    /// </summary>
-    Task<CountdownTargetResult> CalculateCountdownAsync(
-        DailyPrayerSchedule schedule,
-        PrayerNotificationSettings notificationSettings,
-        DateTimeOffset? referenceTime = null);
 }

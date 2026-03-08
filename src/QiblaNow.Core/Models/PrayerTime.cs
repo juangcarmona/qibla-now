@@ -1,11 +1,9 @@
-using System.Globalization;
-
 namespace QiblaNow.Core.Models;
 
 /// <summary>
 /// Represents a single prayer time with its type, exact time, and offset
 /// </summary>
-public struct PrayerTime : IEquatable<PrayerTime>
+public readonly struct PrayerTime : IEquatable<PrayerTime>
 {
     public PrayerType Type { get; }
     public DateTimeOffset DateTime { get; }
@@ -20,19 +18,21 @@ public struct PrayerTime : IEquatable<PrayerTime>
 
     public bool Equals(PrayerTime other) =>
         Type == other.Type &&
-        DateTime == other.DateTime &&
+        DateTime.Equals(other.DateTime) &&
         OffsetMinutes == other.OffsetMinutes;
 
-    public override bool Equals(object? obj) => obj is PrayerTime other && Equals(other);
+    public override bool Equals(object? obj) =>
+        obj is PrayerTime other && Equals(other);
 
-    public override int GetHashCode() => HashCode.Combine(Type, DateTime, OffsetMinutes);
+    public override int GetHashCode() =>
+        HashCode.Combine(Type, DateTime, OffsetMinutes);
 
     public static bool operator ==(PrayerTime left, PrayerTime right) => left.Equals(right);
-
     public static bool operator !=(PrayerTime left, PrayerTime right) => !left.Equals(right);
 
     public override string ToString() =>
         $"{Type}: {DateTime:HH:mm} (offset: {OffsetMinutes:+#;-#;0} min)";
 
-    public string ToShortString() => DateTime.ToString("HH:mm", CultureInfo.InvariantCulture);
+    public string ToShortString() =>
+        DateTime.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture);
 }

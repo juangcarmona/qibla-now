@@ -33,26 +33,29 @@ public sealed class PrayerCalculationSettings
     {
         var result = new DailyPrayerSchedule(source.Date, source.TimeZone);
 
-        var fajr = source.GetPrayer(PrayerType.Fajr);
-        if (fajr != null)
-            result.Prayers.Add(new PrayerTime(PrayerType.Fajr, fajr.DateTime.AddMinutes(FajrOffsetMinutes), FajrOffsetMinutes));
+        foreach (var prayer in source.Prayers.OrderBy(p => p.DateTime))
+        {
+            var offsetMinutes = GetOffsetMinutes(prayer.Type);
 
-        var dhuhr = source.GetPrayer(PrayerType.Dhuhr);
-        if (dhuhr != null)
-            result.Prayers.Add(new PrayerTime(PrayerType.Dhuhr, dhuhr.DateTime.AddMinutes(DhuhrOffsetMinutes), DhuhrOffsetMinutes));
-
-        var asr = source.GetPrayer(PrayerType.Asr);
-        if (asr != null)
-            result.Prayers.Add(new PrayerTime(PrayerType.Asr, asr.DateTime.AddMinutes(AsrOffsetMinutes), AsrOffsetMinutes));
-
-        var maghrib = source.GetPrayer(PrayerType.Maghrib);
-        if (maghrib != null)
-            result.Prayers.Add(new PrayerTime(PrayerType.Maghrib, maghrib.DateTime.AddMinutes(MaghribOffsetMinutes), MaghribOffsetMinutes));
-
-        var isha = source.GetPrayer(PrayerType.Isha);
-        if (isha != null)
-            result.Prayers.Add(new PrayerTime(PrayerType.Isha, isha.DateTime.AddMinutes(IshaOffsetMinutes), IshaOffsetMinutes));
+            result.Prayers.Add(new PrayerTime(
+                prayer.Type,
+                prayer.DateTime.AddMinutes(offsetMinutes),
+                offsetMinutes));
+        }
 
         return result;
+    }
+
+    private int GetOffsetMinutes(PrayerType type)
+    {
+        return type switch
+        {
+            PrayerType.Fajr => FajrOffsetMinutes,
+            PrayerType.Dhuhr => DhuhrOffsetMinutes,
+            PrayerType.Asr => AsrOffsetMinutes,
+            PrayerType.Maghrib => MaghribOffsetMinutes,
+            PrayerType.Isha => IshaOffsetMinutes,
+            _ => 0
+        };
     }
 }
