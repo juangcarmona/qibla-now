@@ -29,42 +29,62 @@ public sealed class PrayerTimesCalculator : IPrayerTimesCalculator
         double lat = location.Latitude;
         double lng = location.Longitude;
 
-        int day = date.DayOfYear;
+        // Days from J2000.0 at UTC midnight of this date.
+        // J2000.0 = 2000-01-01T12:00:00Z = Unix day 10957.5.
+        // Matches the PrayTimes reference: D = utcTime/864e5 - 10957.5 + seedHour/24 - lng/360.
+        double d0 = date.ToUniversalTime().ToUnixTimeMilliseconds() / 86400000.0 - 10957.5;
 
-        var (decl, eqt) = SolarPosition(day);
-        double noon     = MidDay(lng, eqt);
+        // Compute solar declination and UTC solar noon for a given prayer seed hour.
+        // PrayTimes uses per-prayer seed times (fajr=5, sunrise=6, dhuhr=12, asr=13, sunset/isha=18)
+        // to evaluate the solar position at each prayer's approximate local time.
+        (double Decl, double NoonUtc) SolarForSeed(double seedHour)
+        {
+            double D = d0 + seedHour / 24.0 - lng / 360.0;
+            var (decl, eqt) = SolarPosition(D);
+            return (decl, FixHour(12.0 - eqt - lng / 15.0));
+        }
 
         var (fajrAngle, ishaAngle) = Methods[settings.Method];
 
-        double sunrise = SunAngleTime(-0.833, lat, decl, noon, false);
-        double sunset  = SunAngleTime(-0.833, lat, decl, noon, true);
+        var (declFajr,    noonFajr)    = SolarForSeed(5);
+        var (declSunrise, noonSunrise) = SolarForSeed(6);
+        var (_,           noonDhuhr)   = SolarForSeed(12);
+        var (declAsr,     noonAsr)     = SolarForSeed(13);
+        var (declSunset,  noonSunset)  = SolarForSeed(18);
 
-        double fajrRaw = SunAngleTime(-fajrAngle, lat, decl, noon, false);
-        double ishaRaw;
+        double sunrise = SunAngleTime(-0.833,      lat, declSunrise, noonSunrise, false);
+        double sunset  = SunAngleTime(-0.833,      lat, declSunset,  noonSunset,  true);
+        // Maghrib: all supported methods use sunset + 1 minute
+        // (PrayTimes defaults: maghrib = '1 min').
+        double maghrib = sunset + 1.0 / 60.0;
 
-        if (settings.Method == CalculationMethod.UmmAlQura)
-            ishaRaw = sunset + (90.0 / 60.0);
-        else
-            ishaRaw = SunAngleTime(-ishaAngle, lat, decl, noon, true);
+        double fajrRaw = SunAngleTime(-fajrAngle,  lat, declFajr,    noonFajr,    false);
+        // UmmAlQura: isha = maghrib + 90 min (PrayTimes updateTimes: isha = times.maghrib + 90/60).
+        // All other methods: angle-based. Isha uses the same seed as sunset (seed=18).
+        double ishaRaw = settings.Method == CalculationMethod.UmmAlQura
+            ? maghrib + 90.0 / 60.0
+            : SunAngleTime(-ishaAngle, lat, declSunset, noonSunset, true);
 
-        // Apply HighLatitudeRule when angle-based times are invalid (NaN) or
-        // the rule caps the extreme times (polar summer / short nights).
-        double nightDuration = FixHour(sunset + 24.0 - sunrise); // sunset → next sunrise
+        // High-latitude adjustment.
+        // Matches PrayTimes adjustHighLats: apply when time is NaN *or* when the
+        // prayer falls outside the allowed night fraction (timeDiff > portion).
+        // Night duration uses the PrayTimes formula: night = 24 + sunrise - sunset.
+        double nightDuration = 24.0 + sunrise - sunset;
         fajrRaw = ApplyHighLatitudeRule(fajrRaw, sunrise, nightDuration, settings.HighLatitudeRule, false);
         ishaRaw = ApplyHighLatitudeRule(ishaRaw, sunset,  nightDuration, settings.HighLatitudeRule, true);
 
-        double dhuhr = noon;
-        double asr   = AsrTime(settings.Madhab, lat, decl, noon);
+        double dhuhr = noonDhuhr;
+        double asr   = AsrTime(settings.Madhab, lat, declAsr, noonAsr);
 
         // Build schedule (offsets applied, then rounded to nearest minute)
         var schedule = new DailyPrayerSchedule(date, TimeZoneInfo.Utc);
 
-        schedule.Prayers.Add(new PrayerTime(PrayerType.Fajr,    ToDate(date, fajrRaw   + settings.FajrOffsetMinutes   / 60.0), settings.FajrOffsetMinutes));
+        schedule.Prayers.Add(new PrayerTime(PrayerType.Fajr,    ToDate(date, fajrRaw  + settings.FajrOffsetMinutes    / 60.0), settings.FajrOffsetMinutes));
         schedule.Prayers.Add(new PrayerTime(PrayerType.Sunrise,  ToDate(date, sunrise)));
-        schedule.Prayers.Add(new PrayerTime(PrayerType.Dhuhr,   ToDate(date, dhuhr     + settings.DhuhrOffsetMinutes   / 60.0), settings.DhuhrOffsetMinutes));
-        schedule.Prayers.Add(new PrayerTime(PrayerType.Asr,     ToDate(date, asr       + settings.AsrOffsetMinutes     / 60.0), settings.AsrOffsetMinutes));
-        schedule.Prayers.Add(new PrayerTime(PrayerType.Maghrib, ToDate(date, sunset    + settings.MaghribOffsetMinutes / 60.0), settings.MaghribOffsetMinutes));
-        schedule.Prayers.Add(new PrayerTime(PrayerType.Isha,    ToDate(date, ishaRaw   + settings.IshaOffsetMinutes    / 60.0), settings.IshaOffsetMinutes));
+        schedule.Prayers.Add(new PrayerTime(PrayerType.Dhuhr,   ToDate(date, dhuhr    + settings.DhuhrOffsetMinutes   / 60.0), settings.DhuhrOffsetMinutes));
+        schedule.Prayers.Add(new PrayerTime(PrayerType.Asr,     ToDate(date, asr      + settings.AsrOffsetMinutes     / 60.0), settings.AsrOffsetMinutes));
+        schedule.Prayers.Add(new PrayerTime(PrayerType.Maghrib, ToDate(date, maghrib  + settings.MaghribOffsetMinutes / 60.0), settings.MaghribOffsetMinutes));
+        schedule.Prayers.Add(new PrayerTime(PrayerType.Isha,    ToDate(date, ishaRaw  + settings.IshaOffsetMinutes    / 60.0), settings.IshaOffsetMinutes));
 
         return Task.FromResult(schedule);
     }
@@ -203,22 +223,25 @@ public sealed class PrayerTimesCalculator : IPrayerTimesCalculator
 
     // ── Solar math ──────────────────────────────────────────────────────────
 
-    private static (double declination, double equation) SolarPosition(int day)
+    /// <summary>
+    /// Computes solar declination and equation of time for a given Julian Day
+    /// offset from J2000.0 (D = utcTime_days_from_unix - 10957.5 + seed/24 - lng/360).
+    /// Matches the PrayTimes v3.2 sunPosition() formula exactly.
+    /// </summary>
+    private static (double declination, double equation) SolarPosition(double D)
     {
-        double g = FixAngle(357.529 + 0.98560028 * day);
-        double q = FixAngle(280.459 + 0.98564736 * day);
+        double g = FixAngle(357.529 + 0.98560028 * D);
+        double q = FixAngle(280.459 + 0.98564736 * D);
         double L = FixAngle(q + 1.915 * Sin(g) + 0.020 * Sin(2 * g));
-        double e = 23.439 - 0.00000036 * day;
+        double e = 23.439 - 0.00000036 * D;
 
-        double RA   = Atan2(Cos(e) * Sin(L), Cos(L)) / 15.0;
+        // RA must be normalized to [0, 24) to match PrayTimes mod(arctan2/15, 24)
+        double RA   = FixHour(Atan2(Cos(e) * Sin(L), Cos(L)) / 15.0);
         double decl = Asin(Sin(e) * Sin(L));
         double eqt  = q / 15.0 - RA;
 
         return (decl, eqt);
     }
-
-    private static double MidDay(double lng, double eqt) =>
-        FixHour(12 - eqt - lng / 15.0);
 
     private static double SunAngleTime(
         double angle,
@@ -250,28 +273,34 @@ public sealed class PrayerTimesCalculator : IPrayerTimesCalculator
     // ── High-latitude correction ─────────────────────────────────────────────
 
     /// <summary>
-    /// Applied when the angle-based time is NaN (sun never reaches the required angle).
+    /// Matches PrayTimes adjustTime(): applies the high-latitude rule whenever
+    /// the prayer time is NaN (sun never reaches the required angle) OR the
+    /// prayer falls farther from sunrise/sunset than the allowed portion.
     /// For SeventhOfNight: Fajr = sunrise − night/7, Isha = sunset + night/7.
     /// For MiddleOfNight:  Fajr = sunrise − night/2, Isha = sunset + night/2.
+    /// night = 24 + sunrise − sunset (PrayTimes formula).
     /// </summary>
     private static double ApplyHighLatitudeRule(
         double time,
         double anchor,        // sunrise for Fajr, sunset for Isha
-        double nightDuration, // hours from sunset to next sunrise
+        double nightDuration, // = 24 + sunrise − sunset
         HighLatitudeRule rule,
         bool isIsha)
     {
-        if (!double.IsNaN(time))
-            return time;
-
         double portion = rule switch
         {
             HighLatitudeRule.SeventhOfNight => nightDuration / 7.0,
             HighLatitudeRule.MiddleOfNight  => nightDuration / 2.0,
-            _                               => nightDuration / 7.0  // default to SeventhOfNight
+            _                               => nightDuration / 7.0  // default: SeventhOfNight
         };
 
-        return isIsha ? anchor + portion : anchor - portion;
+        // timeDiff: how far the prayer is from its anchor (positive = farther)
+        double timeDiff = isIsha ? (time - anchor) : (anchor - time);
+
+        if (double.IsNaN(time) || timeDiff > portion)
+            return isIsha ? anchor + portion : anchor - portion;
+
+        return time;
     }
 
     // ── Utilities ───────────────────────────────────────────────────────────

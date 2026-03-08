@@ -1,0 +1,21 @@
+{
+  "config": {
+    "description": "London, UK – 2 March 2026 (GMT = UTC+0)",
+    "date": "2026-03-02",
+    "lat": 51.5074,
+    "lon": -0.1278,
+    "timezone": "UTC",
+    "method": "MWL",
+    "asr": "Standard",
+    "highLats": "OneSeventh",
+    "rounding": "nearest"
+  },
+  "utc_times": {
+    "fajr": "04:53",
+    "sunrise": "06:44",
+    "dhuhr": "12:13",
+    "asr": "15:05",
+    "maghrib": "17:44",
+    "isha": "19:27"
+  }
+}

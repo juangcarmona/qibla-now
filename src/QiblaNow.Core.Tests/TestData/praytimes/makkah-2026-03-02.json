@@ -1,0 +1,21 @@
+{
+  "config": {
+    "description": "Makkah, Saudi Arabia – 2 March 2026 (Umm al-Qura / Makkah method; isha = 90 min after sunset)",
+    "date": "2026-03-02",
+    "lat": 21.3891,
+    "lon": 39.8579,
+    "timezone": "UTC",
+    "method": "Makkah",
+    "asr": "Standard",
+    "highLats": "OneSeventh",
+    "rounding": "nearest"
+  },
+  "utc_times": {
+    "fajr": "02:24",
+    "sunrise": "03:41",
+    "dhuhr": "09:33",
+    "asr": "12:54",
+    "maghrib": "15:26",
+    "isha": "16:56"
+  }
+}

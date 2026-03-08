@@ -1,0 +1,21 @@
+{
+  "config": {
+    "description": "Reykjavik, Iceland – 15 January 2026 (winter; high-latitude rule active)",
+    "date": "2026-01-15",
+    "lat": 64.1265,
+    "lon": -21.8174,
+    "timezone": "UTC",
+    "method": "ISNA",
+    "asr": "Standard",
+    "highLats": "OneSeventh",
+    "rounding": "nearest"
+  },
+  "utc_times": {
+    "fajr": "08:15",
+    "sunrise": "10:54",
+    "dhuhr": "13:37",
+    "asr": "14:18",
+    "maghrib": "16:21",
+    "isha": "18:59"
+  }
+}
