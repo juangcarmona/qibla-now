@@ -9,7 +9,10 @@ namespace QiblaNow.App.Platforms.Android;
 /// Shows the notification and schedules the next alarm via ReconcileOnStartupAsync.
 /// Exported=false: only the AlarmManager (same app) can trigger this.
 /// </summary>
-[BroadcastReceiver(Enabled = true, Exported = false)]
+[BroadcastReceiver(
+    Enabled = true,
+    Exported = false,
+    Name = "com.jgcarmona.qiblanow.PrayerAlarmReceiver")]
 public class PrayerAlarmReceiver : BroadcastReceiver
 {
     internal const string ExtraPrayerType = "prayer_type";

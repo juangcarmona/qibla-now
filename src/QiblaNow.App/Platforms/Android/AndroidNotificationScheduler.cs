@@ -39,8 +39,7 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
             CreateNotificationChannel();
 
             // Create intent for alarm
-            var intent = new Intent(AlarmAction);
-            intent.SetPackage(_context.PackageName);
+            var intent = new Intent(_context, typeof(PrayerAlarmReceiver));
             intent.PutExtra(PrayerTypeExtra, (int)candidate.Type);
 
             // Use PendingIntent for alarm trigger — stable request code per prayer type
@@ -187,10 +186,10 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
         };
 
         var notification = new Notification.Builder(_context, NotificationChannelId)
-            .SetSmallIcon(Resource.Drawable.MaterialIcons)
+            .SetSmallIcon(Resource.Mipmap.appicon)
             .SetContentTitle(prayerName)
             .SetContentText("Time to pray")
-            .SetPriority(NotificationPriority.Default)
+            .SetPriority((int)NotificationPriority.Default)
             .Build();
 
         var notificationManager = _context.GetSystemService(Context.NotificationService) as NotificationManager;

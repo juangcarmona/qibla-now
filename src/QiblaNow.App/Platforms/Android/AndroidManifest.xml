@@ -6,14 +6,6 @@
 				 android:label="@string/app_name"
 				 android:supportsRtl="true"
 				 android:enabled="true">
-		<!-- Prayer alarm receiver -->
-		<receiver android:name="QiblaNow.App.Platforms.Android.PrayerAlarmReceiver" android:enabled="true" android:exported="false" />
-		<!-- Boot receiver -->
-		<receiver android:name="QiblaNow.App.Platforms.Android.BootReceiver" android:enabled="true" android:exported="false">
-			<intent-filter>
-				<action android:name="android.intent.action.BOOT_COMPLETED" />
-			</intent-filter>
-		</receiver>
 	</application>
 	<!-- PERMISSIONS -->
 	<uses-permission android:name="android.permission.INTERNET" />

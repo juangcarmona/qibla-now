@@ -1,3 +1,4 @@
+using Android.App;
 using Android.Content;
 using Microsoft.Extensions.DependencyInjection;
 using QiblaNow.Core.Abstractions;
@@ -8,8 +9,12 @@ namespace QiblaNow.App.Platforms.Android;
 /// BroadcastReceiver that restores prayer alarm scheduling after device reboot.
 /// Must be Exported=true so the Android system can deliver BOOT_COMPLETED.
 /// </summary>
-[BroadcastReceiver(Enabled = true, Exported = true)]
-[IntentFilter(new[] { "android.intent.action.BOOT_COMPLETED" })]
+
+[BroadcastReceiver(
+    Enabled = true,
+    Exported = true,
+    Name = "com.jgcarmona.qiblanow.BootReceiver")]
+[IntentFilter([Intent.ActionBootCompleted])]
 public class BootReceiver : BroadcastReceiver
 {
     public override void OnReceive(Context? context, Intent? intent)

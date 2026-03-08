@@ -1,11 +1,10 @@
-using Microsoft.Extensions.Logging;
-using QiblaNow.App.Pages;
-using QiblaNow.Presentation.ViewModels;
-using QiblaNow.Presentation.DI;
 using CommunityToolkit.Maui;
-using QiblaNow.Core.Abstractions;
+using Microsoft.Extensions.Logging;
 using QiblaNow.App.Services;
 using QiblaNow.Core;
+using QiblaNow.Core.Abstractions;
+using QiblaNow.Presentation.DI;
+using QiblaNow.Presentation.ViewModels;
 
 namespace QiblaNow.App
 {
@@ -38,9 +37,9 @@ namespace QiblaNow.App
             // Register presentation services
             builder.Services.AddPresentationServices();
 
-            // Android notification scheduler (singleton)
-            builder.Services.AddSingleton<INotificationScheduler, AndroidNotificationScheduler>();
-
+#if ANDROID
+            builder.Services.AddSingleton<INotificationScheduler, Platforms.Android.AndroidNotificationScheduler>();
+#endif
             return builder.Build();
         }
     }

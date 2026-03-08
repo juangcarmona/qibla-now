@@ -1,3 +1,4 @@
+using Android.App;
 using Android.Content;
 using Microsoft.Extensions.DependencyInjection;
 using QiblaNow.Core.Abstractions;
