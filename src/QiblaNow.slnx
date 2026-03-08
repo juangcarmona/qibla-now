@@ -1,8 +1,4 @@
 <Solution>
-  <Project Path="QiblaNow.App.Droid.OLD/QiblaNow.App.Droid.OLD.csproj">
-    <Deploy />
-  </Project>
-  <Project Path="QiblaNow.App.OLD/QiblaNow.App.OLD.csproj" />
   <Project Path="QiblaNow.App/QiblaNow.App.csproj" Id="b99b0367-a871-495e-bd03-6bcbd4bf1638" />
   <Project Path="QiblaNow.Core/QiblaNow.Core.csproj" Id="04edf47d-d7b8-461f-a989-3c88720b6c3f" />
   <Project Path="QiblaNow.Presentation.Tests/QiblaNow.Presentation.Tests.csproj" />

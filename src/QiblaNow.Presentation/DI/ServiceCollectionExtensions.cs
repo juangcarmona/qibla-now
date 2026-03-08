@@ -1,4 +1,4 @@
-using QiblaNow.Core.Services;
+using QiblaNow.App.Services;
 using QiblaNow.Core.Abstractions;
 using QiblaNow.Presentation.ViewModels;
 using Microsoft.Extensions.DependencyInjection;

@@ -4,7 +4,8 @@ using QiblaNow.Presentation.ViewModels;
 using QiblaNow.Presentation.DI;
 using CommunityToolkit.Maui;
 using QiblaNow.Core.Abstractions;
-using QiblaNow.Core.Services;
+using QiblaNow.App.Services;
+using QiblaNow.Core;
 
 namespace QiblaNow.App
 {
