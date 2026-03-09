@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Maui.Controls;
 using QiblaNow.Core.Abstractions;
 using QiblaNow.Core.Models;
 
@@ -43,34 +44,163 @@ public sealed partial class SettingsViewModel : ObservableObject
     public bool FajrEnabled
     {
         get => NotificationSettings.FajrEnabled;
-        set { NotificationSettings.FajrEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); _settingsStore.SaveNotificationSettings(NotificationSettings); }
+        set { NotificationSettings.FajrEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); OnPropertyChanged(nameof(NotificationSummary)); _settingsStore.SaveNotificationSettings(NotificationSettings); }
     }
 
     public bool DhuhrEnabled
     {
         get => NotificationSettings.DhuhrEnabled;
-        set { NotificationSettings.DhuhrEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); _settingsStore.SaveNotificationSettings(NotificationSettings); }
+        set { NotificationSettings.DhuhrEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); OnPropertyChanged(nameof(NotificationSummary)); _settingsStore.SaveNotificationSettings(NotificationSettings); }
     }
 
     public bool AsrEnabled
     {
         get => NotificationSettings.AsrEnabled;
-        set { NotificationSettings.AsrEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); _settingsStore.SaveNotificationSettings(NotificationSettings); }
+        set { NotificationSettings.AsrEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); OnPropertyChanged(nameof(NotificationSummary)); _settingsStore.SaveNotificationSettings(NotificationSettings); }
     }
 
     public bool MaghribEnabled
     {
         get => NotificationSettings.MaghribEnabled;
-        set { NotificationSettings.MaghribEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); _settingsStore.SaveNotificationSettings(NotificationSettings); }
+        set { NotificationSettings.MaghribEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); OnPropertyChanged(nameof(NotificationSummary)); _settingsStore.SaveNotificationSettings(NotificationSettings); }
     }
 
     public bool IshaEnabled
     {
         get => NotificationSettings.IshaEnabled;
-        set { NotificationSettings.IshaEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); _settingsStore.SaveNotificationSettings(NotificationSettings); }
+        set { NotificationSettings.IshaEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); OnPropertyChanged(nameof(NotificationSummary)); _settingsStore.SaveNotificationSettings(NotificationSettings); }
     }
 
     public bool AnyNotificationEnabled => NotificationSettings.IsAnyEnabled;
+
+    // ── Summary properties (used by the Settings index page) ────────────────
+
+    public string LocationSummary
+    {
+        get
+        {
+            if (LocationMode == LocationMode.GPS)
+                return string.IsNullOrEmpty(LocationName) ? "GPS" : $"GPS — {LocationName}";
+
+            if (!string.IsNullOrEmpty(Latitude) && !string.IsNullOrEmpty(Longitude))
+                return $"Manual — {Latitude}, {Longitude}";
+
+            return "Manual";
+        }
+    }
+
+    public string CalculationSummary =>
+        $"{CalculationSettings.Method} · {CalculationSettings.Madhab}";
+
+    public string NotificationSummary
+    {
+        get
+        {
+            var count = new[]
+            {
+                NotificationSettings.FajrEnabled,
+                NotificationSettings.DhuhrEnabled,
+                NotificationSettings.AsrEnabled,
+                NotificationSettings.MaghribEnabled,
+                NotificationSettings.IshaEnabled
+            }.Count(e => e);
+            return count == 0 ? "No alerts" : $"{count} prayer alert{(count == 1 ? "" : "s")} on";
+        }
+    }
+
+    // ── Flat calculation properties (auto-save, used by CalculationSettingsPage) ─
+
+    public CalculationMethod SelectedMethod
+    {
+        get => CalculationSettings.Method;
+        set
+        {
+            if (CalculationSettings.Method == value) return;
+            CalculationSettings.Method = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(CalculationSummary));
+            _settingsStore.SaveCalculationSettings(CalculationSettings);
+        }
+    }
+
+    public Madhab SelectedMadhab
+    {
+        get => CalculationSettings.Madhab;
+        set
+        {
+            if (CalculationSettings.Madhab == value) return;
+            CalculationSettings.Madhab = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(CalculationSummary));
+            _settingsStore.SaveCalculationSettings(CalculationSettings);
+        }
+    }
+
+    public HighLatitudeRule SelectedHighLatitudeRule
+    {
+        get => CalculationSettings.HighLatitudeRule;
+        set
+        {
+            if (CalculationSettings.HighLatitudeRule == value) return;
+            CalculationSettings.HighLatitudeRule = value;
+            OnPropertyChanged();
+            _settingsStore.SaveCalculationSettings(CalculationSettings);
+        }
+    }
+
+    // ── Navigation commands (Settings index → sub-pages) ────────────────────
+
+    [RelayCommand]
+    private Task GoLocationSettings() => Shell.Current.GoToAsync("location-settings");
+
+    [RelayCommand]
+    private Task GoCalculationSettings() => Shell.Current.GoToAsync("calculation-settings");
+
+    [RelayCommand]
+    private Task GoSoundSettings() => Shell.Current.GoToAsync("sound-settings");
+
+    [RelayCommand]
+    private Task GoDisplaySettings() => Shell.Current.GoToAsync("display-settings");
+
+    [RelayCommand]
+    private Task GoAbout() => Shell.Current.GoToAsync("about");
+
+    // ── Refresh from store (called by SettingsPage index on re-appearing) ────
+
+    public void Refresh()
+    {
+        var cs   = _settingsStore.GetCalculationSettings();
+        var ns   = _settingsStore.GetNotificationSettings();
+        var mode = _settingsStore.GetLocationMode();
+        var saved = _settingsStore.GetLastSnapshot();
+
+        // Assign through generated setters so MVVM Toolkit tracks changes correctly.
+        // Set the objects first before mode/location to avoid partial-method side-effects
+        // overriding them.
+        CalculationSettings  = cs;
+        NotificationSettings = ns;
+
+        // Setting LocationMode triggers OnLocationModeChanged which re-populates
+        // Latitude/Longitude from the store — so the snapshot fields come after.
+        LocationMode = mode;
+
+        if (saved?.Label != null)
+            LocationName = saved.Label;
+
+        // Fire summary notifications for properties not covered by generated setters
+        OnPropertyChanged(nameof(LocationSummary));
+        OnPropertyChanged(nameof(CalculationSummary));
+        OnPropertyChanged(nameof(NotificationSummary));
+        OnPropertyChanged(nameof(SelectedMethod));
+        OnPropertyChanged(nameof(SelectedMadhab));
+        OnPropertyChanged(nameof(SelectedHighLatitudeRule));
+        OnPropertyChanged(nameof(FajrEnabled));
+        OnPropertyChanged(nameof(DhuhrEnabled));
+        OnPropertyChanged(nameof(AsrEnabled));
+        OnPropertyChanged(nameof(MaghribEnabled));
+        OnPropertyChanged(nameof(IshaEnabled));
+        OnPropertyChanged(nameof(AnyNotificationEnabled));
+    }
 
     public SettingsViewModel(ISettingsStore settingsStore, ILocationService locationService)
     {
@@ -100,6 +230,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         ErrorMessage = string.Empty;
         OnPropertyChanged(nameof(IsManualLocation));
         OnPropertyChanged(nameof(IsGpsLocation));
+        OnPropertyChanged(nameof(LocationSummary));
 
         if (value == LocationMode.Manual)
         {
@@ -130,7 +261,12 @@ public sealed partial class SettingsViewModel : ObservableObject
     partial void OnLocationNameChanged(string value)
     {
         OnPropertyChanged(nameof(HasLocationName));
+        OnPropertyChanged(nameof(LocationSummary));
     }
+
+    partial void OnLatitudeChanged(string value) => OnPropertyChanged(nameof(LocationSummary));
+
+    partial void OnLongitudeChanged(string value) => OnPropertyChanged(nameof(LocationSummary));
 
     [RelayCommand]
     private Task SaveManualLocationAsync()
@@ -228,5 +364,6 @@ public sealed partial class SettingsViewModel : ObservableObject
         OnPropertyChanged(nameof(MaghribEnabled));
         OnPropertyChanged(nameof(IshaEnabled));
         OnPropertyChanged(nameof(AnyNotificationEnabled));
+        OnPropertyChanged(nameof(NotificationSummary));
     }
 }

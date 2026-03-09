@@ -1,5 +1,6 @@
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
+using QiblaNow.App.Pages;
 using QiblaNow.App.Services;
 using QiblaNow.Core;
 using QiblaNow.Core.Abstractions;
@@ -40,6 +41,15 @@ namespace QiblaNow.App
 #if ANDROID
             builder.Services.AddSingleton<INotificationScheduler, Platforms.Android.AndroidNotificationScheduler>();
 #endif
+
+            // Pages (transient — resolved by Shell navigation)
+            builder.Services.AddTransient<SettingsPage>();
+            builder.Services.AddTransient<LocationSettingsPage>();
+            builder.Services.AddTransient<CalculationSettingsPage>();
+            builder.Services.AddTransient<SoundSettingsPage>();
+            builder.Services.AddTransient<DisplaySettingsPage>();
+            builder.Services.AddTransient<AboutPage>();
+
             return builder.Build();
         }
     }

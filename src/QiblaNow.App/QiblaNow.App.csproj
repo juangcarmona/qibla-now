@@ -28,7 +28,7 @@
 		<MauiXamlInflator>SourceGen</MauiXamlInflator>
 
 		<!-- Display name -->
-		<ApplicationTitle>QiblaNow.App</ApplicationTitle>
+		<ApplicationTitle>Qibla Now</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.companyname.qiblanow.app</ApplicationId>
@@ -48,19 +48,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+
 		<MauiSplashScreen Include="Resources\Splash\splash.png" Color="#0B6E4F" />
 
 		<MauiIcon Include="Resources\AppIcon\appicon.png" Color="#0B6E4F" />
-		<!-- Images -->
-		<MauiImage Include="Resources\Images\*" />
-		
-		<!-- Custom Fonts -->
-		<MauiFont Include="Resources\Fonts\*" />
 
-		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
-		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+		<MauiImage Include="Resources\Images\*" />
+
+		<MauiFont Include="Resources\Fonts\*" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -73,6 +69,12 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\QiblaNow.Core\QiblaNow.Core.csproj" />
 	  <ProjectReference Include="..\QiblaNow.Presentation\QiblaNow.Presentation.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AndroidResource Update="Platforms\Android\Resources\drawable\notification_icon.png">
+	    <Color>#0B6E4F</Color>
+	  </AndroidResource>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -91,14 +93,20 @@
 	  <MauiXaml Update="Pages\SettingsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\LocationSettingsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\CalculationSettingsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\SoundSettingsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\DisplaySettingsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\AboutPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	</ItemGroup>
-
-	<ItemGroup>
-	  <MauiImage Include="Resources\Splash\splash.png" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Resources\Images\" />
-	</ItemGroup>
-
 </Project>

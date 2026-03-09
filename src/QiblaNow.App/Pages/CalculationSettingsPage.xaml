@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.Presentation"
+             x:Class="QiblaNow.App.Pages.CalculationSettingsPage"
+             Title="Calculation"
+             BackgroundColor="{StaticResource AppBackgroundLight}"
+             x:DataType="viewmodels:SettingsViewModel">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,16,20,20" Spacing="16">
+
+            <Border Padding="18,16"
+                    BackgroundColor="{StaticResource White}"
+                    StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="18" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="18">
+
+                    <Label Text="Prayer Calculation"
+                           FontSize="18" FontAttributes="Bold"
+                           TextColor="{StaticResource OnSurfaceLight}" />
+
+                    <!-- Calculation Method -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Calculation Method"
+                               FontSize="13" TextColor="{StaticResource Gray600}" />
+                        <Picker ItemsSource="{Binding CalculationMethodOptions}"
+                                SelectedItem="{Binding SelectedMethod}"
+                                Title="Select Method"
+                                HorizontalOptions="Fill" />
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="0.5" Color="{StaticResource Gray200}" />
+
+                    <!-- Madhab -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Madhab (Asr Calculation)"
+                               FontSize="13" TextColor="{StaticResource Gray600}" />
+                        <Picker ItemsSource="{Binding MadhabOptions}"
+                                SelectedItem="{Binding SelectedMadhab}"
+                                Title="Select Madhab"
+                                HorizontalOptions="Fill" />
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="0.5" Color="{StaticResource Gray200}" />
+
+                    <!-- High Latitude Rule -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="High Latitude Rule"
+                               FontSize="13" TextColor="{StaticResource Gray600}" />
+                        <Picker ItemsSource="{Binding HighLatitudeRuleOptions}"
+                                SelectedItem="{Binding SelectedHighLatitudeRule}"
+                                Title="Select Rule"
+                                HorizontalOptions="Fill" />
+                    </VerticalStackLayout>
+
+                    <Label Text="Changes are saved automatically."
+                           FontSize="12" Opacity="0.6"
+                           TextColor="{StaticResource Gray500}"
+                           HorizontalTextAlignment="Center"
+                           Margin="0,4,0,0" />
+
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

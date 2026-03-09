@@ -186,7 +186,7 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
         };
 
         var notification = new Notification.Builder(_context, NotificationChannelId)
-            .SetSmallIcon(Resource.Mipmap.appicon)
+            .SetSmallIcon(Resource.Drawable.notification_icon)
             .SetContentTitle(prayerName)
             .SetContentText("Time to pray")
             .SetPriority((int)NotificationPriority.Default)
