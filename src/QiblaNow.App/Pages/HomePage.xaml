@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
     x:Class="QiblaNow.App.Pages.HomePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels"
+    xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.Presentation"
     x:DataType="viewmodels:HomeViewModel"
     Title="Qibla Now"
     BackgroundColor="{StaticResource AppBackgroundLight}">
@@ -31,64 +31,63 @@
               RowSpacing="14"
               RowDefinitions="Auto,Auto,Auto,Auto">
 
-            <!-- ROW 0: NEXT PRAYER STATUS (refined) -->
+            <!-- ROW 0: NEXT PRAYER STATUS -->
             <Grid Grid.Row="0"
-      RowDefinitions="Auto,Auto"
-      RowSpacing="10">
+                  RowDefinitions="Auto,Auto"
+                  RowSpacing="10">
 
                 <!-- Top line -->
                 <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="12">
 
                     <VerticalStackLayout Spacing="2">
                         <Label Text="Next prayer"
-                   FontSize="12"
-                   Opacity="0.60"
-                   TextColor="{StaticResource OnSurfaceLight}" />
+                               FontSize="12"
+                               Opacity="0.60"
+                               TextColor="{StaticResource OnSurfaceLight}" />
 
                         <Label Text="{Binding NextPrayerName}"
-                   FontSize="32"
-                   FontAttributes="Bold"
-                   LineBreakMode="TailTruncation"
-                   TextColor="{StaticResource OnSurfaceLight}" />
+                               FontSize="32"
+                               FontAttributes="Bold"
+                               LineBreakMode="TailTruncation"
+                               TextColor="{StaticResource OnSurfaceLight}" />
                     </VerticalStackLayout>
 
                     <Label Grid.Column="1"
-               Text="{Binding NextPrayerTime}"
-               FontSize="20"
-               FontAttributes="Bold"
-               Opacity="0.75"
-               VerticalTextAlignment="Center"
-               HorizontalTextAlignment="End"
-               TextColor="{StaticResource OnSurfaceLight}" />
+                           Text="{Binding NextPrayerTime}"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           Opacity="0.75"
+                           VerticalTextAlignment="Center"
+                           HorizontalTextAlignment="End"
+                           TextColor="{StaticResource OnSurfaceLight}" />
                 </Grid>
 
                 <!-- Countdown pill -->
                 <Border Grid.Row="1"
                         Padding="12,8"
                         BackgroundColor="{StaticResource White}"
-                        StrokeThickness="0">    
+                        StrokeThickness="0">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="14" />
                     </Border.StrokeShape>
 
                     <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
-                        <!-- simple dot as icon (no extra asset) -->
                         <BoxView WidthRequest="8"
-                             HeightRequest="8"
-                             CornerRadius="4"
-                             Opacity="0.75"
-                             Color="{StaticResource Primary}" />    
+                                 HeightRequest="8"
+                                 CornerRadius="4"
+                                 Opacity="0.75"
+                                 Color="{StaticResource Primary}" />
 
                         <Label Text="{Binding NextPrayerCountdown}"
                                FontSize="14"
                                Opacity="0.85"
-                               TextColor="{StaticResource OnSurfaceLight}" />   
+                               TextColor="{StaticResource OnSurfaceLight}" />
                     </HorizontalStackLayout>
                 </Border>
 
             </Grid>
 
-            <!-- ROW 1: TODAY CARD -->
+            <!-- ROW 1: SCHEDULE CARD -->
             <Frame Grid.Row="1"
                    Padding="16"
                    HasShadow="True"
@@ -96,83 +95,100 @@
 
                 <VerticalStackLayout Spacing="14">
 
-                    <!-- Header -->
+                    <!-- Header: date label with nav + location -->
                     <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
-                        <Label Text="Today"
-                               FontSize="18"
-                               FontAttributes="Bold"
-                               TextColor="{StaticResource OnSurfaceLight}" />
-                        <Label Grid.Column="1"
-                               Text="{Binding LocationLabel}"
-                               FontSize="12"
-                               Opacity="0.65"
-                               VerticalOptions="Center"
-                               TextColor="{StaticResource OnSurfaceLight}" />
+
+                        <!-- Day navigation -->
+                        <Grid Grid.Column="0"
+                              ColumnDefinitions="Auto,Auto,Auto"
+                              ColumnSpacing="2"
+                              VerticalOptions="Center">
+
+                            <Button Grid.Column="0"
+                                    Text="&#x2039;"
+                                    Command="{Binding PreviousDayCommand}"
+                                    WidthRequest="32"
+                                    HeightRequest="32"
+                                    Padding="0"
+                                    BackgroundColor="Transparent"
+                                    FontSize="20"
+                                    TextColor="{StaticResource Primary}" />
+
+                            <Label Grid.Column="1"
+                                   Text="{Binding SelectedDateLabel}"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center"
+                                   TextColor="{StaticResource OnSurfaceLight}" />
+
+                            <Button Grid.Column="2"
+                                    Text="&#x203A;"
+                                    Command="{Binding NextDayCommand}"
+                                    WidthRequest="32"
+                                    HeightRequest="32"
+                                    Padding="0"
+                                    BackgroundColor="Transparent"
+                                    FontSize="20"
+                                    TextColor="{StaticResource Primary}" />
+                        </Grid>
+
+                        <!-- Location label + optional Today tap-target -->
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="{Binding LocationLabel}"
+                                   FontSize="12"
+                                   Opacity="0.65"
+                                   HorizontalTextAlignment="End"
+                                   TextColor="{StaticResource OnSurfaceLight}" />
+                            <Label Text="&#x2192; Today"
+                                   FontSize="11"
+                                   IsVisible="{Binding IsNotToday}"
+                                   TextColor="{StaticResource Primary}"
+                                   HorizontalTextAlignment="End">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding GoTodayCommand}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </VerticalStackLayout>
+
                     </Grid>
 
-                    <!-- Times list (placeholder) -->
-                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto"
-                          ColumnDefinitions="Auto,*,Auto"
-                          RowSpacing="12">
+                    <!-- Prayer rows (data-driven, Sunrise excluded) -->
+                    <VerticalStackLayout Spacing="12"
+                                         BindableLayout.ItemsSource="{Binding PrayerRows}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="viewmodels:PrayerRowItem">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                                    <Label Grid.Column="0"
+                                           Text="{Binding Name}"
+                                           Opacity="0.85"
+                                           VerticalTextAlignment="Center"
+                                           TextColor="{StaticResource OnSurfaceLight}" />
+                                    <BoxView Grid.Column="1"
+                                             HeightRequest="1"
+                                             Opacity="0.10"
+                                             VerticalOptions="Center"
+                                             BackgroundColor="{StaticResource OnSurfaceLight}" />
+                                    <Label Grid.Column="2"
+                                           Text="{Binding Time}"
+                                           FontAttributes="Bold"
+                                           HorizontalTextAlignment="End"
+                                           VerticalTextAlignment="Center"
+                                           TextColor="{StaticResource OnSurfaceLight}" />
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
 
-                        <Label Grid.Row="0" Grid.Column="0" Text="Fajr" Opacity="0.85"
-                               TextColor="{StaticResource OnSurfaceLight}" />
-                        <BoxView Grid.Row="0" Grid.Column="1"
-                                 HeightRequest="1"
-                                 Opacity="0.10"
-                                 VerticalOptions="Center"
-                                 BackgroundColor="{StaticResource OnSurfaceLight}" />
-                        <Label Grid.Row="0" Grid.Column="2" Text="06:21" FontAttributes="Bold"
-                               TextColor="{StaticResource OnSurfaceLight}" />
-
-                        <Label Grid.Row="1" Grid.Column="0" Text="Dhuhr" Opacity="0.85"
-                               TextColor="{StaticResource OnSurfaceLight}" />
-                        <BoxView Grid.Row="1" Grid.Column="1"
-                                 HeightRequest="1"
-                                 Opacity="0.10"
-                                 VerticalOptions="Center"
-                                 BackgroundColor="{StaticResource OnSurfaceLight}" />
-                        <Label Grid.Row="1" Grid.Column="2" Text="13:58" FontAttributes="Bold"
-                               TextColor="{StaticResource OnSurfaceLight}" />
-
-                        <Label Grid.Row="2" Grid.Column="0" Text="Asr" Opacity="0.85"
-                               TextColor="{StaticResource OnSurfaceLight}" />
-                        <BoxView Grid.Row="2" Grid.Column="1"
-                                 HeightRequest="1"
-                                 Opacity="0.10"
-                                 VerticalOptions="Center"
-                                 BackgroundColor="{StaticResource OnSurfaceLight}" />
-                        <Label Grid.Row="2" Grid.Column="2" Text="17:22" FontAttributes="Bold"
-                               TextColor="{StaticResource OnSurfaceLight}" />
-
-                        <Label Grid.Row="3" Grid.Column="0" Text="Maghrib" Opacity="0.85"
-                               TextColor="{StaticResource OnSurfaceLight}" />
-                        <BoxView Grid.Row="3" Grid.Column="1"
-                                 HeightRequest="1"
-                                 Opacity="0.10"
-                                 VerticalOptions="Center"
-                                 BackgroundColor="{StaticResource OnSurfaceLight}" />
-                        <Label Grid.Row="3" Grid.Column="2" Text="19:42" FontAttributes="Bold"
-                               TextColor="{StaticResource OnSurfaceLight}" />
-
-                        <Label Grid.Row="4" Grid.Column="0" Text="Isha" Opacity="0.85"
-                               TextColor="{StaticResource OnSurfaceLight}" />
-                        <BoxView Grid.Row="4" Grid.Column="1"
-                                 HeightRequest="1"
-                                 Opacity="0.10"
-                                 VerticalOptions="Center"
-                                 BackgroundColor="{StaticResource OnSurfaceLight}" />
-                        <Label Grid.Row="4" Grid.Column="2" Text="21:10" FontAttributes="Bold"
-                               TextColor="{StaticResource OnSurfaceLight}" />
-                    </Grid>
-
-                    <!-- Meta -->
+                    <!-- Meta: method + asr (bound to actual settings) -->
                     <HorizontalStackLayout Spacing="10" Opacity="0.65">
-                        <Label Text="Method: MWL" FontSize="12"
+                        <Label Text="{Binding MethodLabel}"
+                               FontSize="12"
                                TextColor="{StaticResource OnSurfaceLight}" />
-                        <Label Text="•" FontSize="12"
+                        <Label Text="&#x2022;"
+                               FontSize="12"
                                TextColor="{StaticResource OnSurfaceLight}" />
-                        <Label Text="Asr: Shafi" FontSize="12"
+                        <Label Text="{Binding AsrLabel}"
+                               FontSize="12"
                                TextColor="{StaticResource OnSurfaceLight}" />
                     </HorizontalStackLayout>
 
