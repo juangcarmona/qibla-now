@@ -16,6 +16,7 @@ namespace QiblaNow.App
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseMauiMaps()
                 // Initialize the .NET MAUI Community Toolkit by adding the below line of code
                 .UseMauiCommunityToolkit()
                    // After initializing the .NET MAUI Community Toolkit, optionally add additional fonts

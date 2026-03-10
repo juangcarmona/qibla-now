@@ -1,13 +1,62 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.App"
+             xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.Presentation"
+             xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
              x:Class="QiblaNow.App.Pages.MapPage"
              x:DataType="viewmodels:MapViewModel"
              Title="Map">
-    <VerticalStackLayout Spacing="10" Padding="10">
-        <Label Text="Map Page"
-               FontSize="24"
-               HorizontalOptions="Center" />
-    </VerticalStackLayout>
+
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0"
+                Margin="12,12,12,8"
+                Padding="12"
+                StrokeThickness="1">
+            <VerticalStackLayout Spacing="6">
+                <Label Text="{Binding LocationLabel}"
+                       FontAttributes="Bold"
+                       FontSize="16" />
+
+                <Grid ColumnDefinitions="*,*,*"
+                      ColumnSpacing="12">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="Qibla"
+                               FontSize="12" />
+                        <Label Text="{Binding QiblaBearingText}"
+                               FontAttributes="Bold"
+                               FontSize="18" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="2">
+                        <Label Text="Heading"
+                               FontSize="12" />
+                        <Label Text="{Binding DeviceHeadingText}"
+                               FontAttributes="Bold"
+                               FontSize="18" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="2" Spacing="2">
+                        <Label Text="Error"
+                               FontSize="12" />
+                        <Label Text="{Binding HeadingErrorText}"
+                               FontAttributes="Bold"
+                               FontSize="18" />
+                    </VerticalStackLayout>
+                </Grid>
+
+                <Label Text="{Binding AlignmentText}"
+                       FontAttributes="Bold"
+                       FontSize="16" />
+
+                <Label Text="{Binding ErrorMessage}"
+                       IsVisible="{Binding HasError}"
+                       FontSize="12" />
+            </VerticalStackLayout>
+        </Border>
+
+        <maps:Map x:Name="QiblaMap"
+                  Grid.Row="1"
+                  Margin="12,0,12,12"
+                  IsShowingUser="false" />
+    </Grid>
 </ContentPage>
