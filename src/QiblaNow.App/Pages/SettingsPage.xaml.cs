@@ -4,9 +4,18 @@ namespace QiblaNow.App.Pages;
 
 public partial class SettingsPage : ContentPage
 {
-	public SettingsPage(SettingsViewModel viewModel)
+    private readonly SettingsViewModel _vm;
+
+    public SettingsPage(SettingsViewModel viewModel)
     {
-		InitializeComponent();
-		BindingContext = viewModel;
-	}
+        InitializeComponent();
+        _vm = viewModel;
+        BindingContext = viewModel;
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        _vm.Refresh();
+    }
 }

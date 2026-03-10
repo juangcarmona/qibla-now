@@ -1,9 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
-using QiblaNow.App.Pages;
-using QiblaNow.Presentation.ViewModels;
-using QiblaNow.App.Services;
 using CommunityToolkit.Maui;
+using Microsoft.Extensions.Logging;
+using QiblaNow.App.Pages;
+using QiblaNow.App.Services;
+using QiblaNow.Core;
 using QiblaNow.Core.Abstractions;
+using QiblaNow.Presentation.DI;
+using QiblaNow.Presentation.ViewModels;
 
 namespace QiblaNow.App
 {
@@ -31,24 +33,22 @@ namespace QiblaNow.App
             // Core services (singleton)
             builder.Services.AddSingleton<ISettingsStore, SettingsStore>();
             builder.Services.AddSingleton<ILocationService, LocationService>();
+            builder.Services.AddSingleton<IPrayerTimesCalculator, PrayerTimesCalculator>();
 
-            // ViewModels
-            builder.Services.AddTransient<HomeViewModel>();
-            builder.Services.AddTransient<HomePage>();
+            // Register presentation services
+            builder.Services.AddPresentationServices();
 
-            builder.Services.AddTransient<PrayerTimesViewModel>();
-            builder.Services.AddTransient<PrayerTimesPage>();
+#if ANDROID
+            builder.Services.AddSingleton<INotificationScheduler, Platforms.Android.AndroidNotificationScheduler>();
+#endif
 
-            builder.Services.AddTransient<QiblaViewModel>();
-            builder.Services.AddTransient<QiblaPage>();
-
-            builder.Services.AddTransient<MapViewModel>();
-            builder.Services.AddTransient<MapPage>();
-
-            builder.Services.AddTransient<SettingsViewModel>();
+            // Pages (transient — resolved by Shell navigation)
             builder.Services.AddTransient<SettingsPage>();
-
-
+            builder.Services.AddTransient<LocationSettingsPage>();
+            builder.Services.AddTransient<CalculationSettingsPage>();
+            builder.Services.AddTransient<SoundSettingsPage>();
+            builder.Services.AddTransient<DisplaySettingsPage>();
+            builder.Services.AddTransient<AboutPage>();
 
             return builder.Build();
         }

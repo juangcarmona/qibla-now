@@ -6,42 +6,30 @@ namespace QiblaNow.Core.Models;
 public sealed class LocationSnapshot
 {
     public LocationMode Mode { get; }
-
     public double Latitude { get; }
-
     public double Longitude { get; }
-
-    /// <summary>
-    /// Optional human-readable location label (e.g., city name)
-    /// </summary>
     public string? Label { get; }
+    public DateTimeOffset Timestamp { get; init; } = DateTimeOffset.UtcNow;
 
-    /// <summary>
-    /// UTC timestamp when this snapshot was captured
-    /// </summary>
-    public DateTimeOffset Timestamp { get; set; }
-
-    public LocationSnapshot(LocationMode mode, double latitude, double longitude, string? label = null)
+    public LocationSnapshot(
+        LocationMode mode,
+        double latitude,
+        double longitude,
+        string? label = null)
     {
+        if (latitude < -90 || latitude > 90)
+            throw new ArgumentOutOfRangeException(nameof(latitude), "Latitude must be between -90 and 90.");
+
+        if (longitude < -180 || longitude > 180)
+            throw new ArgumentOutOfRangeException(nameof(longitude), "Longitude must be between -180 and 180.");
+
         Mode = mode;
         Latitude = latitude;
         Longitude = longitude;
         Label = label;
-        Timestamp = DateTimeOffset.UtcNow;
     }
 
-    /// <summary>
-    /// Validates latitude is within valid range [-90, 90]
-    /// </summary>
     public bool IsValidLatitude => Latitude >= -90 && Latitude <= 90;
-
-    /// <summary>
-    /// Validates longitude is within valid range [-180, 180]
-    /// </summary>
     public bool IsValidLongitude => Longitude >= -180 && Longitude <= 180;
-
-    /// <summary>
-    /// Checks if the snapshot coordinates are valid
-    /// </summary>
-    public bool AreCoordinatesValid => IsValidLatitude && IsValidLongitude;
+    public bool AreCoordinatesValid => true;
 }

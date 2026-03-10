@@ -1,66 +1,191 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels"
+             xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.Presentation"
              x:Class="QiblaNow.App.Pages.SettingsPage"
              Title="Settings"
+             BackgroundColor="{StaticResource AppBackgroundLight}"
              x:DataType="viewmodels:SettingsViewModel">
 
     <ScrollView>
-        <VerticalStackLayout Padding="20,0" Spacing="20">
+        <VerticalStackLayout Padding="20,16,20,20" Spacing="20">
 
-            <!-- Location Mode Selection -->
-            <Frame HasShadow="True" Padding="16">
-                <VerticalStackLayout Spacing="12">
-                    <Label Text="Location Mode" Style="{DynamicResource Title}" FontAttributes="Bold"/>
-                    <Picker ItemsSource="{Binding LocationModeOptions}"
-                            Title="Select Location Mode"
-                            SelectedItem="{Binding LocationMode}"
-                            HorizontalOptions="Fill"/>
+            <!-- Main settings group -->
+            <Border Padding="0"
+                    BackgroundColor="{StaticResource White}"
+                    StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="18" />
+                </Border.StrokeShape>
 
-                    <!-- Manual Location Section -->
-                    <Grid IsVisible="{Binding IsManualLocation}" RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="Auto,*" ColumnSpacing="12" RowSpacing="8">
-                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Manual Coordinates" Style="{DynamicResource Body}" FontAttributes="Bold"/>
-                        <Label Grid.Row="1" Grid.Column="0" Text="Latitude:" Style="{DynamicResource Caption}"/>
-                        <Entry Grid.Row="1" Grid.Column="1"
-                               Placeholder="-90 to 90"
-                               Text="{Binding Latitude}"
-                               Keyboard="Numeric"
-                               ReturnType="Next"/>
-                        <Label Grid.Row="2" Grid.Column="0" Text="Longitude:" Style="{DynamicResource Caption}"/>
-                        <Entry Grid.Row="2" Grid.Column="1"
-                               Placeholder="-180 to 180"
-                               Text="{Binding Longitude}"
-                               Keyboard="Numeric"
-                               ReturnType="Done"/>
+                <VerticalStackLayout Spacing="0">
+
+                    <!-- Location row -->
+                    <Grid Padding="16,14"
+                          ColumnDefinitions="44,*,Auto"
+                          ColumnSpacing="12">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoLocationSettingsCommand}" />
+                        </Grid.GestureRecognizers>
+                        <Border Grid.Column="0"
+                                BackgroundColor="{StaticResource Secondary}"
+                                WidthRequest="36" HeightRequest="36"
+                                HorizontalOptions="Center" VerticalOptions="Center"
+                                StrokeThickness="0">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
+                            <Label Text="📍" FontSize="18"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="Location"
+                                   FontSize="16" FontAttributes="Bold"
+                                   TextColor="{StaticResource OnSurfaceLight}" />
+                            <Label Text="{Binding LocationSummary}"
+                                   FontSize="13" TextColor="{StaticResource Gray600}"
+                                   LineBreakMode="TailTruncation" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" FontSize="22"
+                               TextColor="{StaticResource Gray400}"
+                               VerticalOptions="Center" />
                     </Grid>
 
-                    <!-- GPS Section -->
-                    <StackLayout IsVisible="{Binding IsGpsLocation}" Spacing="12">
-                        <Label Text="Use GPS to automatically detect your location"
-                               Style="{DynamicResource Body}"
-                               LineBreakMode="WordWrap"/>
-                        <Button Text="Request GPS Location"
-                                Command="{Binding RequestGpsLocationCommand}"
-                                IsEnabled="{Binding IsNotSaving}"
-                                HorizontalOptions="Fill"/>
-                    </StackLayout>
+                    <BoxView HeightRequest="0.5"
+                             Color="{StaticResource Gray200}"
+                             Margin="16,0" />
+
+                    <!-- Display row -->
+                    <Grid Padding="16,14"
+                          ColumnDefinitions="44,*,Auto"
+                          ColumnSpacing="12">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoDisplaySettingsCommand}" />
+                        </Grid.GestureRecognizers>
+                        <Border Grid.Column="0"
+                                BackgroundColor="{StaticResource Secondary}"
+                                WidthRequest="36" HeightRequest="36"
+                                HorizontalOptions="Center" VerticalOptions="Center"
+                                StrokeThickness="0">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
+                            <Label Text="🕐" FontSize="18"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="Display"
+                                   FontSize="16" FontAttributes="Bold"
+                                   TextColor="{StaticResource OnSurfaceLight}" />
+                            <Label Text="Time format, prayer visibility"
+                                   FontSize="13" TextColor="{StaticResource Gray600}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" FontSize="22"
+                               TextColor="{StaticResource Gray400}"
+                               VerticalOptions="Center" />
+                    </Grid>
+
+                    <BoxView HeightRequest="0.5"
+                             Color="{StaticResource Gray200}"
+                             Margin="16,0" />
+
+                    <!-- Calculation row -->
+                    <Grid Padding="16,14"
+                          ColumnDefinitions="44,*,Auto"
+                          ColumnSpacing="12">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoCalculationSettingsCommand}" />
+                        </Grid.GestureRecognizers>
+                        <Border Grid.Column="0"
+                                BackgroundColor="{StaticResource Secondary}"
+                                WidthRequest="36" HeightRequest="36"
+                                HorizontalOptions="Center" VerticalOptions="Center"
+                                StrokeThickness="0">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
+                            <Label Text="🕌" FontSize="18"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="Calculation"
+                                   FontSize="16" FontAttributes="Bold"
+                                   TextColor="{StaticResource OnSurfaceLight}" />
+                            <Label Text="{Binding CalculationSummary}"
+                                   FontSize="13" TextColor="{StaticResource Gray600}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" FontSize="22"
+                               TextColor="{StaticResource Gray400}"
+                               VerticalOptions="Center" />
+                    </Grid>
+
+                    <BoxView HeightRequest="0.5"
+                             Color="{StaticResource Gray200}"
+                             Margin="16,0" />
+
+                    <!-- Sound & Notifications row -->
+                    <Grid Padding="16,14"
+                          ColumnDefinitions="44,*,Auto"
+                          ColumnSpacing="12">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoSoundSettingsCommand}" />
+                        </Grid.GestureRecognizers>
+                        <Border Grid.Column="0"
+                                BackgroundColor="{StaticResource Secondary}"
+                                WidthRequest="36" HeightRequest="36"
+                                HorizontalOptions="Center" VerticalOptions="Center"
+                                StrokeThickness="0">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
+                            <Label Text="🔔" FontSize="18"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="Sound &amp; Notifications"
+                                   FontSize="16" FontAttributes="Bold"
+                                   TextColor="{StaticResource OnSurfaceLight}" />
+                            <Label Text="{Binding NotificationSummary}"
+                                   FontSize="13" TextColor="{StaticResource Gray600}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" FontSize="22"
+                               TextColor="{StaticResource Gray400}"
+                               VerticalOptions="Center" />
+                    </Grid>
+
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
-            <!-- Manual Location Save -->
-            <Button Text="Save Location"
-                    Command="{Binding SaveManualLocationCommand}"
-                    IsEnabled="{Binding !IsSaving}"
-                    HorizontalOptions="Fill"
-                    Padding="20"/>
+            <!-- Info group -->
+            <Border Padding="0"
+                    BackgroundColor="{StaticResource White}"
+                    StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="18" />
+                </Border.StrokeShape>
 
-            <!-- Error Message -->
-            <Label Text="{Binding ErrorMessage}"
-                   IsVisible="{Binding HasError}"
-                   TextColor="Red"
-                   LineBreakMode="WordWrap"
-                   HorizontalTextAlignment="Center"/>
+                <!-- About row -->
+                <Grid Padding="16,14"
+                      ColumnDefinitions="44,*,Auto"
+                      ColumnSpacing="12">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoAboutCommand}" />
+                    </Grid.GestureRecognizers>
+                    <Border Grid.Column="0"
+                            BackgroundColor="{StaticResource Secondary}"
+                            WidthRequest="36" HeightRequest="36"
+                            HorizontalOptions="Center" VerticalOptions="Center"
+                            StrokeThickness="0">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
+                        <Label Text="ℹ️" FontSize="18"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                        <Label Text="About"
+                               FontSize="16" FontAttributes="Bold"
+                               TextColor="{StaticResource OnSurfaceLight}" />
+                        <Label Text="App information"
+                               FontSize="13" TextColor="{StaticResource Gray600}" />
+                    </VerticalStackLayout>
+                    <Label Grid.Column="2" Text="›" FontSize="22"
+                           TextColor="{StaticResource Gray400}"
+                           VerticalOptions="Center" />
+                </Grid>
+
+            </Border>
+
         </VerticalStackLayout>
     </ScrollView>
 

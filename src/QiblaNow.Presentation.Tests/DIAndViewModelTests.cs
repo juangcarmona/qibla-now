@@ -1,29 +1,68 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using QiblaNow.Core.Abstractions;
+using QiblaNow.Core.Models;
 using QiblaNow.Presentation.ViewModels;
 
-namespace QiblaNow.Core.Tests;
+namespace QiblaNow.Presentation.Tests;
 
 public class DIAndViewModelTests
 {
-    [Fact]
-    public void DI_Registers_ViewModels()
+    // Minimal stubs so ViewModels can be resolved in the test DI container
+    // without pulling in platform-specific implementations (MAUI Preferences, etc.).
+
+    private sealed class StubCalculator : IPrayerTimesCalculator
     {
-        // Arrange
+        public Task<DailyPrayerSchedule> CalculateDailyScheduleAsync(LocationSnapshot l, DateTimeOffset d, PrayerCalculationSettings s)
+            => Task.FromResult(new DailyPrayerSchedule(d, TimeZoneInfo.Utc));
+
+        public Task<NextPrayerResult?> CalculateNextPrayerAsync(DailyPrayerSchedule s, PrayerNotificationSettings n, DateTimeOffset now)
+            => Task.FromResult<NextPrayerResult?>(null);
+
+        public Task<NextNotificationCandidateResult?> CalculateNextNotificationCandidateAsync(DailyPrayerSchedule s, PrayerNotificationSettings n, DateTimeOffset now)
+            => Task.FromResult<NextNotificationCandidateResult?>(null);
+
+        public Task<CountdownTargetResult?> CalculateCountdownAsync(DailyPrayerSchedule s, PrayerNotificationSettings n, DateTimeOffset now)
+            => Task.FromResult<CountdownTargetResult?>(null);
+    }
+
+    private sealed class StubSettingsStore : ISettingsStore
+    {
+        public LocationMode GetLocationMode() => LocationMode.GPS;
+        public void SetLocationMode(LocationMode mode) { }
+        public LocationSnapshot? GetLastSnapshot() => null;
+        public void SaveSnapshot(LocationSnapshot snapshot) { }
+        public PrayerCalculationSettings GetCalculationSettings() => new();
+        public void SaveCalculationSettings(PrayerCalculationSettings settings) { }
+        public PrayerNotificationSettings GetNotificationSettings() => new();
+        public void SaveNotificationSettings(PrayerNotificationSettings settings) { }
+        public LocationSnapshot? GetLastValidLocation() => null;
+        public void SaveLastValidLocation(LocationSnapshot location) { }
+        public SchedulingState GetSchedulingState() => new();
+        public void SaveSchedulingState(SchedulingState state) { }
+    }
+
+    private static IServiceProvider BuildServices()
+    {
         var services = new ServiceCollection();
+        services.AddSingleton<IPrayerTimesCalculator, StubCalculator>();
+        services.AddSingleton<ISettingsStore, StubSettingsStore>();
         services.AddTransient<PrayerTimesViewModel>();
         services.AddTransient<QiblaViewModel>();
         services.AddTransient<MapViewModel>();
-        
-        var serviceProvider = services.BuildServiceProvider();
+        return services.BuildServiceProvider();
+    }
 
-        // Act
-        var timesViewModel = serviceProvider.GetRequiredService<PrayerTimesViewModel>();
-        var qiblaViewModel = serviceProvider.GetRequiredService<QiblaViewModel>();
-        var mapViewModel = serviceProvider.GetRequiredService<MapViewModel>();
+    [Fact]
+    public void DI_Registers_ViewModels()
+    {
+        var sp = BuildServices();
 
-        // Assert
+        var timesViewModel  = sp.GetRequiredService<PrayerTimesViewModel>();
+        var qiblaViewModel  = sp.GetRequiredService<QiblaViewModel>();
+        var mapViewModel    = sp.GetRequiredService<MapViewModel>();
+
         Assert.NotNull(timesViewModel);
         Assert.NotNull(qiblaViewModel);
         Assert.NotNull(mapViewModel);
@@ -32,20 +71,12 @@ public class DIAndViewModelTests
     [Fact]
     public void ViewModels_Inherit_From_ObservableObject()
     {
-        // Arrange
-        var services = new ServiceCollection();
-        services.AddTransient<PrayerTimesViewModel>();
-        services.AddTransient<QiblaViewModel>();
-        services.AddTransient<MapViewModel>();
-        
-        var serviceProvider = services.BuildServiceProvider();
+        var sp = BuildServices();
 
-        // Act
-        var prayerTimesViewModel = serviceProvider.GetRequiredService<PrayerTimesViewModel>();
-        var qiblaViewModel = serviceProvider.GetRequiredService<QiblaViewModel>();
-        var mapViewModel = serviceProvider.GetRequiredService<MapViewModel>();
+        var prayerTimesViewModel = sp.GetRequiredService<PrayerTimesViewModel>();
+        var qiblaViewModel       = sp.GetRequiredService<QiblaViewModel>();
+        var mapViewModel         = sp.GetRequiredService<MapViewModel>();
 
-        // Assert
         Assert.IsAssignableFrom<ObservableObject>(prayerTimesViewModel);
         Assert.IsAssignableFrom<ObservableObject>(qiblaViewModel);
         Assert.IsAssignableFrom<ObservableObject>(mapViewModel);
@@ -54,19 +85,15 @@ public class DIAndViewModelTests
     [Fact]
     public void ViewModels_Resolved_Via_DI()
     {
-        // Arrange
-        var services = new ServiceCollection();
-        services.AddTransient<PrayerTimesViewModel>();
-        
-        var serviceProvider = services.BuildServiceProvider();
+        var sp = BuildServices();
 
-        // Act
-        var timesViewModel = serviceProvider.GetRequiredService<PrayerTimesViewModel>();
-        var timesViewModel2 = serviceProvider.GetRequiredService<PrayerTimesViewModel>();
+        var timesViewModel  = sp.GetRequiredService<PrayerTimesViewModel>();
+        var timesViewModel2 = sp.GetRequiredService<PrayerTimesViewModel>();
 
-        // Assert - Transient services are different instances
+        // Transient → different instances each resolution
         Assert.NotNull(timesViewModel);
         Assert.NotNull(timesViewModel2);
         Assert.NotSame(timesViewModel, timesViewModel2);
     }
 }
+

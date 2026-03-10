@@ -26,4 +26,45 @@ public interface ISettingsStore
     /// Saves a location snapshot to persistent storage
     /// </summary>
     void SaveSnapshot(LocationSnapshot snapshot);
+
+    /// <summary>
+    /// Gets the current prayer calculation settings
+    /// </summary>
+    PrayerCalculationSettings GetCalculationSettings();
+
+    /// <summary>
+    /// Saves prayer calculation settings
+    /// </summary>
+    void SaveCalculationSettings(PrayerCalculationSettings settings);
+
+    /// <summary>
+    /// Gets the current prayer notification settings
+    /// </summary>
+    PrayerNotificationSettings GetNotificationSettings();
+
+    /// <summary>
+    /// Saves prayer notification settings
+    /// </summary>
+    void SaveNotificationSettings(PrayerNotificationSettings settings);
+
+    /// <summary>
+    /// Gets the last known valid location for prayer calculation
+    /// </summary>
+    LocationSnapshot? GetLastValidLocation();
+
+    /// <summary>
+    /// Saves the last known valid location
+    /// </summary>
+    void SaveLastValidLocation(LocationSnapshot location);
+
+    /// <summary>
+    /// Gets the persisted alarm scheduling state used for recovery after reboot or process death.
+    /// </summary>
+    SchedulingState GetSchedulingState();
+
+    /// <summary>
+    /// Persists alarm scheduling state for deterministic recovery.
+    /// Must NOT modify user notification preference flags.
+    /// </summary>
+    void SaveSchedulingState(SchedulingState state);
 }

@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace QiblaNow.Core.Tests;
+namespace QiblaNow.Presentation.Tests;
 
 public class ViewModelTests
 {

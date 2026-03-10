@@ -1,0 +1,21 @@
+{
+  "config": {
+    "description": "London, UK – 28 March 2026 (last day of GMT, clocks change next day)",
+    "date": "2026-03-28",
+    "lat": 51.5074,
+    "lon": -0.1278,
+    "timezone": "UTC",
+    "method": "MWL",
+    "asr": "Standard",
+    "highLats": "OneSeventh",
+    "rounding": "nearest"
+  },
+  "utc_times": {
+    "fajr": "04:08",
+    "sunrise": "05:45",
+    "dhuhr": "12:06",
+    "asr": "15:33",
+    "maghrib": "18:28",
+    "isha": "20:04"
+  }
+}

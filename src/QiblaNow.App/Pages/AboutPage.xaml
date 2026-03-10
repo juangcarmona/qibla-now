@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QiblaNow.App.Pages.AboutPage"
+             Title="About"
+             BackgroundColor="{StaticResource AppBackgroundLight}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,16,20,20" Spacing="16">
+
+            <!-- App identity -->
+            <Border Padding="18,24"
+                    BackgroundColor="{StaticResource White}"
+                    StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="18" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+                    <Image Source="appicon.png"
+                           HeightRequest="80"
+                           WidthRequest="80"
+                           HorizontalOptions="Center"
+                           Aspect="AspectFit" />
+                    <Label Text="Qibla Now"
+                           FontSize="26" FontAttributes="Bold"
+                           TextColor="{StaticResource Primary}"
+                           HorizontalTextAlignment="Center" />
+                    <Label Text="Version 1.0"
+                           FontSize="14" TextColor="{StaticResource Gray600}"
+                           HorizontalTextAlignment="Center" />
+                    <Label Text="An offline-first Islamic utility for prayer times and Qibla direction."
+                           FontSize="14" TextColor="{StaticResource OnSurfaceLight}"
+                           HorizontalTextAlignment="Center"
+                           LineBreakMode="WordWrap"
+                           Margin="0,4,0,0" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Features -->
+            <Border Padding="18,16"
+                    BackgroundColor="{StaticResource White}"
+                    StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="18" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Features"
+                           FontSize="18" FontAttributes="Bold"
+                           TextColor="{StaticResource OnSurfaceLight}" />
+                    <Label Text="• Accurate prayer times for any location"
+                           FontSize="14" TextColor="{StaticResource OnSurfaceLight}" />
+                    <Label Text="• Qibla compass direction"
+                           FontSize="14" TextColor="{StaticResource OnSurfaceLight}" />
+                    <Label Text="• Prayer time notifications"
+                           FontSize="14" TextColor="{StaticResource OnSurfaceLight}" />
+                    <Label Text="• Multiple calculation methods"
+                           FontSize="14" TextColor="{StaticResource OnSurfaceLight}" />
+                    <Label Text="• Works fully offline"
+                           FontSize="14" TextColor="{StaticResource OnSurfaceLight}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Built with -->
+            <Border Padding="18,16"
+                    BackgroundColor="{StaticResource White}"
+                    StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="18" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Built With"
+                           FontSize="18" FontAttributes="Bold"
+                           TextColor="{StaticResource OnSurfaceLight}" />
+                    <Label Text=".NET MAUI — cross-platform native UI"
+                           FontSize="14" TextColor="{StaticResource Gray600}" />
+                    <Label Text="Adhan .NET — prayer time calculations"
+                           FontSize="14" TextColor="{StaticResource Gray600}" />
+                    <Label Text="CommunityToolkit.Mvvm — MVVM infrastructure"
+                           FontSize="14" TextColor="{StaticResource Gray600}" />
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
