@@ -32,7 +32,7 @@
 		<ApplicationTitle>Qibla Now</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.qiblanow.app</ApplicationId>
+		<ApplicationId>com.companyname.qiblanow</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -69,50 +69,59 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\QiblaNow.Core\QiblaNow.Core.csproj" />
-	  <ProjectReference Include="..\QiblaNow.Presentation\QiblaNow.Presentation.csproj" />
+		<ProjectReference Include="..\QiblaNow.Core\QiblaNow.Core.csproj" />
+		<ProjectReference Include="..\QiblaNow.Presentation\QiblaNow.Presentation.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <AndroidResource Update="Platforms\Android\Resources\drawable\notification_icon.png">
-	    <Color>#0B6E4F</Color>
-	  </AndroidResource>
+		<AndroidResource Update="Platforms\Android\Resources\drawable\notification_icon.png">
+			<Color>#0B6E4F</Color>
+		</AndroidResource>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Pages\HomePage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\MapPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\PrayerTimesPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\QiblaPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\SettingsPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\LocationSettingsPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\CalculationSettingsPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\SoundSettingsPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\DisplaySettingsPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\AboutPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
+		<MauiXaml Update="Pages\HomePage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\MapPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\PrayerTimesPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\QiblaPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\SettingsPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\LocationSettingsPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\CalculationSettingsPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\SoundSettingsPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\DisplaySettingsPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\AboutPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 	</ItemGroup>
 
-	<PropertyGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
+	<Import Project="QiblaNow.App.secrets.props"
+			Condition="Exists('QiblaNow.App.secrets.props')" />
+
+	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
 		<AndroidManifestPlaceholders>MAPS_API_KEY=$(MapsApiKey)</AndroidManifestPlaceholders>
 	</PropertyGroup>
+
+	<Target Name="ShowMapsApiKey" BeforeTargets="Build">
+		<Message Text="MapsApiKey='$(MapsApiKey)'" Importance="High" />
+		<Message Text="AndroidManifestPlaceholders='$(AndroidManifestPlaceholders)'" Importance="High" />
+	</Target>
+	
 </Project>
