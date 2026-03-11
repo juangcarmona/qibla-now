@@ -37,5 +37,11 @@ jobs:
           </Project>
           "@ | Set-Content -Path src/QiblaNow.App/QiblaNow.App.secrets.props -Encoding UTF8
 
-      - name: Build
-        run: dotnet build src/QiblaNow.App/QiblaNow.App.csproj -c Release -f net10.0-android
+      - name: Install required workloads
+        run: dotnet workload restore src/QiblaNow.App/QiblaNow.App.csproj
+
+      - name: Restore
+        run: dotnet restore src/QiblaNow.slnx
+
+      - name: Build Android
+        run: dotnet build src/QiblaNow.App/QiblaNow.App.csproj -c Release -f net10.0-android --no-restore
