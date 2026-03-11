@@ -32,7 +32,7 @@
 		<ApplicationTitle>Qibla Now</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.qiblanow</ApplicationId>
+		<ApplicationId>com.jgcarmona.qiblanow</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -53,11 +53,15 @@
 
 		<MauiSplashScreen Include="Resources\Splash\splash.png" Color="#0B6E4F" />
 
-		<MauiIcon Include="Resources\AppIcon\appicon.png" Color="#0B6E4F" />
+		<MauiIcon Include="Resources\AppIcon\appicon.png" BaseSize="512,512" />
 
-		<MauiImage Include="Resources\Images\*" />
+		<MauiImage Include="Resources\Images\**\*" />
 
 		<MauiFont Include="Resources\Fonts\*" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Resources\Images\about_logo.png" />
 	</ItemGroup>
 
 	<ItemGroup>

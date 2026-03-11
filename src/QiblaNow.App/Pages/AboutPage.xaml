@@ -16,21 +16,28 @@
                     <RoundRectangle CornerRadius="18" />
                 </Border.StrokeShape>
 
-                <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
-                    <Image Source="appicon.png"
+                <VerticalStackLayout Spacing="10"
+                                     HorizontalOptions="Center">
+                    <Image Source="splash.png"
                            HeightRequest="80"
                            WidthRequest="80"
                            HorizontalOptions="Center"
                            Aspect="AspectFit" />
+
                     <Label Text="Qibla Now"
-                           FontSize="26" FontAttributes="Bold"
+                           FontSize="26"
+                           FontAttributes="Bold"
                            TextColor="{StaticResource Primary}"
                            HorizontalTextAlignment="Center" />
+
                     <Label Text="Version 1.0"
-                           FontSize="14" TextColor="{StaticResource Gray600}"
+                           FontSize="14"
+                           TextColor="{StaticResource Gray600}"
                            HorizontalTextAlignment="Center" />
+
                     <Label Text="An offline-first Islamic utility for prayer times and Qibla direction."
-                           FontSize="14" TextColor="{StaticResource OnSurfaceLight}"
+                           FontSize="14"
+                           TextColor="{StaticResource OnSurfaceLight}"
                            HorizontalTextAlignment="Center"
                            LineBreakMode="WordWrap"
                            Margin="0,4,0,0" />
@@ -47,22 +54,33 @@
 
                 <VerticalStackLayout Spacing="10">
                     <Label Text="Features"
-                           FontSize="18" FontAttributes="Bold"
+                           FontSize="18"
+                           FontAttributes="Bold"
                            TextColor="{StaticResource OnSurfaceLight}" />
+
                     <Label Text="• Accurate prayer times for any location"
-                           FontSize="14" TextColor="{StaticResource OnSurfaceLight}" />
+                           FontSize="14"
+                           TextColor="{StaticResource OnSurfaceLight}" />
+
                     <Label Text="• Qibla compass direction"
-                           FontSize="14" TextColor="{StaticResource OnSurfaceLight}" />
+                           FontSize="14"
+                           TextColor="{StaticResource OnSurfaceLight}" />
+
                     <Label Text="• Prayer time notifications"
-                           FontSize="14" TextColor="{StaticResource OnSurfaceLight}" />
+                           FontSize="14"
+                           TextColor="{StaticResource OnSurfaceLight}" />
+
                     <Label Text="• Multiple calculation methods"
-                           FontSize="14" TextColor="{StaticResource OnSurfaceLight}" />
+                           FontSize="14"
+                           TextColor="{StaticResource OnSurfaceLight}" />
+
                     <Label Text="• Works fully offline"
-                           FontSize="14" TextColor="{StaticResource OnSurfaceLight}" />
+                           FontSize="14"
+                           TextColor="{StaticResource OnSurfaceLight}" />
                 </VerticalStackLayout>
             </Border>
 
-            <!-- Built with -->
+            <!-- Links -->
             <Border Padding="18,16"
                     BackgroundColor="{StaticResource White}"
                     StrokeThickness="0">
@@ -70,16 +88,65 @@
                     <RoundRectangle CornerRadius="18" />
                 </Border.StrokeShape>
 
-                <VerticalStackLayout Spacing="8">
-                    <Label Text="Built With"
-                           FontSize="18" FontAttributes="Bold"
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Links"
+                           FontSize="18"
+                           FontAttributes="Bold"
                            TextColor="{StaticResource OnSurfaceLight}" />
-                    <Label Text=".NET MAUI — cross-platform native UI"
-                           FontSize="14" TextColor="{StaticResource Gray600}" />
-                    <Label Text="Adhan .NET — prayer time calculations"
-                           FontSize="14" TextColor="{StaticResource Gray600}" />
-                    <Label Text="CommunityToolkit.Mvvm — MVVM infrastructure"
-                           FontSize="14" TextColor="{StaticResource Gray600}" />
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Source code"
+                               FontSize="13"
+                               TextColor="{StaticResource Gray600}" />
+                        <Label Text="github.com/juangcarmona/qibla-now"
+                               FontSize="14"
+                               TextColor="{StaticResource Primary}">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnGithubTapped" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Website"
+                               FontSize="13"
+                               TextColor="{StaticResource Gray600}" />
+                        <Label Text="jgcarmona.com"
+                               FontSize="14"
+                               TextColor="{StaticResource Primary}">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnWebsiteTapped" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Support -->
+            <Border Padding="18,16"
+                    BackgroundColor="{StaticResource White}"
+                    StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="18" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Support"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource OnSurfaceLight}" />
+
+                    <Label Text="Qibla Now is free and open source. If it helps you, you can support its development."
+                           FontSize="14"
+                           TextColor="{StaticResource OnSurfaceLight}"
+                           LineBreakMode="WordWrap" />
+
+                    <Button Text="Support this project"
+                            Clicked="OnDonateClicked"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="{StaticResource White}"
+                            CornerRadius="14"
+                            HeightRequest="48" />
                 </VerticalStackLayout>
             </Border>
 
