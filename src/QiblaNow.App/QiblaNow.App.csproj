@@ -112,8 +112,7 @@
 		</MauiXaml>
 	</ItemGroup>
 
-	<Import Project="QiblaNow.App.secrets.props"
-			Condition="Exists('QiblaNow.App.secrets.props')" />
+	<Import Project="QiblaNow.App.secrets.props" Condition="Exists('QiblaNow.App.secrets.props')" />
 
 	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
 		<AndroidManifestPlaceholders>MAPS_API_KEY=$(MapsApiKey)</AndroidManifestPlaceholders>
