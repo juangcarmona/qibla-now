@@ -1,13 +1,97 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.App"
+             xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.Presentation"
+             xmlns:maps="http://schemas.microsoft.com/dotnet/2021/maui/maps"
              x:Class="QiblaNow.App.Pages.MapPage"
              x:DataType="viewmodels:MapViewModel"
              Title="Map">
-    <VerticalStackLayout Spacing="10" Padding="10">
-        <Label Text="Map Page"
-               FontSize="24"
-               HorizontalOptions="Center" />
-    </VerticalStackLayout>
+
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0"
+        Margin="12,12,12,8"
+        Padding="14"
+        StrokeThickness="1">
+            <VerticalStackLayout Spacing="10">
+
+                <Grid ColumnDefinitions="*,Auto"
+              ColumnSpacing="8">
+                    <Label Grid.Column="0"
+                   Text="{Binding LocationLabel}"
+                   FontAttributes="Bold"
+                   FontSize="18"
+                   VerticalOptions="Center" />
+
+                    <Button Grid.Column="1"
+                    Text="i"
+                    WidthRequest="36"
+                    HeightRequest="36"
+                    CornerRadius="18"
+                    FontAttributes="Bold"
+                    Clicked="OnInfoClicked" />
+                </Grid>
+
+                <Grid ColumnDefinitions="*,*,*"
+              ColumnSpacing="12">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="Qibla"
+                       FontSize="12"
+                       HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding QiblaBearingText}"
+                       FontAttributes="Bold"
+                       FontSize="18"
+                       HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="2">
+                        <Label Text="Heading"
+                       FontSize="12"
+                       HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding DeviceHeadingText}"
+                       FontAttributes="Bold"
+                       FontSize="18"
+                       HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="2" Spacing="2">
+                        <Label Text="Error"
+                       FontSize="12"
+                       HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding HeadingErrorText}"
+                       FontAttributes="Bold"
+                       FontSize="18"
+                       HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Grid>
+
+                <VerticalStackLayout Spacing="2"
+                             HorizontalOptions="Center">
+                    <Label Text="{Binding TurnArrowText}"
+                   IsVisible="{Binding ShowTurnArrow}"
+                   FontSize="34"
+                   FontAttributes="Bold"
+                   HorizontalTextAlignment="Center"
+                   HorizontalOptions="Center" />
+
+                    <Label Text="{Binding GuidanceText}"
+                   FontAttributes="Bold"
+                   FontSize="24"
+                   HorizontalTextAlignment="Center"
+                   HorizontalOptions="Center" />
+                </VerticalStackLayout>
+
+                <Label Text="{Binding InfoText}"
+               FontSize="10"
+               HorizontalTextAlignment="Center" />
+
+                <Label Text="{Binding ErrorMessage}"
+               IsVisible="{Binding HasError}"
+               FontSize="12" />
+            </VerticalStackLayout>
+        </Border>
+        
+        <maps:Map Grid.Row="1"
+                  x:Name="QiblaMap"
+                  Margin="12,0,12,12" />
+    </Grid>
 </ContentPage>
