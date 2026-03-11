@@ -1,0 +1,47 @@
+name: Build Android
+
+on:
+  push:
+    branches: [ main ]    
+    paths:
+      - 'src/QiblaNow.*/**'
+      - '.github/workflows/build-android.yml'
+  pull_request:
+    paths:
+      - 'src/QiblaNow.*/**'
+      - '.github/workflows/build-android.yml'
+
+jobs:
+  build-android:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Create secrets props
+        shell: pwsh
+        run: |
+          @"
+          <Project>
+            <PropertyGroup>
+              <MapsApiKey>${{ secrets.MAPS_API_KEY }}</MapsApiKey>
+              <AdMobAppId>${{ secrets.ADMOB_APP_ID }}</AdMobAppId>
+              <AdMobBannerTest>${{ secrets.ADMOB_BANNER_TEST }}</AdMobBannerTest>
+              <AdMobBannerProd>${{ secrets.ADMOB_BANNER_PROD }}</AdMobBannerProd>
+            </PropertyGroup>
+          </Project>
+          "@ | Set-Content -Path src/QiblaNow.App/QiblaNow.App.secrets.props -Encoding UTF8
+
+      - name: Install required workloads
+        run: dotnet workload restore src/QiblaNow.App/QiblaNow.App.csproj
+
+      - name: Restore
+        run: dotnet restore src/QiblaNow.slnx
+
+      - name: Build Android
+        run: dotnet build src/QiblaNow.App/QiblaNow.App.csproj -c Release -f net10.0-android --no-restore

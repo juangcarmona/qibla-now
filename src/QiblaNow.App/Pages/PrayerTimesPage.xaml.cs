@@ -9,5 +9,8 @@ public partial class PrayerTimesPage : ContentPage
     {
         InitializeComponent();
         BindingContext = viewModel;
+#if ANDROID
+        BottomBanner.AdsId = AdMobConfig.BannerId;
+#endif
     }
 }

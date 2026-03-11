@@ -8,5 +8,8 @@ public partial class SoundSettingsPage : ContentPage
     {
         InitializeComponent();
         BindingContext = viewModel;
+#if ANDROID
+        BottomBanner.AdsId = AdMobConfig.BannerId;
+#endif
     }
 }

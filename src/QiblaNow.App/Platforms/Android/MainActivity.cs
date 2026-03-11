@@ -1,6 +1,8 @@
 using Android.App;
 using Android.Content.PM;
+using Android.Gms.Ads;
 using Android.OS;
+using Plugin.MauiMtAdmob;
 
 namespace QiblaNow.App
 {
@@ -11,11 +13,24 @@ namespace QiblaNow.App
         {
             base.OnCreate(savedInstanceState);
 
-            // Request POST_NOTIFICATIONS permission for Android 13+
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
             {
                 Permissions.RequestAsync<Permissions.PostNotifications>();
             }
+            var appId = PackageManager?
+                .GetApplicationInfo(PackageName!, PackageInfoFlags.MetaData)?
+                .MetaData?
+                .GetString("com.google.android.gms.ads.APPLICATION_ID");
+            
+            CrossMauiMTAdmob.Current.Init(
+                this,
+                appId ?? string.Empty,
+#if DEBUG
+                debugMode: true
+#else
+                        debugMode: false
+#endif
+            );
         }
     }
 }

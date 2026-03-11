@@ -2,11 +2,22 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="QiblaNow.App.Pages.QiblaPage"
+             xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"  
              Title="Qibla">
-    <VerticalStackLayout>
-        <Label 
+    <Grid RowDefinitions="*,Auto">
+        <VerticalStackLayout Grid.Row="0">
+            <Label 
             Text="Welcome to .NET MAUI!"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+        <Border Grid.Row="1"
+             BackgroundColor="{StaticResource White}"
+             StrokeThickness="0"
+             Padding="0,4">
+            <admob:MTAdView
+                x:Name="BottomBanner"                
+                 HorizontalOptions="Center" />
+        </Border>
+    </Grid>
 </ContentPage>
