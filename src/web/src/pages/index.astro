@@ -1,0 +1,234 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Qibla Now | Offline prayer times and Qibla direction"
+  description="Qibla Now is an offline-first Islamic utility for prayer times, Qibla direction, alarms, and map guidance with privacy-first design."
+>
+  <section class="hero section">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">Offline-first Islamic utility</p>
+        <h1>Prayer times and Qibla direction, without noise.</h1>
+        <p class="lead">
+          Qibla Now is built for speed, clarity, and trust: accurate prayer times, precise Qibla
+          direction, local alarms, and no accounts, no analytics, no telemetry.
+        </p>
+
+        <div class="hero-actions">
+          <a class="button button-primary" href="/features">See features</a>
+          <a class="button button-secondary" href="/privacy">Privacy first</a>
+        </div>
+
+        <ul class="hero-points">
+          <li>Works offline after installation</li>
+          <li>On-device prayer and Qibla calculation</li>
+          <li>Minimal, distraction-free experience</li>
+        </ul>
+      </div>
+
+      <aside class="hero-panel card">
+        <img src="/screenshots/home.png" alt="Qibla Now home screen" class="hero-image" />
+      </aside>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="grid-3">
+      <article class="card info-card">
+        <h3>Prayer times</h3>
+        <p>
+          Accurate daily prayer schedules with configurable calculation methods, madhab selection,
+          and high-latitude rules.
+        </p>
+      </article>
+
+      <article class="card info-card">
+        <h3>Qibla direction</h3>
+        <p>
+          Great-circle bearing toward the Kaaba, shown through compass, map, and numeric direction.
+        </p>
+      </article>
+
+      <article class="card info-card">
+        <h3>Privacy by design</h3>
+        <p>
+          No accounts, no analytics, no telemetry, no backend, and no personal data collection.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="grid-2">
+      <div>
+        <p class="eyebrow">Why it is different</p>
+        <h2>A tool, not a platform.</h2>
+        <p>
+          Qibla Now is designed as a religious utility first. It focuses on the few tasks that
+          matter during prayer-related moments and avoids the clutter, tracking, and dependency
+          patterns common in modern mobile apps.
+        </p>
+        <p>
+          The product goal is simple: reliable information, fast interaction, and calm execution.
+        </p>
+      </div>
+
+      <div class="card value-card">
+        <ul>
+          <li><strong>Offline-first:</strong> core functionality remains available without internet.</li>
+          <li><strong>No cloud dependency:</strong> calculations happen locally on the device.</li>
+          <li><strong>No tracking:</strong> no analytics, telemetry, or remote logging.</li>
+          <li><strong>Minimal ads:</strong> banner-only, non-personalized, never on core prayer screens.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="card trust-card">
+      <div class="grid-2 trust-grid">
+        <div>
+          <p class="eyebrow">Trust model</p>
+          <h2>Designed to respect privacy and attention.</h2>
+          <p>
+            External network use is limited to optional integrations such as maps and ads. Core
+            religious functionality does not depend on a project-owned backend.
+          </p>
+        </div>
+
+        <div class="trust-points">
+          <div>
+            <strong>No accounts</strong>
+            <p>No sign-up, no profile, no personal identity layer.</p>
+          </div>
+          <div>
+            <strong>No telemetry</strong>
+            <p>No analytics, no crash reporting, no hidden behavioral data pipeline.</p>
+          </div>
+          <div>
+            <strong>Non-personalized ads only</strong>
+            <p>Ads are limited and configured to avoid profiling and tracking.</p>
+          </div>
+          <div>
+            <strong>Local settings and logic</strong>
+            <p>Preferences and calculations remain device-side.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-top: 3rem;
+  }
+
+  .hero-grid {
+    display: grid;
+    gap: 2rem;
+    align-items: stretch;
+  }
+
+  .lead {
+    font-size: 1.1rem;
+    max-width: 46rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin: 1.5rem 0;
+  }
+
+  .hero-points {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 0;
+    margin: 1.25rem 0 0;
+    list-style: none;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .hero-points li {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.5rem 0.8rem;
+  }
+
+  .hero-panel {
+    background: linear-gradient(180deg, #ffffff 0%, #fbfaf4 100%);
+  }
+
+  .hero-image {
+    width: 100%;
+    border-radius: 14px;
+  }
+
+  .hero-panel-inner {
+    padding: 1.5rem;
+  }
+
+  .panel-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--brand-dark);
+    margin-bottom: 1rem;
+  }
+
+  .mini-list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .info-card,
+  .value-card {
+    padding: 1.5rem;
+  }
+
+  .value-card ul {
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+
+  .value-card li + li {
+    margin-top: 0.8rem;
+  }
+
+  .trust-card {
+    padding: 1.5rem;
+    background: linear-gradient(180deg, #ffffff 0%, #f8f6ee 100%);
+  }
+
+  .trust-grid {
+    align-items: start;
+  }
+
+  .trust-points {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .trust-points > div {
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .trust-points p {
+    margin-bottom: 0;
+  }
+
+  @media (min-width: 900px) {
+    .hero-grid {
+      grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.8fr);
+    }
+  }
+</style>

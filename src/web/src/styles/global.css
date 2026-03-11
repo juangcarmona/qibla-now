@@ -1,0 +1,64 @@
+:root {
+  --bg: #f7f4ea;
+  --surface: #ffffff;
+  --text: #102418;
+  --muted: #526057;
+  --border: #d9dfd8;
+
+  --brand: #0b6e4f;
+  --brand-dark: #064e3b;
+  --accent: #c8a64b;
+
+  --max-width: 1120px;
+  --radius: 18px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: Inter, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  line-height: 1.6;
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  width: min(var(--max-width), calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 2rem 0 3rem;
+  flex: 1;
+}
+
+/* Minimalist adjustments */
+.button,
+.button-primary,
+.button-secondary {
+  border-radius: 0;
+}
+
+.card {
+  border-radius: 0;
+}
+
+nav a,
+nav a.active {
+  border-radius: 0;
+}
+
+.section {
+  padding: 3rem 0;
+}
