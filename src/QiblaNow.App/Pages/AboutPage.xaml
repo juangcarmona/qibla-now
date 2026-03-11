@@ -18,7 +18,7 @@
 
                 <VerticalStackLayout Spacing="10"
                                      HorizontalOptions="Center">
-                    <Image Source="splash.png"
+                    <Image Source="about_logo.png"
                            HeightRequest="80"
                            WidthRequest="80"
                            HorizontalOptions="Center"
