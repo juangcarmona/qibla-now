@@ -1,0 +1,74 @@
+<footer class="site-footer">
+  <div class="container inner">
+    <div>
+      <strong class="footer-title">Qibla Now</strong>
+      <p class="footer-desc">Prayer times and Qibla direction with clarity, privacy, and technical rigor.</p>
+    </div>
+
+    <nav aria-label="Footer">
+      <a href="/privacy">Privacy</a>
+      <a href="/support">Support</a>
+      <a href="/about">About</a>
+    </nav>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border);
+    background: white;
+    margin-top: auto;
+  }
+
+  .inner {
+    padding: 1.2rem 0;
+    display: flex;
+    gap: 1.2rem;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--brand-dark);
+  }
+
+  .footer-desc {
+    margin: 0.25rem 0 0;
+    max-width: 48rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  nav {
+    display: flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+  }
+
+  nav a {
+    color: var(--muted);
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0.2rem 0.5rem;
+    background: none;
+    border: none;
+    border-radius: 0;
+    font-size: 0.98rem;
+    transition: color 0.15s;
+  }
+
+  nav a:hover {
+    color: var(--brand-dark);
+  }
+
+  @media (max-width: 720px) {
+    .inner {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 1.2rem 0;
+      gap: 0.7rem;
+    }
+  }
+</style>

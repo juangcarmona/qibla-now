@@ -6,3 +6,4 @@ CLAUDE.md
 # bin and obj folders
 bin/
 obj/
+src/QiblaNow.App/QiblaNow.App.secrets.props
