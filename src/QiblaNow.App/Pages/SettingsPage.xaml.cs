@@ -11,6 +11,9 @@ public partial class SettingsPage : ContentPage
         InitializeComponent();
         _vm = viewModel;
         BindingContext = viewModel;
+#if ANDROID
+        BottomBanner.AdsId = AdMobConfig.BannerId;
+#endif
     }
 
     protected override void OnAppearing()

@@ -2,79 +2,89 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="QiblaNow.App.Pages.DisplaySettingsPage"
+             xmlns:app="clr-namespace:QiblaNow.App"
+             xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"   
              Title="Display"
              BackgroundColor="{StaticResource AppBackgroundLight}">
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="20,16,20,20" Spacing="16">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="20,16,20,20" Spacing="16">
-
-            <!-- Time Format (future) -->
-            <Border Padding="18,16"
+                <!-- Time Format (future) -->
+                <Border Padding="18,16"
                     BackgroundColor="{StaticResource White}"
                     StrokeThickness="0">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="18" />
-                </Border.StrokeShape>
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="18" />
+                    </Border.StrokeShape>
 
-                <VerticalStackLayout Spacing="12">
-                    <Label Text="Time Format"
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Time Format"
                            FontSize="18" FontAttributes="Bold"
                            TextColor="{StaticResource OnSurfaceLight}" />
 
-                    <Grid ColumnDefinitions="*,Auto">
-                        <Label Grid.Column="0"
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Grid.Column="0"
                                Text="Use 24-hour clock"
                                FontSize="15"
                                TextColor="{StaticResource OnSurfaceLight}"
                                VerticalOptions="Center" />
-                        <Switch Grid.Column="1"
+                            <Switch Grid.Column="1"
                                 IsEnabled="False"
                                 OnColor="{StaticResource Primary}" />
-                    </Grid>
+                        </Grid>
 
-                    <Label Text="Time format setting — coming soon."
+                        <Label Text="Time format setting — coming soon."
                            FontSize="12" Opacity="0.55"
                            TextColor="{StaticResource Gray500}" />
-                </VerticalStackLayout>
-            </Border>
+                    </VerticalStackLayout>
+                </Border>
 
-            <!-- Prayer Visibility (future) -->
-            <Border Padding="18,16"
+                <!-- Prayer Visibility (future) -->
+                <Border Padding="18,16"
                     BackgroundColor="{StaticResource White}"
                     StrokeThickness="0">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="18" />
-                </Border.StrokeShape>
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="18" />
+                    </Border.StrokeShape>
 
-                <VerticalStackLayout Spacing="10">
-                    <Label Text="Prayer Visibility"
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Prayer Visibility"
                            FontSize="18" FontAttributes="Bold"
                            TextColor="{StaticResource OnSurfaceLight}" />
-                    <Label Text="Choose which prayer times to show — coming soon."
+                        <Label Text="Choose which prayer times to show — coming soon."
                            FontSize="13" TextColor="{StaticResource Gray500}"
                            LineBreakMode="WordWrap" />
-                </VerticalStackLayout>
-            </Border>
+                    </VerticalStackLayout>
+                </Border>
 
-            <!-- Hijri Date Adjustment (future) -->
-            <Border Padding="18,16"
+                <!-- Hijri Date Adjustment (future) -->
+                <Border Padding="18,16"
                     BackgroundColor="{StaticResource White}"
                     StrokeThickness="0">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="18" />
-                </Border.StrokeShape>
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="18" />
+                    </Border.StrokeShape>
 
-                <VerticalStackLayout Spacing="10">
-                    <Label Text="Hijri Date Adjustment"
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Hijri Date Adjustment"
                            FontSize="18" FontAttributes="Bold"
                            TextColor="{StaticResource OnSurfaceLight}" />
-                    <Label Text="Adjust the displayed Hijri date by ±3 days — coming soon."
+                        <Label Text="Adjust the displayed Hijri date by ±3 days — coming soon."
                            FontSize="13" TextColor="{StaticResource Gray500}"
                            LineBreakMode="WordWrap" />
-                </VerticalStackLayout>
-            </Border>
+                    </VerticalStackLayout>
+                </Border>
 
-        </VerticalStackLayout>
-    </ScrollView>
-
+            </VerticalStackLayout>
+        </ScrollView>
+        <Border Grid.Row="1"
+                BackgroundColor="{StaticResource White}"
+                StrokeThickness="0"
+                Padding="0,4">
+            <admob:MTAdView
+               x:Name="BottomBanner"                
+                HorizontalOptions="Center" />
+        </Border>
+    </Grid>
 </ContentPage>

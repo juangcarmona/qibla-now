@@ -3,22 +3,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.Presentation"
              x:Class="QiblaNow.App.Pages.LocationSettingsPage"
+             xmlns:app="clr-namespace:QiblaNow.App"
+             xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"   
              Title="Location"
              BackgroundColor="{StaticResource AppBackgroundLight}"
              x:DataType="viewmodels:SettingsViewModel">
-
-    <ScrollView>
-        <VerticalStackLayout Padding="20,16,20,20" Spacing="16">
-            <Border Padding="18,16"
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="20,16,20,20" Spacing="16">
+                <Border Padding="18,16"
                     BackgroundColor="{StaticResource White}"
                     StrokeThickness="0">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="18" />
-                </Border.StrokeShape>
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="18" />
+                    </Border.StrokeShape>
 
-                <VerticalStackLayout Spacing="16">
+                    <VerticalStackLayout Spacing="16">
 
-                    <Label Text="{Binding LocationName}"
+                        <Label Text="{Binding LocationName}"
                                IsVisible="{Binding HasLocationName}"
                                FontSize="24"
                                FontAttributes="Bold"
@@ -26,90 +28,99 @@
                                HorizontalTextAlignment="Center"
                                LineBreakMode="WordWrap" />
 
-                    <Label Text="Location Mode"
+                        <Label Text="Location Mode"
                            FontSize="18" FontAttributes="Bold"
                            TextColor="{StaticResource OnSurfaceLight}" />
 
-                    <Picker ItemsSource="{Binding LocationModeOptions}"
+                        <Picker ItemsSource="{Binding LocationModeOptions}"
                             SelectedItem="{Binding LocationMode}"
                             Title="Select Mode"
                             HorizontalOptions="Fill" />
 
-                    <!-- GPS section -->
-                    <VerticalStackLayout IsVisible="{Binding IsGpsLocation}" Spacing="12">
-                        <Label Text="Use GPS to detect your location automatically."
+                        <!-- GPS section -->
+                        <VerticalStackLayout IsVisible="{Binding IsGpsLocation}" Spacing="12">
+                            <Label Text="Use GPS to detect your location automatically."
                                FontSize="14" TextColor="{StaticResource Gray600}"
                                LineBreakMode="WordWrap" />
 
-                        <Button Text="Request GPS Location"
+                            <Button Text="Request GPS Location"
                                 Command="{Binding RequestGpsLocationCommand}"
                                 IsEnabled="{Binding IsNotSaving}"
                                 HorizontalOptions="Fill" />
 
-                        <ActivityIndicator IsRunning="{Binding IsSaving}"
+                            <ActivityIndicator IsRunning="{Binding IsSaving}"
                                            IsVisible="{Binding IsSaving}"
                                            Color="{StaticResource Primary}"
                                            HorizontalOptions="Center" />
 
 
-                    </VerticalStackLayout>
+                        </VerticalStackLayout>
 
-                    <!-- Manual section -->
-                    <VerticalStackLayout IsVisible="{Binding IsManualLocation}" Spacing="12">
+                        <!-- Manual section -->
+                        <VerticalStackLayout IsVisible="{Binding IsManualLocation}" Spacing="12">
 
-                        <Grid ColumnDefinitions="Auto,*"
+                            <Grid ColumnDefinitions="Auto,*"
                               ColumnSpacing="12"
                               RowDefinitions="Auto,Auto"
                               RowSpacing="10">
-                            <Label Grid.Row="0" Grid.Column="0"
+                                <Label Grid.Row="0" Grid.Column="0"
                                    Text="Latitude"
                                    FontSize="14"
                                    TextColor="{StaticResource OnSurfaceLight}"
                                    VerticalOptions="Center" />
-                            <Entry Grid.Row="0" Grid.Column="1"
+                                <Entry Grid.Row="0" Grid.Column="1"
                                    Placeholder="-90 to 90"
                                    Text="{Binding Latitude}"
                                    Keyboard="Numeric"
                                    ReturnType="Next"
                                    HorizontalOptions="Fill" />
 
-                            <Label Grid.Row="1" Grid.Column="0"
+                                <Label Grid.Row="1" Grid.Column="0"
                                    Text="Longitude"
                                    FontSize="14"
                                    TextColor="{StaticResource OnSurfaceLight}"
                                    VerticalOptions="Center" />
-                            <Entry Grid.Row="1" Grid.Column="1"
+                                <Entry Grid.Row="1" Grid.Column="1"
                                    Placeholder="-180 to 180"
                                    Text="{Binding Longitude}"
                                    Keyboard="Numeric"
                                    ReturnType="Done"
                                    HorizontalOptions="Fill" />
-                        </Grid>
+                            </Grid>
 
-                        <ActivityIndicator IsRunning="{Binding IsSaving}"
+                            <ActivityIndicator IsRunning="{Binding IsSaving}"
                                            IsVisible="{Binding IsSaving}"
                                            Color="{StaticResource Primary}"
                                            HorizontalOptions="Center" />
 
-                        <Button Text="Save Location"
+                            <Button Text="Save Location"
                                 Command="{Binding SaveManualLocationCommand}"
                                 IsEnabled="{Binding IsNotSaving}"
                                 HorizontalOptions="Fill" />
 
+                        </VerticalStackLayout>
+
                     </VerticalStackLayout>
+                </Border>
 
-                </VerticalStackLayout>
-            </Border>
-
-            <!-- Error message -->
-            <Label Text="{Binding ErrorMessage}"
+                <!-- Error message -->
+                <Label Text="{Binding ErrorMessage}"
                    IsVisible="{Binding HasError}"
                    TextColor="Red"
                    FontSize="14"
                    LineBreakMode="WordWrap"
                    HorizontalTextAlignment="Center" />
 
-        </VerticalStackLayout>
-    </ScrollView>
+            </VerticalStackLayout>
+        </ScrollView>
 
+        <Border Grid.Row="1"
+                BackgroundColor="{StaticResource White}"
+                StrokeThickness="0"
+                Padding="0,4">
+            <admob:MTAdView
+               x:Name="BottomBanner"                
+                HorizontalOptions="Center" />
+        </Border>
+    </Grid>
 </ContentPage>

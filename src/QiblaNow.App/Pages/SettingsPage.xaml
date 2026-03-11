@@ -3,190 +3,211 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.Presentation"
              x:Class="QiblaNow.App.Pages.SettingsPage"
+             xmlns:app="clr-namespace:QiblaNow.App"
+             xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"   
              Title="Settings"
              BackgroundColor="{StaticResource AppBackgroundLight}"
              x:DataType="viewmodels:SettingsViewModel">
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="20,16,20,20" Spacing="20">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="20,16,20,20" Spacing="20">
-
-            <!-- Main settings group -->
-            <Border Padding="0"
+                <!-- Main settings group -->
+                <Border Padding="0"
                     BackgroundColor="{StaticResource White}"
                     StrokeThickness="0">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="18" />
-                </Border.StrokeShape>
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="18" />
+                    </Border.StrokeShape>
 
-                <VerticalStackLayout Spacing="0">
+                    <VerticalStackLayout Spacing="0">
 
-                    <!-- Location row -->
-                    <Grid Padding="16,14"
+                        <!-- Location row -->
+                        <Grid Padding="16,14"
                           ColumnDefinitions="44,*,Auto"
                           ColumnSpacing="12">
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding GoLocationSettingsCommand}" />
-                        </Grid.GestureRecognizers>
-                        <Border Grid.Column="0"
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding GoLocationSettingsCommand}" />
+                            </Grid.GestureRecognizers>
+                            <Border Grid.Column="0"
                                 BackgroundColor="{StaticResource Secondary}"
                                 WidthRequest="36" HeightRequest="36"
                                 HorizontalOptions="Center" VerticalOptions="Center"
                                 StrokeThickness="0">
-                            <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
-                            <Label Text="📍" FontSize="18"
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <Label Text="📍" FontSize="18"
                                    HorizontalOptions="Center" VerticalOptions="Center" />
-                        </Border>
-                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                            <Label Text="Location"
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label Text="Location"
                                    FontSize="16" FontAttributes="Bold"
                                    TextColor="{StaticResource OnSurfaceLight}" />
-                            <Label Text="{Binding LocationSummary}"
+                                <Label Text="{Binding LocationSummary}"
                                    FontSize="13" TextColor="{StaticResource Gray600}"
                                    LineBreakMode="TailTruncation" />
-                        </VerticalStackLayout>
-                        <Label Grid.Column="2" Text="›" FontSize="22"
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" FontSize="22"
                                TextColor="{StaticResource Gray400}"
                                VerticalOptions="Center" />
-                    </Grid>
+                        </Grid>
 
-                    <BoxView HeightRequest="0.5"
+                        <BoxView HeightRequest="0.5"
                              Color="{StaticResource Gray200}"
                              Margin="16,0" />
 
-                    <!-- Display row -->
-                    <Grid Padding="16,14"
+                        <!-- Display row -->
+                        <Grid Padding="16,14"
                           ColumnDefinitions="44,*,Auto"
                           ColumnSpacing="12">
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding GoDisplaySettingsCommand}" />
-                        </Grid.GestureRecognizers>
-                        <Border Grid.Column="0"
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding GoDisplaySettingsCommand}" />
+                            </Grid.GestureRecognizers>
+                            <Border Grid.Column="0"
                                 BackgroundColor="{StaticResource Secondary}"
                                 WidthRequest="36" HeightRequest="36"
                                 HorizontalOptions="Center" VerticalOptions="Center"
                                 StrokeThickness="0">
-                            <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
-                            <Label Text="🕐" FontSize="18"
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <Label Text="🕐" FontSize="18"
                                    HorizontalOptions="Center" VerticalOptions="Center" />
-                        </Border>
-                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                            <Label Text="Display"
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label Text="Display"
                                    FontSize="16" FontAttributes="Bold"
                                    TextColor="{StaticResource OnSurfaceLight}" />
-                            <Label Text="Time format, prayer visibility"
+                                <Label Text="Time format, prayer visibility"
                                    FontSize="13" TextColor="{StaticResource Gray600}" />
-                        </VerticalStackLayout>
-                        <Label Grid.Column="2" Text="›" FontSize="22"
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" FontSize="22"
                                TextColor="{StaticResource Gray400}"
                                VerticalOptions="Center" />
-                    </Grid>
+                        </Grid>
 
-                    <BoxView HeightRequest="0.5"
+                        <BoxView HeightRequest="0.5"
                              Color="{StaticResource Gray200}"
                              Margin="16,0" />
 
-                    <!-- Calculation row -->
-                    <Grid Padding="16,14"
+                        <!-- Calculation row -->
+                        <Grid Padding="16,14"
                           ColumnDefinitions="44,*,Auto"
                           ColumnSpacing="12">
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding GoCalculationSettingsCommand}" />
-                        </Grid.GestureRecognizers>
-                        <Border Grid.Column="0"
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding GoCalculationSettingsCommand}" />
+                            </Grid.GestureRecognizers>
+                            <Border Grid.Column="0"
                                 BackgroundColor="{StaticResource Secondary}"
                                 WidthRequest="36" HeightRequest="36"
                                 HorizontalOptions="Center" VerticalOptions="Center"
                                 StrokeThickness="0">
-                            <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
-                            <Label Text="🕌" FontSize="18"
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <Label Text="🕌" FontSize="18"
                                    HorizontalOptions="Center" VerticalOptions="Center" />
-                        </Border>
-                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                            <Label Text="Calculation"
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label Text="Calculation"
                                    FontSize="16" FontAttributes="Bold"
                                    TextColor="{StaticResource OnSurfaceLight}" />
-                            <Label Text="{Binding CalculationSummary}"
+                                <Label Text="{Binding CalculationSummary}"
                                    FontSize="13" TextColor="{StaticResource Gray600}" />
-                        </VerticalStackLayout>
-                        <Label Grid.Column="2" Text="›" FontSize="22"
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" FontSize="22"
                                TextColor="{StaticResource Gray400}"
                                VerticalOptions="Center" />
-                    </Grid>
+                        </Grid>
 
-                    <BoxView HeightRequest="0.5"
+                        <BoxView HeightRequest="0.5"
                              Color="{StaticResource Gray200}"
                              Margin="16,0" />
 
-                    <!-- Sound & Notifications row -->
-                    <Grid Padding="16,14"
+                        <!-- Sound & Notifications row -->
+                        <Grid Padding="16,14"
                           ColumnDefinitions="44,*,Auto"
                           ColumnSpacing="12">
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding GoSoundSettingsCommand}" />
-                        </Grid.GestureRecognizers>
-                        <Border Grid.Column="0"
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding GoSoundSettingsCommand}" />
+                            </Grid.GestureRecognizers>
+                            <Border Grid.Column="0"
                                 BackgroundColor="{StaticResource Secondary}"
                                 WidthRequest="36" HeightRequest="36"
                                 HorizontalOptions="Center" VerticalOptions="Center"
                                 StrokeThickness="0">
-                            <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
-                            <Label Text="🔔" FontSize="18"
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <Label Text="🔔" FontSize="18"
                                    HorizontalOptions="Center" VerticalOptions="Center" />
-                        </Border>
-                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                            <Label Text="Sound &amp; Notifications"
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label Text="Sound &amp; Notifications"
                                    FontSize="16" FontAttributes="Bold"
                                    TextColor="{StaticResource OnSurfaceLight}" />
-                            <Label Text="{Binding NotificationSummary}"
+                                <Label Text="{Binding NotificationSummary}"
                                    FontSize="13" TextColor="{StaticResource Gray600}" />
-                        </VerticalStackLayout>
-                        <Label Grid.Column="2" Text="›" FontSize="22"
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" FontSize="22"
                                TextColor="{StaticResource Gray400}"
                                VerticalOptions="Center" />
-                    </Grid>
+                        </Grid>
 
-                </VerticalStackLayout>
-            </Border>
+                    </VerticalStackLayout>
+                </Border>
 
-            <!-- Info group -->
-            <Border Padding="0"
+                <!-- Info group -->
+                <Border Padding="0"
                     BackgroundColor="{StaticResource White}"
                     StrokeThickness="0">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="18" />
-                </Border.StrokeShape>
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="18" />
+                    </Border.StrokeShape>
 
-                <!-- About row -->
-                <Grid Padding="16,14"
+                    <!-- About row -->
+                    <Grid Padding="16,14"
                       ColumnDefinitions="44,*,Auto"
                       ColumnSpacing="12">
-                    <Grid.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding GoAboutCommand}" />
-                    </Grid.GestureRecognizers>
-                    <Border Grid.Column="0"
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoAboutCommand}" />
+                        </Grid.GestureRecognizers>
+                        <Border Grid.Column="0"
                             BackgroundColor="{StaticResource Secondary}"
                             WidthRequest="36" HeightRequest="36"
                             HorizontalOptions="Center" VerticalOptions="Center"
                             StrokeThickness="0">
-                        <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
-                        <Label Text="ℹ️" FontSize="18"
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Label Text="ℹ️" FontSize="18"
                                HorizontalOptions="Center" VerticalOptions="Center" />
-                    </Border>
-                    <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                        <Label Text="About"
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="About"
                                FontSize="16" FontAttributes="Bold"
                                TextColor="{StaticResource OnSurfaceLight}" />
-                        <Label Text="App information"
+                            <Label Text="App information"
                                FontSize="13" TextColor="{StaticResource Gray600}" />
-                    </VerticalStackLayout>
-                    <Label Grid.Column="2" Text="›" FontSize="22"
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" FontSize="22"
                            TextColor="{StaticResource Gray400}"
                            VerticalOptions="Center" />
-                </Grid>
+                    </Grid>
 
-            </Border>
+                </Border>
 
-        </VerticalStackLayout>
-    </ScrollView>
+            </VerticalStackLayout>
+        </ScrollView>
+        <Border Grid.Row="1"
+                BackgroundColor="{StaticResource White}"
+                StrokeThickness="0"
+                Padding="0,4">
+            <admob:MTAdView
+               x:Name="BottomBanner"                
+                HorizontalOptions="Center" />
+        </Border>
 
+    </Grid>
 </ContentPage>

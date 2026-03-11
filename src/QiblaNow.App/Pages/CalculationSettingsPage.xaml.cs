@@ -8,5 +8,8 @@ public partial class CalculationSettingsPage : ContentPage
     {
         InitializeComponent();
         BindingContext = viewModel;
+#if ANDROID
+        BottomBanner.AdsId = AdMobConfig.BannerId;
+#endif
     }
 }

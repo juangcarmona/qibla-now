@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.App"
+             xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.Presentation"
              x:Class="QiblaNow.App.Pages.PrayerTimesPage"
+             xmlns:app="clr-namespace:QiblaNow.App"
+             xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"   
              Title="Prayer Times"
              x:DataType="viewmodels:PrayerTimesViewModel">
-    <VerticalStackLayout Spacing="10" Padding="10">
-        <Label Text="Times Page"
+    <Grid RowDefinitions="*,Auto">
+        <VerticalStackLayout Spacing="10" Padding="10">
+            <Label Text="Times Page"
                FontSize="24"
                HorizontalOptions="Center" />
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+        <Border Grid.Row="1"
+                BackgroundColor="{StaticResource White}"
+                StrokeThickness="0"
+                Padding="0,4">
+            <admob:MTAdView
+               x:Name="BottomBanner"                
+                HorizontalOptions="Center" />
+        </Border>
+    </Grid>
 </ContentPage>

@@ -43,7 +43,7 @@
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">23.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 	</PropertyGroup>
@@ -62,15 +62,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Resources\Images\about_logo.png" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="14.0.1" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.41" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.3" />
 		<PackageReference Include="Microsoft.Maui.Controls.Maps" Version="10.0.41" />
+		<PackageReference Include="Plugin.MauiMTAdmob" Version="2.3.1" />
+	</ItemGroup>
+
+	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+		<PackageReference Include="Xamarin.AndroidX.Compose.Runtime.Annotation.Jvm" Version="1.10.0.1" ExcludeAssets="all" PrivateAssets="all" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -113,13 +114,25 @@
 
 	<Import Project="QiblaNow.App.secrets.props" Condition="Exists('QiblaNow.App.secrets.props')" />
 
+	<!-- For Android, we need to pass the Maps API key and AdMob App ID as manifest placeholders to be used in the AndroidManifest.xml.
+		  These values are defined in QiblaNow.App.secrets.props, which is not included in source control.	-->
 	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
-		<AndroidManifestPlaceholders>MAPS_API_KEY=$(MapsApiKey)</AndroidManifestPlaceholders>
+		<AndroidManifestPlaceholders>MAPS_API_KEY=$(MapsApiKey);ADMOB_APP_ID=$(AdMobAppId)</AndroidManifestPlaceholders>
+		<!-- For AdMob Banner ID, we want to use the test ID in Debug configuration and the production ID in Release configuration.	-->
+		<AdMobBannerId Condition="'$(Configuration)' == 'Debug'">$(AdMobBannerTest)</AdMobBannerId>
+		<AdMobBannerId Condition="'$(Configuration)' != 'Debug'">$(AdMobBannerProd)</AdMobBannerId>
 	</PropertyGroup>
+
+	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+			<_Parameter1>AdMobBannerId</_Parameter1>
+			<_Parameter2>$(AdMobBannerId)</_Parameter2>
+		</AssemblyAttribute>
+	</ItemGroup>
 
 	<Target Name="ShowMapsApiKey" BeforeTargets="Build">
 		<Message Text="MapsApiKey='$(MapsApiKey)'" Importance="High" />
 		<Message Text="AndroidManifestPlaceholders='$(AndroidManifestPlaceholders)'" Importance="High" />
 	</Target>
-	
+
 </Project>

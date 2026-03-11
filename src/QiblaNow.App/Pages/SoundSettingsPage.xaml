@@ -3,100 +3,112 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.Presentation"
              x:Class="QiblaNow.App.Pages.SoundSettingsPage"
+             xmlns:app="clr-namespace:QiblaNow.App"
+             xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"   
              Title="Sound &amp; Notifications"
              BackgroundColor="{StaticResource AppBackgroundLight}"
              x:DataType="viewmodels:SettingsViewModel">
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="20,16,20,20" Spacing="16">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="20,16,20,20" Spacing="16">
-
-            <!-- Prayer Notifications -->
-            <Border Padding="18,16"
+                <!-- Prayer Notifications -->
+                <Border Padding="18,16"
                     BackgroundColor="{StaticResource White}"
                     StrokeThickness="0">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="18" />
-                </Border.StrokeShape>
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="18" />
+                    </Border.StrokeShape>
 
-                <VerticalStackLayout Spacing="14">
-                    <Label Text="Prayer Notifications"
+                    <VerticalStackLayout Spacing="14">
+                        <Label Text="Prayer Notifications"
                            FontSize="18" FontAttributes="Bold"
                            TextColor="{StaticResource OnSurfaceLight}" />
 
-                    <Label Text="Receive a notification at each prayer time."
+                        <Label Text="Receive a notification at each prayer time."
                            FontSize="13" TextColor="{StaticResource Gray600}"
                            LineBreakMode="WordWrap" />
 
-                    <BoxView HeightRequest="0.5" Color="{StaticResource Gray200}" Margin="0,2" />
+                        <BoxView HeightRequest="0.5" Color="{StaticResource Gray200}" Margin="0,2" />
 
-                    <Grid ColumnDefinitions="*,Auto"
+                        <Grid ColumnDefinitions="*,Auto"
                           RowDefinitions="Auto,Auto,Auto,Auto,Auto"
                           RowSpacing="12"
                           Margin="0,2,0,0">
 
-                        <Label Grid.Row="0" Grid.Column="0"
+                            <Label Grid.Row="0" Grid.Column="0"
                                Text="Fajr" FontSize="15"
                                TextColor="{StaticResource OnSurfaceLight}"
                                VerticalOptions="Center" />
-                        <Switch Grid.Row="0" Grid.Column="1"
+                            <Switch Grid.Row="0" Grid.Column="1"
                                 IsToggled="{Binding FajrEnabled}"
                                 OnColor="{StaticResource Primary}" />
 
-                        <Label Grid.Row="1" Grid.Column="0"
+                            <Label Grid.Row="1" Grid.Column="0"
                                Text="Dhuhr" FontSize="15"
                                TextColor="{StaticResource OnSurfaceLight}"
                                VerticalOptions="Center" />
-                        <Switch Grid.Row="1" Grid.Column="1"
+                            <Switch Grid.Row="1" Grid.Column="1"
                                 IsToggled="{Binding DhuhrEnabled}"
                                 OnColor="{StaticResource Primary}" />
 
-                        <Label Grid.Row="2" Grid.Column="0"
+                            <Label Grid.Row="2" Grid.Column="0"
                                Text="Asr" FontSize="15"
                                TextColor="{StaticResource OnSurfaceLight}"
                                VerticalOptions="Center" />
-                        <Switch Grid.Row="2" Grid.Column="1"
+                            <Switch Grid.Row="2" Grid.Column="1"
                                 IsToggled="{Binding AsrEnabled}"
                                 OnColor="{StaticResource Primary}" />
 
-                        <Label Grid.Row="3" Grid.Column="0"
+                            <Label Grid.Row="3" Grid.Column="0"
                                Text="Maghrib" FontSize="15"
                                TextColor="{StaticResource OnSurfaceLight}"
                                VerticalOptions="Center" />
-                        <Switch Grid.Row="3" Grid.Column="1"
+                            <Switch Grid.Row="3" Grid.Column="1"
                                 IsToggled="{Binding MaghribEnabled}"
                                 OnColor="{StaticResource Primary}" />
 
-                        <Label Grid.Row="4" Grid.Column="0"
+                            <Label Grid.Row="4" Grid.Column="0"
                                Text="Isha" FontSize="15"
                                TextColor="{StaticResource OnSurfaceLight}"
                                VerticalOptions="Center" />
-                        <Switch Grid.Row="4" Grid.Column="1"
+                            <Switch Grid.Row="4" Grid.Column="1"
                                 IsToggled="{Binding IshaEnabled}"
                                 OnColor="{StaticResource Primary}" />
 
-                    </Grid>
-                </VerticalStackLayout>
-            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
 
-            <!-- Adhan Sound (future) -->
-            <Border Padding="18,16"
+                <!-- Adhan Sound (future) -->
+                <Border Padding="18,16"
                     BackgroundColor="{StaticResource White}"
                     StrokeThickness="0">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="18" />
-                </Border.StrokeShape>
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="18" />
+                    </Border.StrokeShape>
 
-                <VerticalStackLayout Spacing="10">
-                    <Label Text="Adhan Sound"
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Adhan Sound"
                            FontSize="18" FontAttributes="Bold"
                            TextColor="{StaticResource OnSurfaceLight}" />
-                    <Label Text="Adhan sound selection — coming soon."
+                        <Label Text="Adhan sound selection — coming soon."
                            FontSize="13" TextColor="{StaticResource Gray500}"
                            LineBreakMode="WordWrap" />
-                </VerticalStackLayout>
-            </Border>
+                    </VerticalStackLayout>
+                </Border>
 
-        </VerticalStackLayout>
-    </ScrollView>
+            </VerticalStackLayout>
+        </ScrollView>
 
+        <Border Grid.Row="1"
+                BackgroundColor="{StaticResource White}"
+                StrokeThickness="0"
+                Padding="0,4">
+            <admob:MTAdView
+               x:Name="BottomBanner"                
+                HorizontalOptions="Center" />
+        </Border>
+
+    </Grid>
 </ContentPage>

@@ -89,7 +89,7 @@
                FontSize="12" />
             </VerticalStackLayout>
         </Border>
-        
+
         <maps:Map Grid.Row="1"
                   x:Name="QiblaMap"
                   Margin="12,0,12,12" />

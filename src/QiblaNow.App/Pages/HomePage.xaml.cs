@@ -11,6 +11,10 @@ public partial class HomePage : ContentPage
         InitializeComponent();
         _vm = vm;
         BindingContext = vm;
+
+#if ANDROID
+        BottomBanner.AdsId = AdMobConfig.BannerId;
+#endif
     }
 
     protected override void OnAppearing()

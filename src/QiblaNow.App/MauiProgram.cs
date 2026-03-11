@@ -1,5 +1,6 @@
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
+using Plugin.MauiMtAdmob;
 using QiblaNow.App.Pages;
 using QiblaNow.App.Services;
 using QiblaNow.Core;
@@ -18,6 +19,7 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .UseMauiMaps()
+            .UseMauiMTAdmob()
             .UseMauiCommunityToolkit()
             .ConfigureFonts(fonts =>
             {
