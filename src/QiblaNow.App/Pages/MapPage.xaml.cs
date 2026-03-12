@@ -287,7 +287,7 @@ public partial class MapPage : ContentPage
 
     private async void OnInfoClicked(object? sender, EventArgs e)
     {
-        await DisplayAlert(
+        await DisplayAlertAsync(
             "How Qibla is shown",
             "The true Qibla direction is the shortest path on the Earth's surface toward Mecca.\n\n" +
             "On a globe, that path is a great-circle route.\n" +

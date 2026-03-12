@@ -43,7 +43,7 @@ public class PrayerAlarmReceiver : BroadcastReceiver
             }
             finally
             {
-                pending.Finish();
+                pending?.Finish();
             }
         });
     }
