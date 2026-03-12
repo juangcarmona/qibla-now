@@ -1,23 +1,152 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.Presentation"
+             xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"
              x:Class="QiblaNow.App.Pages.QiblaPage"
-             xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"  
+             x:DataType="viewmodels:MapViewModel"
+             BackgroundColor="{StaticResource AppBackgroundLight}"
              Title="Qibla">
-    <Grid RowDefinitions="*,Auto">
-        <VerticalStackLayout Grid.Row="0">
-            <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-        </VerticalStackLayout>
-        <Border Grid.Row="1"
-             BackgroundColor="{StaticResource White}"
-             StrokeThickness="0"
-             Padding="0,4">
-            <admob:MTAdView
-                x:Name="BottomBanner"                
-                 HorizontalOptions="Center" />
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Top information panel -->
+        <Border Grid.Row="0"
+                Margin="12,12,12,8"
+                Padding="14"
+                BackgroundColor="{StaticResource White}"
+                StrokeThickness="1">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="14" />
+            </Border.StrokeShape>
+
+            <VerticalStackLayout Spacing="10">
+
+                <Label Text="{Binding LocationLabel}"
+                       FontAttributes="Bold"
+                       FontSize="18"
+                       TextColor="{StaticResource OnSurfaceLight}"
+                       HorizontalTextAlignment="Center" />
+
+                <Grid ColumnDefinitions="*,*,*"
+                      ColumnSpacing="12">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="Qibla"
+                               FontSize="12"
+                               TextColor="{StaticResource Gray600}"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding QiblaBearingText}"
+                               FontAttributes="Bold"
+                               FontSize="18"
+                               TextColor="{StaticResource OnSurfaceLight}"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="2">
+                        <Label Text="Heading"
+                               FontSize="12"
+                               TextColor="{StaticResource Gray600}"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding DeviceHeadingText}"
+                               FontAttributes="Bold"
+                               FontSize="18"
+                               TextColor="{StaticResource OnSurfaceLight}"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="2" Spacing="2">
+                        <Label Text="Error"
+                               FontSize="12"
+                               TextColor="{StaticResource Gray600}"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding HeadingErrorText}"
+                               FontAttributes="Bold"
+                               FontSize="18"
+                               TextColor="{StaticResource OnSurfaceLight}"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Grid>
+
+                <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
+                    <Label Text="{Binding TurnArrowText}"
+                           IsVisible="{Binding ShowTurnArrow}"
+                           FontSize="34"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center"
+                           HorizontalOptions="Center"
+                           TextColor="{StaticResource Tertiary}" />
+
+                    <Label Text="{Binding GuidanceText}"
+                           FontAttributes="Bold"
+                           FontSize="22"
+                           HorizontalTextAlignment="Center"
+                           HorizontalOptions="Center"
+                           TextColor="{StaticResource OnSurfaceLight}" />
+                </VerticalStackLayout>
+
+                <Label Text="{Binding ErrorMessage}"
+                       IsVisible="{Binding HasError}"
+                       FontSize="12"
+                       TextColor="{StaticResource Magenta}" />
+
+            </VerticalStackLayout>
         </Border>
+
+        <!-- Compass visual -->
+        <VerticalStackLayout Grid.Row="1"
+                             VerticalOptions="Center"
+                             HorizontalOptions="Center"
+                             Spacing="16"
+                             Padding="24,0">
+
+            <Grid WidthRequest="280"
+                  HeightRequest="280"
+                  HorizontalOptions="Center"
+                  VerticalOptions="Center">
+
+                <!-- Compass board (rotates with device so North stays up on screen) -->
+                <Image Source="compass.svg"
+                       WidthRequest="280"
+                       HeightRequest="280"
+                       Aspect="AspectFit"
+                       AnchorX="0.5"
+                       AnchorY="0.5"
+                       Rotation="{Binding CompassBoardRotation}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+
+                <!-- Qibla arrow (points to Qibla relative to device orientation) -->
+                <Image Source="arrow.svg"
+                       WidthRequest="280"
+                       HeightRequest="280"
+                       Aspect="AspectFit"
+                       AnchorX="0.5"
+                       AnchorY="0.5"
+                       Rotation="{Binding CompassArrowRotation}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+            </Grid>
+
+            <!-- Direction caption -->
+            <Label Text="{Binding QiblaBearingCaption}"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center"
+                   FontSize="16"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource OnSurfaceLight}" />
+
+        </VerticalStackLayout>
+
+        <!-- Ad banner -->
+        <Border Grid.Row="2"
+                BackgroundColor="{StaticResource White}"
+                StrokeThickness="0"
+                Padding="0,4">
+            <admob:MTAdView
+                x:Name="BottomBanner"
+                HorizontalOptions="Center" />
+        </Border>
+
     </Grid>
 </ContentPage>
+

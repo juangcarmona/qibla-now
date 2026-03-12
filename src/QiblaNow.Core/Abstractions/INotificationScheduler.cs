@@ -24,4 +24,14 @@ public interface INotificationScheduler
     /// Must be idempotent — safe to call on app startup, boot, and timezone change.
     /// </summary>
     Task ReconcileOnStartupAsync();
+
+    /// <summary>
+    /// Handles the event triggered by an alarm for a specific prayer type asynchronously.
+    /// </summary>
+    /// <remarks>This method is intended to be called when an alarm for a prayer is triggered, allowing for
+    /// appropriate actions to be taken based on the prayer type.</remarks>
+    /// <param name="prayerType">The type of prayer associated with the alarm that was triggered. This parameter influences the behavior of the
+    /// method based on the specific prayer type being handled.</param>
+    /// <returns>A task representing the asynchronous operation of handling the alarm.</returns>
+    Task HandleAlarmTriggeredAsync(PrayerType prayerType);
 }

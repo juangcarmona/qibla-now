@@ -39,11 +39,16 @@ public static class MauiProgram
         builder.Services.AddPresentationServices();
 
 #if ANDROID
+        builder.Services.AddSingleton<Android.Content.Context>(Android.App.Application.Context);
         builder.Services.AddSingleton<INotificationScheduler, Platforms.Android.AndroidNotificationScheduler>();
+#else
+        builder.Services.AddSingleton<INotificationScheduler, QiblaNow.Core.Abstractions.NullNotificationScheduler>();
 #endif
 
         builder.Services.AddTransient<MapViewModel>();
         builder.Services.AddTransient<MapPage>();
+
+        builder.Services.AddTransient<QiblaPage>();
 
         builder.Services.AddTransient<SettingsPage>();
         builder.Services.AddTransient<LocationSettingsPage>();

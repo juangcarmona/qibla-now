@@ -6,11 +6,11 @@ namespace QiblaNow.Core.Models;
 /// </summary>
 public sealed class PrayerNotificationSettings
 {
-    public bool FajrEnabled { get; set; } = false;
-    public bool DhuhrEnabled { get; set; } = false;
-    public bool AsrEnabled { get; set; } = false;
-    public bool MaghribEnabled { get; set; } = false;
-    public bool IshaEnabled { get; set; } = false;
+    public bool FajrEnabled { get; set; } = true;
+    public bool DhuhrEnabled { get; set; } = true;
+    public bool AsrEnabled { get; set; } = true;
+    public bool MaghribEnabled { get; set; } = true;
+    public bool IshaEnabled { get; set; } = true;
 
     /// <summary>
     /// Checks if any prayer notification is enabled

@@ -10,6 +10,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 {
     private readonly ISettingsStore   _settingsStore;
     private readonly ILocationService _locationService;
+    private readonly INotificationScheduler _notificationScheduler;
 
     [ObservableProperty] private LocationMode _locationMode;
     [ObservableProperty] private string _latitude     = string.Empty;
@@ -44,31 +45,37 @@ public sealed partial class SettingsViewModel : ObservableObject
     public bool FajrEnabled
     {
         get => NotificationSettings.FajrEnabled;
-        set { NotificationSettings.FajrEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); OnPropertyChanged(nameof(NotificationSummary)); _settingsStore.SaveNotificationSettings(NotificationSettings); }
+        set { NotificationSettings.FajrEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); OnPropertyChanged(nameof(NotificationSummary)); SaveAndReconcileNotifications(); }
     }
 
     public bool DhuhrEnabled
     {
         get => NotificationSettings.DhuhrEnabled;
-        set { NotificationSettings.DhuhrEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); OnPropertyChanged(nameof(NotificationSummary)); _settingsStore.SaveNotificationSettings(NotificationSettings); }
+        set { NotificationSettings.DhuhrEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); OnPropertyChanged(nameof(NotificationSummary)); SaveAndReconcileNotifications(); }
     }
 
     public bool AsrEnabled
     {
         get => NotificationSettings.AsrEnabled;
-        set { NotificationSettings.AsrEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); OnPropertyChanged(nameof(NotificationSummary)); _settingsStore.SaveNotificationSettings(NotificationSettings); }
+        set { NotificationSettings.AsrEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); OnPropertyChanged(nameof(NotificationSummary)); SaveAndReconcileNotifications(); }
     }
 
     public bool MaghribEnabled
     {
         get => NotificationSettings.MaghribEnabled;
-        set { NotificationSettings.MaghribEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); OnPropertyChanged(nameof(NotificationSummary)); _settingsStore.SaveNotificationSettings(NotificationSettings); }
+        set { NotificationSettings.MaghribEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); OnPropertyChanged(nameof(NotificationSummary)); SaveAndReconcileNotifications(); }
     }
 
     public bool IshaEnabled
     {
         get => NotificationSettings.IshaEnabled;
-        set { NotificationSettings.IshaEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); OnPropertyChanged(nameof(NotificationSummary)); _settingsStore.SaveNotificationSettings(NotificationSettings); }
+        set { NotificationSettings.IshaEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); OnPropertyChanged(nameof(NotificationSummary)); SaveAndReconcileNotifications(); }
+    }
+
+    private void SaveAndReconcileNotifications()
+    {
+        _settingsStore.SaveNotificationSettings(NotificationSettings);
+        _ = _notificationScheduler.ReconcileOnStartupAsync();
     }
 
     public bool AnyNotificationEnabled => NotificationSettings.IsAnyEnabled;
@@ -202,10 +209,11 @@ public sealed partial class SettingsViewModel : ObservableObject
         OnPropertyChanged(nameof(AnyNotificationEnabled));
     }
 
-    public SettingsViewModel(ISettingsStore settingsStore, ILocationService locationService)
+    public SettingsViewModel(ISettingsStore settingsStore, ILocationService locationService, INotificationScheduler notificationScheduler)
     {
-        _settingsStore   = settingsStore;
-        _locationService = locationService;
+        _settingsStore          = settingsStore;
+        _locationService        = locationService;
+        _notificationScheduler  = notificationScheduler;
 
         // Initialise from persisted state
         _calculationSettings  = _settingsStore.GetCalculationSettings();

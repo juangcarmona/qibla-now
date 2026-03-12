@@ -9,6 +9,8 @@ public sealed partial class PrayerTimesViewModel : ObservableObject
 {
     private readonly IPrayerTimesCalculator _calculator;
     private readonly ISettingsStore _settingsStore;
+    private readonly INotificationScheduler _notificationScheduler;
+
     private CancellationTokenSource? _countdownCts;
 
     [ObservableProperty] private DailyPrayerSchedule? _schedule;
@@ -17,10 +19,14 @@ public sealed partial class PrayerTimesViewModel : ObservableObject
     [ObservableProperty] private bool   _isLoading;
     [ObservableProperty] private string? _error;
 
-    public PrayerTimesViewModel(IPrayerTimesCalculator calculator, ISettingsStore settingsStore)
+    public PrayerTimesViewModel(
+        IPrayerTimesCalculator calculator, 
+        ISettingsStore settingsStore,
+        INotificationScheduler notificationScheduler)
     {
-        _calculator    = calculator;
-        _settingsStore = settingsStore;
+        _calculator             = calculator;
+        _settingsStore          = settingsStore;
+        _notificationScheduler  = notificationScheduler;
     }
 
     [RelayCommand]
@@ -48,28 +54,30 @@ public sealed partial class PrayerTimesViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Toggles the notification flag for a specific prayer and persists it.
-    /// Does NOT call Reset() — toggles only the targeted prayer.
-    /// </summary>
     [RelayCommand]
-    private void TogglePrayerNotification(PrayerType type)
+    private async Task TogglePrayerNotificationAsync(PrayerType type)
     {
         var s = _settingsStore.GetNotificationSettings();
+
         switch (type)
         {
-            case PrayerType.Fajr:    s.FajrEnabled    = !s.FajrEnabled;    break;
-            case PrayerType.Dhuhr:   s.DhuhrEnabled   = !s.DhuhrEnabled;   break;
-            case PrayerType.Asr:     s.AsrEnabled     = !s.AsrEnabled;     break;
+            case PrayerType.Fajr: s.FajrEnabled = !s.FajrEnabled; break;
+            case PrayerType.Dhuhr: s.DhuhrEnabled = !s.DhuhrEnabled; break;
+            case PrayerType.Asr: s.AsrEnabled = !s.AsrEnabled; break;
             case PrayerType.Maghrib: s.MaghribEnabled = !s.MaghribEnabled; break;
-            case PrayerType.Isha:    s.IshaEnabled    = !s.IshaEnabled;    break;
+            case PrayerType.Isha: s.IshaEnabled = !s.IshaEnabled; break;
         }
+
         _settingsStore.SaveNotificationSettings(s);
+
         OnPropertyChanged(nameof(FajrEnabled));
         OnPropertyChanged(nameof(DhuhrEnabled));
         OnPropertyChanged(nameof(AsrEnabled));
         OnPropertyChanged(nameof(MaghribEnabled));
         OnPropertyChanged(nameof(IshaEnabled));
         OnPropertyChanged(nameof(AnyNotificationEnabled));
+
+        await _notificationScheduler.ReconcileOnStartupAsync();
     }
 
     public bool FajrEnabled            => _settingsStore.GetNotificationSettings().FajrEnabled;

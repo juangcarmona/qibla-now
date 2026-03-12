@@ -305,25 +305,16 @@ public sealed class PrayerTimesCalculator : IPrayerTimesCalculator
 
     // ── Utilities ───────────────────────────────────────────────────────────
 
-    /// <summary>Converts fractional hours to a rounded-to-nearest-minute DateTimeOffset.</summary>
+    /// <summary>Converts fractional UTC hours to a rounded-to-nearest-minute DateTimeOffset.
+    /// Handles hours >= 24 (rolls to next day) and &lt; 0 (rolls to previous day).</summary>
     private static DateTimeOffset ToDate(DateTimeOffset date, double hours)
     {
         if (double.IsNaN(hours))
             hours = 0;
 
-        // Round total minutes first, then split into h/m
         int totalMinutes = (int)Math.Round(hours * 60);
-        int h = totalMinutes / 60;
-        int m = totalMinutes % 60;
-
-        // Clamp to valid hour range (handles edge-case overflow from rounding)
-        h = Math.Clamp(h, 0, 23);
-        m = Math.Clamp(m, 0, 59);
-
-        return new DateTimeOffset(
-            date.Year, date.Month, date.Day,
-            h, m, 0,
-            TimeSpan.Zero);
+        var midnight = new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, TimeSpan.Zero);
+        return midnight.AddMinutes(totalMinutes);
     }
 
     private static double FixAngle(double a)

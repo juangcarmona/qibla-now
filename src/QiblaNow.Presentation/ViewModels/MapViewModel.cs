@@ -76,6 +76,35 @@ public sealed partial class MapViewModel : ObservableObject
 
     public string InfoText => "Gold ray = local Qibla. Green curve = great-circle path. Dark green line = flat-map reference.";
 
+    public string QiblaBearingCaption
+    {
+        get
+        {
+            if (!HasLocation)
+                return string.Empty;
+
+            var b = QiblaBearing;
+            if (b < 90.0)
+                return $"Qibla: {b:0}° from North to East";
+            if (b < 180.0)
+                return $"Qibla: {180.0 - b:0}° from South to East";
+            if (b < 270.0)
+                return $"Qibla: {b - 180.0:0}° from South to West";
+            return $"Qibla: {360.0 - b:0}° from North to West";
+        }
+    }
+
+    /// <summary>
+    /// Rotates the compass board opposite to the device heading so it tracks North.
+    /// </summary>
+    public double CompassBoardRotation => -DeviceHeading;
+
+    /// <summary>
+    /// Rotates the Qibla arrow to the real local Qibla direction relative to the
+    /// device's current orientation. When the device faces Qibla this equals 0.
+    /// </summary>
+    public double CompassArrowRotation => NormalizeDegrees(QiblaBearing - DeviceHeading);
+
     public double TargetLatitude => MeccaLatitude;
     public double TargetLongitude => MeccaLongitude;
 
@@ -85,8 +114,19 @@ public sealed partial class MapViewModel : ObservableObject
     }
 
     partial void OnErrorMessageChanged(string value) => OnPropertyChanged(nameof(HasError));
-    partial void OnQiblaBearingChanged(double value) => OnPropertyChanged(nameof(QiblaBearingText));
-    partial void OnDeviceHeadingChanged(double value) => OnPropertyChanged(nameof(DeviceHeadingText));
+    partial void OnQiblaBearingChanged(double value)
+    {
+        OnPropertyChanged(nameof(QiblaBearingText));
+        OnPropertyChanged(nameof(QiblaBearingCaption));
+        OnPropertyChanged(nameof(CompassArrowRotation));
+    }
+
+    partial void OnDeviceHeadingChanged(double value)
+    {
+        OnPropertyChanged(nameof(DeviceHeadingText));
+        OnPropertyChanged(nameof(CompassBoardRotation));
+        OnPropertyChanged(nameof(CompassArrowRotation));
+    }
 
     partial void OnHeadingErrorChanged(double value)
     {
@@ -107,6 +147,9 @@ public sealed partial class MapViewModel : ObservableObject
         OnPropertyChanged(nameof(HeadingErrorText));
         OnPropertyChanged(nameof(AlignmentText));
         OnPropertyChanged(nameof(GuidanceText));
+        OnPropertyChanged(nameof(QiblaBearingCaption));
+        OnPropertyChanged(nameof(CompassBoardRotation));
+        OnPropertyChanged(nameof(CompassArrowRotation));
     }
 
     public async Task LoadAsync()

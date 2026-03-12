@@ -35,12 +35,25 @@ public sealed partial class HomeViewModel : ObservableObject
     // ── Loading ──────────────────────────────────────────────────────────────
     [ObservableProperty] private bool _isLoading;
 
+    // ── Next-prayer alarm indicator ──────────────────────────────────────────
+    [ObservableProperty] private bool _nextPrayerAlarmEnabled;
+
     // ── Prayer rows ──────────────────────────────────────────────────────────
     public ObservableCollection<PrayerRowItem> PrayerRows { get; } = new();
 
     // ── Internal state ───────────────────────────────────────────────────────
     private DateOnly _selectedDate;
     private CancellationTokenSource? _countdownCts;
+
+    // Sentinel used to find the next prayer regardless of notification settings.
+    private static readonly PrayerNotificationSettings _allEnabled = new()
+    {
+        FajrEnabled    = true,
+        DhuhrEnabled   = true,
+        AsrEnabled     = true,
+        MaghribEnabled = true,
+        IshaEnabled    = true,
+    };
 
     public HomeViewModel(
         ISettingsStore settingsStore,
@@ -115,23 +128,25 @@ public sealed partial class HomeViewModel : ObservableObject
 
                 var now = DateTimeOffset.UtcNow;
 
-                var nextResult = await _calculator.CalculateNextPrayerAsync(
+                // Use _allEnabled so next-prayer display is never gated on notification prefs.
+                var nextForDisplay = await _calculator.CalculateNextPrayerAsync(
                     schedule,
-                    notifSettings,
+                    _allEnabled,
                     now);
 
-                if (nextResult is not null)
+                var countdownForDisplay = await _calculator.CalculateCountdownAsync(
+                    schedule,
+                    _allEnabled,
+                    now);
+
+                if (nextForDisplay is not null)
                 {
-                    NextPrayerName = nextResult.Type.ToString();
-                    NextPrayerTime = nextResult.Time.ToLocalTime().ToString("HH:mm");
+                    NextPrayerName        = nextForDisplay.Type.ToString();
+                    NextPrayerTime        = nextForDisplay.Time.ToLocalTime().ToString("HH:mm");
+                    NextPrayerAlarmEnabled = IsNotifEnabled(notifSettings, nextForDisplay.Type);
 
-                    var countdown = await _calculator.CalculateCountdownAsync(
-                        schedule,
-                        notifSettings,
-                        now);
-
-                    NextPrayerCountdown = countdown is not null
-                        ? FormatCountdown(countdown.RemainingSeconds)
+                    NextPrayerCountdown = countdownForDisplay is not null
+                        ? FormatCountdown(countdownForDisplay.RemainingSeconds)
                         : "00:00:00";
 
                     StartCountdownTimer(schedule);
@@ -177,7 +192,8 @@ public sealed partial class HomeViewModel : ObservableObject
                 PrayerRows.Add(new PrayerRowItem(
                     prayer.Type.ToString(),
                     prayer.DateTime.ToLocalTime().ToString("HH:mm"),
-                    highlightedPrayer.HasValue && prayer.Type == highlightedPrayer.Value.Type));
+                    highlightedPrayer.HasValue && prayer.Type == highlightedPrayer.Value.Type,
+                    IsNotifEnabled(notifSettings, prayer.Type)));
             }
         }
         finally
@@ -199,6 +215,9 @@ public sealed partial class HomeViewModel : ObservableObject
 
     [RelayCommand]
     private async Task GoSettings() => await Shell.Current.GoToAsync("settings");
+
+    [RelayCommand]
+    private async Task GoNotificationSettings() => await Shell.Current.GoToAsync("sound-settings");
 
     // ── Day navigation commands ──────────────────────────────────────────────
 
@@ -247,17 +266,17 @@ public sealed partial class HomeViewModel : ObservableObject
                     return;
                 }
 
-                var now = DateTimeOffset.UtcNow;
-                var notifSettings = _settingsStore.GetNotificationSettings();
+                var now             = DateTimeOffset.UtcNow;
+                var notifSettings   = _settingsStore.GetNotificationSettings();
 
                 var countdown = await _calculator.CalculateCountdownAsync(
                     schedule,
-                    notifSettings,
+                    _allEnabled,
                     now);
 
                 var nextResult = await _calculator.CalculateNextPrayerAsync(
                     schedule,
-                    notifSettings,
+                    _allEnabled,
                     now);
 
                 Microsoft.Maui.ApplicationModel.MainThread.BeginInvokeOnMainThread(() =>
@@ -268,16 +287,22 @@ public sealed partial class HomeViewModel : ObservableObject
 
                     if (nextResult is not null)
                     {
-                        NextPrayerName = nextResult.Type.ToString();
-                        NextPrayerTime = nextResult.Time.ToLocalTime().ToString("HH:mm");
+                        NextPrayerName         = nextResult.Type.ToString();
+                        NextPrayerTime         = nextResult.Time.ToLocalTime().ToString("HH:mm");
+                        NextPrayerAlarmEnabled = IsNotifEnabled(notifSettings, nextResult.Type);
 
+                        var liveNotifSettings = _settingsStore.GetNotificationSettings();
                         for (var i = 0; i < PrayerRows.Count; i++)
                         {
                             var row = PrayerRows[i];
-                            PrayerRows[i] = new PrayerRowItem(
-                                row.Name,
-                                row.Time,
-                                row.Name == NextPrayerName);
+                            if (Enum.TryParse<PrayerType>(row.Name, out var rowType))
+                            {
+                                PrayerRows[i] = new PrayerRowItem(
+                                    row.Name,
+                                    row.Time,
+                                    row.Name == NextPrayerName,
+                                    IsNotifEnabled(liveNotifSettings, rowType));
+                            }
                         }
                     }
                 });
@@ -332,5 +357,15 @@ public sealed partial class HomeViewModel : ObservableObject
         CalculationMethod.Kuwait => "Kuwait",
         CalculationMethod.UmmAlQura => "Umm al-Qura",
         _ => method.ToString()
+    };
+
+    private static bool IsNotifEnabled(PrayerNotificationSettings s, PrayerType type) => type switch
+    {
+        PrayerType.Fajr    => s.FajrEnabled,
+        PrayerType.Dhuhr   => s.DhuhrEnabled,
+        PrayerType.Asr     => s.AsrEnabled,
+        PrayerType.Maghrib => s.MaghribEnabled,
+        PrayerType.Isha    => s.IshaEnabled,
+        _                  => false,
     };
 }

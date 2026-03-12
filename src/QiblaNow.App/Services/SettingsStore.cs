@@ -154,11 +154,11 @@ public sealed class SettingsStore : ISettingsStore
         {
             var settings = new PrayerNotificationSettings
             {
-                FajrEnabled = Preferences.Default.Get("fajr_enabled", false),
-                DhuhrEnabled = Preferences.Default.Get("dhuhr_enabled", false),
-                AsrEnabled = Preferences.Default.Get("asr_enabled", false),
-                MaghribEnabled = Preferences.Default.Get("maghrib_enabled", false),
-                IshaEnabled = Preferences.Default.Get("isha_enabled", false)
+                FajrEnabled    = Preferences.Default.Get("fajr_enabled",    true),
+                DhuhrEnabled   = Preferences.Default.Get("dhuhr_enabled",   true),
+                AsrEnabled     = Preferences.Default.Get("asr_enabled",     true),
+                MaghribEnabled = Preferences.Default.Get("maghrib_enabled", true),
+                IshaEnabled    = Preferences.Default.Get("isha_enabled",    true)
             };
             return settings;
         }

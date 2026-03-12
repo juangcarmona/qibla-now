@@ -1,14 +1,10 @@
 using Android.Content;
 using Microsoft.Extensions.DependencyInjection;
 using QiblaNow.Core.Abstractions;
+using QiblaNow.Core.Models;
 
 namespace QiblaNow.App.Platforms.Android;
 
-/// <summary>
-/// BroadcastReceiver that fires when a scheduled prayer alarm triggers.
-/// Shows the notification and schedules the next alarm via ReconcileOnStartupAsync.
-/// Exported=false: only the AlarmManager (same app) can trigger this.
-/// </summary>
 [BroadcastReceiver(
     Enabled = true,
     Exported = false,
@@ -19,7 +15,14 @@ public class PrayerAlarmReceiver : BroadcastReceiver
 
     public override void OnReceive(Context? context, Intent? intent)
     {
-        if (context == null || intent == null) return;
+        if (context == null || intent == null)
+            return;
+
+        var prayerTypeValue = intent.GetIntExtra(ExtraPrayerType, -1);
+        if (prayerTypeValue < 0 || !Enum.IsDefined(typeof(PrayerType), prayerTypeValue))
+            return;
+
+        var prayerType = (PrayerType)prayerTypeValue;
 
         var pending = GoAsync();
         _ = Task.Run(async () =>
@@ -30,13 +33,13 @@ public class PrayerAlarmReceiver : BroadcastReceiver
                     .GetService<INotificationScheduler>();
 
                 if (scheduler != null)
-                    await scheduler.ReconcileOnStartupAsync();
+                    await scheduler.HandleAlarmTriggeredAsync(prayerType);
                 else
                     System.Diagnostics.Debug.WriteLine("PrayerAlarmReceiver: INotificationScheduler not available");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"PrayerAlarmReceiver error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"PrayerAlarmReceiver error: {ex}");
             }
             finally
             {
