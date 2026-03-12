@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using QiblaNow.Core.Abstractions;
@@ -31,6 +32,10 @@ public sealed partial class HomeViewModel : ObservableObject
     [ObservableProperty] private bool _isToday;
 
     public bool IsNotToday => !IsToday;
+
+    // ── Hijri date ───────────────────────────────────────────────────────────
+    [ObservableProperty] private string _hijriDateLabel = string.Empty;
+    [ObservableProperty] private bool _hasHijriDate;
 
     // ── Loading ──────────────────────────────────────────────────────────────
     [ObservableProperty] private bool _isLoading;
@@ -66,6 +71,8 @@ public sealed partial class HomeViewModel : ObservableObject
 
         _selectedDate = DateOnly.FromDateTime(DateTime.Today);
         SelectedDateLabel = FormatSelectedDate(_selectedDate);
+        HijriDateLabel = FormatHijriDate(_selectedDate);
+        HasHijriDate = !string.IsNullOrEmpty(HijriDateLabel);
     }
 
     partial void OnIsTodayChanged(bool value) => OnPropertyChanged(nameof(IsNotToday));
@@ -81,6 +88,8 @@ public sealed partial class HomeViewModel : ObservableObject
             var today = DateOnly.FromDateTime(DateTime.Today);
             IsToday = _selectedDate == today;
             SelectedDateLabel = FormatSelectedDate(_selectedDate);
+            HijriDateLabel = FormatHijriDate(_selectedDate);
+            HasHijriDate = !string.IsNullOrEmpty(HijriDateLabel);
             ShowLiveCountdown = IsToday;
 
             var location = await _locationService.GetCurrentLocationAsync();
@@ -318,6 +327,33 @@ public sealed partial class HomeViewModel : ObservableObject
     }
 
     // ── Formatting helpers ───────────────────────────────────────────────────
+
+    private static readonly string[] _hijriMonthNames =
+    [
+        "Muharram", "Safar", "Rabi' al-Awwal", "Rabi' al-Thani",
+        "Jumada al-Awwal", "Jumada al-Thani", "Rajab", "Sha'ban",
+        "Ramadan", "Shawwal", "Dhu al-Qa'dah", "Dhu al-Hijjah"
+    ];
+
+    private static string FormatHijriDate(DateOnly date)
+    {
+        try
+        {
+            var cal = new HijriCalendar();
+            var dt  = date.ToDateTime(TimeOnly.MinValue);
+            var day   = cal.GetDayOfMonth(dt);
+            var month = cal.GetMonth(dt);
+            var year  = cal.GetYear(dt);
+            var name  = month >= 1 && month <= 12
+                ? _hijriMonthNames[month - 1]
+                : month.ToString();
+            return $"{day} {name} {year} AH";
+        }
+        catch
+        {
+            return string.Empty;
+        }
+    }
 
     private static string FormatCountdown(int totalSeconds)
     {

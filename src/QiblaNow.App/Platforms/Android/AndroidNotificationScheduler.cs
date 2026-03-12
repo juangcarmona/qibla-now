@@ -1,7 +1,6 @@
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
-using Android.OS;
 using AndroidX.Core.App;
 using QiblaNow.Core.Abstractions;
 using QiblaNow.Core.Models;
@@ -48,7 +47,7 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
 
             var triggerAtMillis = candidate.ScheduledTime.ToUnixTimeMilliseconds();
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.S && !alarmManager.CanScheduleExactAlarms())
+            if (OperatingSystem.IsAndroidVersionAtLeast(31) && !alarmManager.CanScheduleExactAlarms())
             {
                 System.Diagnostics.Debug.WriteLine("Exact alarm permission not granted; falling back to inexact alarm.");
                 alarmManager.SetAndAllowWhileIdle(AlarmType.RtcWakeup, triggerAtMillis, pendingIntent);
@@ -186,7 +185,7 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
 
     private void CreateNotificationChannel()
     {
-        if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+        if (!OperatingSystem.IsAndroidVersionAtLeast(26))
             return;
 
         var channel = new NotificationChannel(
@@ -205,7 +204,7 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
     {
         CreateNotificationChannel();
 
-        if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu &&
+        if (OperatingSystem.IsAndroidVersionAtLeast(33) &&
             _context.CheckSelfPermission(global::Android.Manifest.Permission.PostNotifications) != Permission.Granted)
         {
             System.Diagnostics.Debug.WriteLine("POST_NOTIFICATIONS not granted; notification suppressed.");
@@ -253,6 +252,11 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
         }
 
         var manager = NotificationManagerCompat.From(_context);
+        if (manager == null)
+        {
+            System.Diagnostics.Debug.WriteLine("NotificationManagerCompat unavailable.");
+            return;
+        }
         manager.Notify((int)prayerType, notification);
     }
 }

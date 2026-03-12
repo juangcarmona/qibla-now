@@ -43,7 +43,7 @@ namespace QiblaNow.App
 
         private void EnsureExactAlarmAccess()
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.S)
+            if (!OperatingSystem.IsAndroidVersionAtLeast(31))
                 return;
 
             var alarmManager = GetSystemService(AlarmService) as AlarmManager;

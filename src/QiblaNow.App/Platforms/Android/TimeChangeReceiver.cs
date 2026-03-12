@@ -42,7 +42,7 @@ public class TimeChangeReceiver : BroadcastReceiver
             }
             finally
             {
-                pending.Finish();
+                pending?.Finish();
             }
         });
     }
