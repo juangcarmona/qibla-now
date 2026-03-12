@@ -9,13 +9,15 @@ namespace QiblaNow.App
     [Activity(Theme = "@style/Maui.SplashTheme", MainLauncher = true, LaunchMode = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
     public class MainActivity : MauiAppCompatActivity
     {
-        protected override void OnCreate(Bundle? savedInstanceState)
+        protected override async void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
             {
-                Permissions.RequestAsync<Permissions.PostNotifications>();
+                var status = await Permissions.CheckStatusAsync<Permissions.PostNotifications>();
+                if (status != PermissionStatus.Granted)
+                    await Permissions.RequestAsync<Permissions.PostNotifications>();
             }
             var appId = PackageManager?
                 .GetApplicationInfo(PackageName!, PackageInfoFlags.MetaData)?
