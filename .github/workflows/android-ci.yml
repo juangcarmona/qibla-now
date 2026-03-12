@@ -1,22 +1,25 @@
-name: Build Android
+name: android-ci
 
 on:
-  push:
-    branches: [ main ]    
-    paths:
-      - 'src/QiblaNow.*/**'
-      - '.github/workflows/build-android.yml'
   pull_request:
+    branches: [main]
     paths:
       - 'src/QiblaNow.*/**'
-      - '.github/workflows/build-android.yml'
+      - '.github/workflows/android-ci.yml'
+      - '.github/workflows/android-cd.yml'
+  workflow_dispatch:
 
 jobs:
-  build-android:
+  validate:
+    name: Validate Android app
     runs-on: windows-latest
 
+    permissions:
+      contents: read
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v5
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -45,3 +48,13 @@ jobs:
 
       - name: Build Android
         run: dotnet build src/QiblaNow.App/QiblaNow.App.csproj -c Release -f net10.0-android --no-restore
+
+      - name: Publish unsigned AAB
+        run: dotnet publish src/QiblaNow.App/QiblaNow.App.csproj -c Release -f net10.0-android -p:AndroidPackageFormats=aab --no-restore
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qiblanow-android-aab-ci
+          path: src/QiblaNow.App/bin/Release/net10.0-android/publish/*.aab
+          if-no-files-found: error
