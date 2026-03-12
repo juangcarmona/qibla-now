@@ -43,12 +43,21 @@ public class DIAndViewModelTests
         public void SaveSchedulingState(SchedulingState state) { }
     }
 
+    private sealed class StubLocationService : ILocationService
+    {
+        public Task<LocationSnapshot?> GetCurrentLocationAsync() => Task.FromResult<LocationSnapshot?>(null);
+        public Task<LocationSnapshot?> RequestGpsLocationAsync() => Task.FromResult<LocationSnapshot?>(null);
+    }
+
     private static IServiceProvider BuildServices()
     {
         var services = new ServiceCollection();
         services.AddSingleton<IPrayerTimesCalculator, StubCalculator>();
         services.AddSingleton<ISettingsStore, StubSettingsStore>();
+        services.AddSingleton<ILocationService, StubLocationService>();
+        services.AddSingleton<INotificationScheduler, NullNotificationScheduler>();
         services.AddTransient<PrayerTimesViewModel>();
+        services.AddTransient<SettingsViewModel>();
         services.AddTransient<QiblaViewModel>();
         services.AddTransient<MapViewModel>();
         return services.BuildServiceProvider();
@@ -59,11 +68,13 @@ public class DIAndViewModelTests
     {
         var sp = BuildServices();
 
-        var timesViewModel  = sp.GetRequiredService<PrayerTimesViewModel>();
-        var qiblaViewModel  = sp.GetRequiredService<QiblaViewModel>();
-        var mapViewModel    = sp.GetRequiredService<MapViewModel>();
+        var timesViewModel    = sp.GetRequiredService<PrayerTimesViewModel>();
+        var settingsViewModel = sp.GetRequiredService<SettingsViewModel>();
+        var qiblaViewModel    = sp.GetRequiredService<QiblaViewModel>();
+        var mapViewModel      = sp.GetRequiredService<MapViewModel>();
 
         Assert.NotNull(timesViewModel);
+        Assert.NotNull(settingsViewModel);
         Assert.NotNull(qiblaViewModel);
         Assert.NotNull(mapViewModel);
     }
@@ -74,10 +85,12 @@ public class DIAndViewModelTests
         var sp = BuildServices();
 
         var prayerTimesViewModel = sp.GetRequiredService<PrayerTimesViewModel>();
+        var settingsViewModel    = sp.GetRequiredService<SettingsViewModel>();
         var qiblaViewModel       = sp.GetRequiredService<QiblaViewModel>();
         var mapViewModel         = sp.GetRequiredService<MapViewModel>();
 
         Assert.IsAssignableFrom<ObservableObject>(prayerTimesViewModel);
+        Assert.IsAssignableFrom<ObservableObject>(settingsViewModel);
         Assert.IsAssignableFrom<ObservableObject>(qiblaViewModel);
         Assert.IsAssignableFrom<ObservableObject>(mapViewModel);
     }

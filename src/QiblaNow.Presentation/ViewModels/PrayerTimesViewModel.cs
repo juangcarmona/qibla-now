@@ -24,8 +24,9 @@ public sealed partial class PrayerTimesViewModel : ObservableObject
         ISettingsStore settingsStore,
         INotificationScheduler notificationScheduler)
     {
-        _calculator    = calculator;
-        _settingsStore = settingsStore;
+        _calculator             = calculator;
+        _settingsStore          = settingsStore;
+        _notificationScheduler  = notificationScheduler;
     }
 
     [RelayCommand]

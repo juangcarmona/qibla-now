@@ -89,9 +89,12 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
                 if (prayerType == PrayerType.Sunrise)
                     continue;
 
-                var pendingIntent = CreateAlarmPendingIntent(prayerType);
-                alarmManager.Cancel(pendingIntent);
-                pendingIntent.Cancel();
+                var pendingIntent = FindExistingAlarmPendingIntent(prayerType);
+                if (pendingIntent != null)
+                {
+                    alarmManager.Cancel(pendingIntent);
+                    pendingIntent.Cancel();
+                }
             }
         }
         catch (Exception ex)
@@ -166,7 +169,19 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
             _context,
             (int)prayerType,
             intent,
-            PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable);
+            PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable)!;
+    }
+
+    private PendingIntent? FindExistingAlarmPendingIntent(PrayerType prayerType)
+    {
+        var intent = new Intent(_context, typeof(PrayerAlarmReceiver));
+        intent.PutExtra(PrayerTypeExtra, (int)prayerType);
+
+        return PendingIntent.GetBroadcast(
+            _context,
+            (int)prayerType,
+            intent,
+            PendingIntentFlags.NoCreate | PendingIntentFlags.Immutable);
     }
 
     private void CreateNotificationChannel()
@@ -177,7 +192,7 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
         var channel = new NotificationChannel(
             NotificationChannelId,
             NotificationChannelName,
-            NotificationImportance.Default)
+            NotificationImportance.High)
         {
             Description = "Prayer time notifications"
         };
@@ -208,12 +223,27 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
             _ => "Prayer"
         };
 
+        var timeText = DateTimeOffset.Now.ToString("HH:mm");
+
         var builder = new NotificationCompat.Builder(_context, NotificationChannelId);
-        builder.SetSmallIcon(Resource.Drawable.notification_icon);
-        builder.SetContentTitle(prayerName);
-        builder.SetContentText("Time to pray");
-        builder.SetPriority((int)NotificationPriority.Default);
+        builder.SetSmallIcon(Resource.Drawable.ic_prayer_notification);
+        builder.SetContentTitle($"{prayerName} — {timeText}");
+        builder.SetContentText($"It's time for {prayerName}");
+        builder.SetPriority((int)NotificationPriority.High);
+        builder.SetCategory(NotificationCompat.CategoryAlarm);
+        builder.SetVisibility((int)NotificationVisibility.Public);
         builder.SetAutoCancel(true);
+
+        // Tap opens the main activity
+        var tapIntent = _context.PackageManager?.GetLaunchIntentForPackage(_context.PackageName ?? "");
+        if (tapIntent != null)
+        {
+            tapIntent.SetFlags(ActivityFlags.ClearTop | ActivityFlags.SingleTop);
+            var tapPendingIntent = PendingIntent.GetActivity(
+                _context, 0, tapIntent,
+                PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable);
+            builder.SetContentIntent(tapPendingIntent);
+        }
 
         var notification = builder.Build();
         if (notification == null)
