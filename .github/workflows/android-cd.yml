@@ -1,0 +1,202 @@
+name: android-cd
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/QiblaNow.*/**'
+      - '.github/workflows/android-ci.yml'
+      - '.github/workflows/android-cd.yml'
+  workflow_dispatch:
+    inputs:
+      track:
+        description: 'Google Play track'
+        required: true
+        default: 'internal'
+        type: choice
+        options:
+          - internal
+          - alpha
+          - beta
+          - production
+      status:
+        description: 'Release status'
+        required: true
+        default: 'completed'
+        type: choice
+        options:
+          - completed
+          - draft
+          - inProgress
+          - halted
+
+jobs:
+  deploy-internal:
+    if: github.event_name == 'push'
+    name: Build and deploy Android to internal track
+    runs-on: windows-latest
+
+    environment:
+      name: internal
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Create secrets props
+        shell: pwsh
+        run: |
+          @"
+          <Project>
+            <PropertyGroup>
+              <MapsApiKey>${{ secrets.MAPS_API_KEY }}</MapsApiKey>
+              <AdMobAppId>${{ secrets.ADMOB_APP_ID }}</AdMobAppId>
+              <AdMobBannerTest>${{ secrets.ADMOB_BANNER_TEST }}</AdMobBannerTest>
+              <AdMobBannerProd>${{ secrets.ADMOB_BANNER_PROD }}</AdMobBannerProd>
+            </PropertyGroup>
+          </Project>
+          "@ | Set-Content -Path src/QiblaNow.App/QiblaNow.App.secrets.props -Encoding UTF8
+
+      - name: Restore Android keystore
+        shell: pwsh
+        run: |
+          $keystorePath = Join-Path $env:RUNNER_TEMP 'qiblanow.keystore'
+          [System.IO.File]::WriteAllBytes(
+            $keystorePath,
+            [System.Convert]::FromBase64String("${{ secrets.ANDROID_KEYSTORE_BASE64 }}")
+          )
+          "ANDROID_KEYSTORE_PATH=$keystorePath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Install required workloads
+        run: dotnet workload restore src/QiblaNow.App/QiblaNow.App.csproj
+
+      - name: Restore
+        run: dotnet restore src/QiblaNow.slnx
+
+      - name: Publish signed AAB
+        run: >
+          dotnet publish src/QiblaNow.App/QiblaNow.App.csproj
+          -c Release
+          -f net10.0-android
+          -p:AndroidPackageFormats=aab
+          -p:AndroidKeyStore=True
+          -p:AndroidSigningKeyStore="${{ env.ANDROID_KEYSTORE_PATH }}"
+          -p:AndroidSigningStorePass="${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
+          -p:AndroidSigningKeyAlias="${{ secrets.ANDROID_KEY_ALIAS }}"
+          -p:AndroidSigningKeyPass="${{ secrets.ANDROID_KEY_PASSWORD }}"
+          --no-restore
+
+      - name: Upload signed artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qiblanow-android-aab-cd
+          path: src/QiblaNow.App/bin/Release/net10.0-android/publish/*-Signed.aab
+          if-no-files-found: error
+
+      - name: Setup Java for Play upload
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Upload to Google Play internal track
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.jgcarmona.qiblanow
+          releaseFiles: src/QiblaNow.App/bin/Release/net10.0-android/publish/*-Signed.aab
+          track: internal
+          status: completed
+
+  deploy-manual:
+    if: github.event_name == 'workflow_dispatch'
+    name: Build and deploy Android manually
+    runs-on: windows-latest
+
+    environment:
+      name: ${{ github.event.inputs.track == 'production' && 'production' || 'internal' }}
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Create secrets props
+        shell: pwsh
+        run: |
+          @"
+          <Project>
+            <PropertyGroup>
+              <MapsApiKey>${{ secrets.MAPS_API_KEY }}</MapsApiKey>
+              <AdMobAppId>${{ secrets.ADMOB_APP_ID }}</AdMobAppId>
+              <AdMobBannerTest>${{ secrets.ADMOB_BANNER_TEST }}</AdMobBannerTest>
+              <AdMobBannerProd>${{ secrets.ADMOB_BANNER_PROD }}</AdMobBannerProd>
+            </PropertyGroup>
+          </Project>
+          "@ | Set-Content -Path src/QiblaNow.App/QiblaNow.App.secrets.props -Encoding UTF8
+
+      - name: Restore Android keystore
+        shell: pwsh
+        run: |
+          $keystorePath = Join-Path $env:RUNNER_TEMP 'qiblanow.keystore'
+          [System.IO.File]::WriteAllBytes(
+            $keystorePath,
+            [System.Convert]::FromBase64String("${{ secrets.ANDROID_KEYSTORE_BASE64 }}")
+          )
+          "ANDROID_KEYSTORE_PATH=$keystorePath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Install required workloads
+        run: dotnet workload restore src/QiblaNow.App/QiblaNow.App.csproj
+
+      - name: Restore
+        run: dotnet restore src/QiblaNow.slnx
+
+      - name: Publish signed AAB
+        run: >
+          dotnet publish src/QiblaNow.App/QiblaNow.App.csproj
+          -c Release
+          -f net10.0-android
+          -p:AndroidPackageFormats=aab
+          -p:AndroidKeyStore=True
+          -p:AndroidSigningKeyStore="${{ env.ANDROID_KEYSTORE_PATH }}"
+          -p:AndroidSigningStorePass="${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
+          -p:AndroidSigningKeyAlias="${{ secrets.ANDROID_KEY_ALIAS }}"
+          -p:AndroidSigningKeyPass="${{ secrets.ANDROID_KEY_PASSWORD }}"
+          --no-restore
+
+      - name: Upload signed artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qiblanow-android-aab-cd
+          path: src/QiblaNow.App/bin/Release/net10.0-android/publish/*-Signed.aab
+          if-no-files-found: error
+
+      - name: Setup Java for Play upload
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Upload to Google Play selected track
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.jgcarmona.qiblanow
+          releaseFiles: src/QiblaNow.App/bin/Release/net10.0-android/publish/*-Signed.aab
+          track: ${{ github.event.inputs.track }}
+          status: ${{ github.event.inputs.status }}
