@@ -4,7 +4,7 @@ namespace QiblaNow.App.Pages;
 
 public partial class LanguageSettingsPage : ContentPage
 {
-    private readonly List<(string Name, string Code)> _languages;
+    private readonly List<(string Flag, string Name, string Code)> _languages;
     private bool _isInitializing;
 
     public LanguageSettingsPage()
@@ -13,13 +13,18 @@ public partial class LanguageSettingsPage : ContentPage
 
         _languages =
         [
-            (AppResources.LanguageSettings_SystemDefault, string.Empty),
-            (AppResources.LanguageSettings_English,       "en"),
-            (AppResources.LanguageSettings_Arabic,        "ar"),
-            (AppResources.LanguageSettings_Spanish,       "es"),
+            ("🌐", AppResources.LanguageSettings_SystemDefault, string.Empty),
+            ("🇬🇧", AppResources.LanguageSettings_English,       "en"),
+            ("🇪🇸", AppResources.LanguageSettings_Spanish,      "es"),
+            ("🇫🇷", "Français",                                "fr"),
+            ("🇸🇦", AppResources.LanguageSettings_Arabic,        "ar"),
+            ("🇵🇰", "اردو",                                    "ur"),
+            ("🇧🇩", "বাংলা",                                   "bn"),
+            ("🇮🇩", "Bahasa Indonesia",                        "id"),
+            ("🇹🇷", "Türkçe",                                  "tr"),
         ];
 
-        LanguagePicker.ItemsSource = _languages.Select(l => l.Name).ToList();
+        LanguagePicker.ItemsSource = _languages.Select(l => $"{l.Flag} {l.Name}").ToList();
 
         // Pre-select the currently active language
         _isInitializing = true;
@@ -34,7 +39,7 @@ public partial class LanguageSettingsPage : ContentPage
         if (_isInitializing) return;
         if (LanguagePicker.SelectedIndex < 0) return;
 
-        var (_, code) = _languages[LanguagePicker.SelectedIndex];
+        var (_, _, code) = _languages[LanguagePicker.SelectedIndex];
 
         // Persist and apply the new culture
         LocalizationHelper.SetLanguageCode(code);
