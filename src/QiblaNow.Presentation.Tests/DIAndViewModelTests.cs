@@ -25,6 +25,12 @@ public class DIAndViewModelTests
 
         public Task<CountdownTargetResult?> CalculateCountdownAsync(DailyPrayerSchedule s, PrayerNotificationSettings n, DateTimeOffset now)
             => Task.FromResult<CountdownTargetResult?>(null);
+
+        public PrayerTime? FindNextPrayerInSchedule(DailyPrayerSchedule schedule, IReadOnlySet<PrayerType> enabled, DateTimeOffset now)
+            => null;
+
+        public PrayerTime? FindFirstEnabledPrayer(DailyPrayerSchedule schedule, IReadOnlySet<PrayerType> enabled)
+            => null;
     }
 
     private sealed class StubSettingsStore : ISettingsStore
@@ -47,6 +53,7 @@ public class DIAndViewModelTests
     {
         public Task<LocationSnapshot?> GetCurrentLocationAsync() => Task.FromResult<LocationSnapshot?>(null);
         public Task<LocationSnapshot?> RequestGpsLocationAsync() => Task.FromResult<LocationSnapshot?>(null);
+        public Task<LocationSnapshot?> TryGetGpsLocationAsync(TimeSpan timeout) => Task.FromResult<LocationSnapshot?>(null);
     }
 
     private static IServiceProvider BuildServices()

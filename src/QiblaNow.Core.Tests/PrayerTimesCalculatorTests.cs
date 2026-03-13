@@ -109,6 +109,122 @@ public class PrayerTimesCalculatorTests
         Assert.True(schedule.IsValid(), $"Schedule invalid for {label}");
     }
 
+    [Fact]
+    public async Task NextPrayer_Rollover_IsAlwaysInTheFuture()
+    {
+        // Schedule for March 13 with prayers on March 13.
+        var schedule = BuildScheduleForDay(new DateTimeOffset(2026, 3, 13, 0, 0, 0, TimeSpan.Zero));
+        // 'now' is after all March 13 prayers.
+        var now = new DateTimeOffset(2026, 3, 13, 21, 0, 0, TimeSpan.Zero);
+
+        var result = await _calculator.CalculateNextPrayerAsync(schedule, new PrayerNotificationSettings(), now);
+
+        Assert.NotNull(result);
+        Assert.True(result!.Time > now);
+        // The +24h rollover picks Fajr — acceptable for the approximate contract.
+        Assert.Equal(PrayerType.Fajr, result.Type);
+        Assert.False(result.IsToday);
+    }
+
+    [Fact]
+    public async Task Countdown_MatchesNextPrayer_TargetAndRemainingSeconds()
+    {
+        var schedule = BuildScheduleForDay(new DateTimeOffset(2026, 3, 13, 0, 0, 0, TimeSpan.Zero));
+        // 'now' is before Dhuhr, so Dhuhr is the next prayer within the schedule.
+        var now = new DateTimeOffset(2026, 3, 13, 9, 34, 0, TimeSpan.Zero);
+
+        var next = await _calculator.CalculateNextPrayerAsync(schedule, new PrayerNotificationSettings(), now);
+        var countdown = await _calculator.CalculateCountdownAsync(schedule, new PrayerNotificationSettings(), now);
+
+        Assert.NotNull(next);
+        Assert.NotNull(countdown);
+        Assert.Equal(next!.Type, countdown!.Type);
+        Assert.Equal(next.Time, countdown.TargetTime);
+        Assert.Equal((int)Math.Round((next.Time - now).TotalSeconds), countdown.RemainingSeconds);
+    }
+
+    // ── Single-schedule helpers (no rollover) ────────────────────────────────
+
+    [Fact]
+    public void FindNextPrayer_ReturnsFirstFuturePrayer()
+    {
+        var schedule = BuildScheduleForDay(new DateTimeOffset(2026, 3, 13, 0, 0, 0, TimeSpan.Zero));
+        var now = new DateTimeOffset(2026, 3, 13, 9, 0, 0, TimeSpan.Zero);
+        var enabled = AllPrayerTypes();
+
+        var result = _calculator.FindNextPrayerInSchedule(schedule, enabled, now);
+
+        Assert.NotNull(result);
+        Assert.Equal(PrayerType.Dhuhr, result!.Value.Type);
+    }
+
+    [Fact]
+    public void FindNextPrayer_ReturnsNull_WhenScheduleExhausted()
+    {
+        var schedule = BuildScheduleForDay(new DateTimeOffset(2026, 3, 13, 0, 0, 0, TimeSpan.Zero));
+        var now = new DateTimeOffset(2026, 3, 13, 21, 0, 0, TimeSpan.Zero);
+        var enabled = AllPrayerTypes();
+
+        var result = _calculator.FindNextPrayerInSchedule(schedule, enabled, now);
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void FindFirstEnabled_ReturnsFirstChronologicalPrayer()
+    {
+        var schedule = BuildScheduleForDay(new DateTimeOffset(2026, 3, 13, 0, 0, 0, TimeSpan.Zero));
+        var enabled = AllPrayerTypes();
+
+        var result = _calculator.FindFirstEnabledPrayer(schedule, enabled);
+
+        Assert.NotNull(result);
+        Assert.Equal(PrayerType.Fajr, result!.Value.Type);
+    }
+
+    // ── Two-schedule orchestration (the real Home flow) ──────────────────────
+
+    [Fact]
+    public async Task Orchestration_AfterIsha_TargetIsTomorrowFajr_FromRealSchedule()
+    {
+        // This models the exact Home flow: today is exhausted, so compute
+        // tomorrow's schedule explicitly and pick its first enabled prayer.
+        var todayDate    = new DateTimeOffset(2026, 3, 13, 0, 0, 0, TimeSpan.Zero);
+        var tomorrowDate = new DateTimeOffset(2026, 3, 14, 0, 0, 0, TimeSpan.Zero);
+
+        // Makkah, Umm al-Qura — easy location, all prayers on same UTC day.
+        var location = new LocationSnapshot(LocationMode.Manual, 21.3891, 39.8579);
+        var settings = new PrayerCalculationSettings
+        {
+            Method = CalculationMethod.UmmAlQura,
+            Madhab = Madhab.Shafi,
+            HighLatitudeRule = HighLatitudeRule.SeventhOfNight,
+        };
+        var enabled = AllPrayerTypes();
+
+        var todaySchedule    = await _calculator.CalculateDailyScheduleAsync(location, todayDate, settings);
+        var tomorrowSchedule = await _calculator.CalculateDailyScheduleAsync(location, tomorrowDate, settings);
+
+        // 'now' is after Isha on March 13.
+        var now = new DateTimeOffset(2026, 3, 13, 18, 0, 0, TimeSpan.Zero);
+
+        // Step 1: search today → null.
+        var todayNext = _calculator.FindNextPrayerInSchedule(todaySchedule, enabled, now);
+        Assert.Null(todayNext);
+
+        // Step 2: fallback to tomorrow's first enabled prayer.
+        var tomorrowFirst = _calculator.FindFirstEnabledPrayer(tomorrowSchedule, enabled);
+        Assert.NotNull(tomorrowFirst);
+        Assert.Equal(PrayerType.Fajr, tomorrowFirst!.Value.Type);
+
+        // The target must actually be in the future relative to 'now'.
+        Assert.True(tomorrowFirst.Value.DateTime > now,
+            $"Tomorrow Fajr {tomorrowFirst.Value.DateTime:u} should be after now {now:u}");
+
+        // Target date should be March 14, not March 13 + 24h approximation.
+        Assert.Equal(14, tomorrowFirst.Value.DateTime.Day);
+    }
+
     // ── Helpers ──────────────────────────────────────────────────────────────
 
     private async Task<DailyPrayerSchedule> ComputeSchedule(
@@ -137,4 +253,29 @@ public class PrayerTimesCalculatorTests
             $"{type}: expected {expected:yyyy-MM-dd HH:mm} UTC, got {prayer.DateTime:yyyy-MM-dd HH:mm} UTC " +
             $"(diff={diff:F1}min, raw={prayer.DateTime:O})");
     }
+
+    /// <summary>
+    /// Builds a synthetic schedule whose <see cref="DailyPrayerSchedule.Date"/>
+    /// and prayer instants all belong to the same civil UTC day.
+    /// </summary>
+    private static DailyPrayerSchedule BuildScheduleForDay(DateTimeOffset date)
+    {
+        var schedule = new DailyPrayerSchedule(date, TimeZoneInfo.Utc);
+        schedule.Prayers.Add(new PrayerTime(PrayerType.Fajr,    date.AddHours(6).AddMinutes(1)));
+        schedule.Prayers.Add(new PrayerTime(PrayerType.Sunrise, date.AddHours(7).AddMinutes(30)));
+        schedule.Prayers.Add(new PrayerTime(PrayerType.Dhuhr,   date.AddHours(13).AddMinutes(25)));
+        schedule.Prayers.Add(new PrayerTime(PrayerType.Asr,     date.AddHours(16).AddMinutes(43)));
+        schedule.Prayers.Add(new PrayerTime(PrayerType.Maghrib, date.AddHours(19).AddMinutes(19)));
+        schedule.Prayers.Add(new PrayerTime(PrayerType.Isha,    date.AddHours(20).AddMinutes(44)));
+        return schedule;
+    }
+
+    private static HashSet<PrayerType> AllPrayerTypes() => new()
+    {
+        PrayerType.Fajr,
+        PrayerType.Dhuhr,
+        PrayerType.Asr,
+        PrayerType.Maghrib,
+        PrayerType.Isha,
+    };
 }

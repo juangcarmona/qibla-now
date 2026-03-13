@@ -201,7 +201,8 @@
 
                         <VerticalStackLayout Spacing="4"
                                          HorizontalOptions="Center"
-                                         Margin="0,4,0,0">
+                                         Margin="0,4,0,0"
+                                         IsVisible="{Binding ShowLiveCountdown}">
 
                             <HorizontalStackLayout Spacing="6"
                                                HorizontalOptions="Center">

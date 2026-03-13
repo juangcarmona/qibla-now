@@ -47,4 +47,23 @@ public interface IPrayerTimesCalculator
         DailyPrayerSchedule schedule,
         PrayerNotificationSettings notificationSettings,
         DateTimeOffset now);
+
+    /// <summary>
+    /// Returns the first enabled prayer in <paramref name="schedule"/> whose time is
+    /// strictly after <paramref name="now"/>. No rollover or approximation.
+    /// Returns null if no enabled prayer is in the future within this schedule.
+    /// </summary>
+    PrayerTime? FindNextPrayerInSchedule(
+        DailyPrayerSchedule schedule,
+        IReadOnlySet<PrayerType> enabled,
+        DateTimeOffset now);
+
+    /// <summary>
+    /// Returns the first enabled prayer in <paramref name="schedule"/> ordered
+    /// chronologically, regardless of <paramref name="now"/>.
+    /// Returns null if no enabled prayer exists in this schedule.
+    /// </summary>
+    PrayerTime? FindFirstEnabledPrayer(
+        DailyPrayerSchedule schedule,
+        IReadOnlySet<PrayerType> enabled);
 }
