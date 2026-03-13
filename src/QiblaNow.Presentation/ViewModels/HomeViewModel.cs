@@ -143,20 +143,17 @@ public sealed partial class HomeViewModel : ObservableObject
                     _allEnabled,
                     now);
 
-                var countdownForDisplay = await _calculator.CalculateCountdownAsync(
-                    schedule,
-                    _allEnabled,
-                    now);
-
                 if (nextForDisplay is not null)
                 {
                     NextPrayerName        = nextForDisplay.Type.ToString();
                     NextPrayerTime        = nextForDisplay.Time.ToLocalTime().ToString("HH:mm");
                     NextPrayerAlarmEnabled = IsNotifEnabled(notifSettings, nextForDisplay.Type);
+                    highlightedPrayer = schedule.Prayers
+                        .Where(p => p.Type == nextForDisplay.Type)
+                        .Cast<PrayerTime?>()
+                        .FirstOrDefault();
 
-                    NextPrayerCountdown = countdownForDisplay is not null
-                        ? FormatCountdown(countdownForDisplay.RemainingSeconds)
-                        : "00:00:00";
+                    NextPrayerCountdown = FormatCountdown(nextForDisplay.RemainingSeconds);
 
                     StartCountdownTimer(schedule);
                 }
@@ -278,11 +275,6 @@ public sealed partial class HomeViewModel : ObservableObject
                 var now             = DateTimeOffset.UtcNow;
                 var notifSettings   = _settingsStore.GetNotificationSettings();
 
-                var countdown = await _calculator.CalculateCountdownAsync(
-                    schedule,
-                    _allEnabled,
-                    now);
-
                 var nextResult = await _calculator.CalculateNextPrayerAsync(
                     schedule,
                     _allEnabled,
@@ -290,8 +282,8 @@ public sealed partial class HomeViewModel : ObservableObject
 
                 Microsoft.Maui.ApplicationModel.MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    NextPrayerCountdown = countdown is not null
-                        ? FormatCountdown(countdown.RemainingSeconds)
+                    NextPrayerCountdown = nextResult is not null
+                        ? FormatCountdown(nextResult.RemainingSeconds)
                         : "00:00:00";
 
                     if (nextResult is not null)

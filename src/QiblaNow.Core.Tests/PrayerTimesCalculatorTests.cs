@@ -109,6 +109,35 @@ public class PrayerTimesCalculatorTests
         Assert.True(schedule.IsValid(), $"Schedule invalid for {label}");
     }
 
+    [Fact]
+    public async Task NextPrayer_Rollover_IsAlwaysInTheFuture()
+    {
+        var schedule = BuildSimpleSchedule(new DateTimeOffset(2026, 3, 12, 0, 0, 0, TimeSpan.Zero));
+        var now = new DateTimeOffset(2026, 3, 13, 9, 34, 0, TimeSpan.Zero);
+
+        var result = await _calculator.CalculateNextPrayerAsync(schedule, new PrayerNotificationSettings(), now);
+
+        Assert.NotNull(result);
+        Assert.True(result!.Time > now);
+        Assert.Equal(PrayerType.Dhuhr, result.Type);
+    }
+
+    [Fact]
+    public async Task Countdown_MatchesNextPrayer_TargetAndRemainingSeconds()
+    {
+        var schedule = BuildSimpleSchedule(new DateTimeOffset(2026, 3, 12, 0, 0, 0, TimeSpan.Zero));
+        var now = new DateTimeOffset(2026, 3, 13, 9, 34, 0, TimeSpan.Zero);
+
+        var next = await _calculator.CalculateNextPrayerAsync(schedule, new PrayerNotificationSettings(), now);
+        var countdown = await _calculator.CalculateCountdownAsync(schedule, new PrayerNotificationSettings(), now);
+
+        Assert.NotNull(next);
+        Assert.NotNull(countdown);
+        Assert.Equal(next!.Type, countdown!.Type);
+        Assert.Equal(next.Time, countdown.TargetTime);
+        Assert.Equal((int)Math.Round((next.Time - now).TotalSeconds), countdown.RemainingSeconds);
+    }
+
     // ── Helpers ──────────────────────────────────────────────────────────────
 
     private async Task<DailyPrayerSchedule> ComputeSchedule(
@@ -136,5 +165,17 @@ public class PrayerTimesCalculatorTests
         Assert.True(diff <= 1.0,
             $"{type}: expected {expected:yyyy-MM-dd HH:mm} UTC, got {prayer.DateTime:yyyy-MM-dd HH:mm} UTC " +
             $"(diff={diff:F1}min, raw={prayer.DateTime:O})");
+    }
+
+    private static DailyPrayerSchedule BuildSimpleSchedule(DateTimeOffset date)
+    {
+        var schedule = new DailyPrayerSchedule(date, TimeZoneInfo.Utc);
+        schedule.Prayers.Add(new PrayerTime(PrayerType.Fajr, new DateTimeOffset(2026, 3, 13, 6, 1, 0, TimeSpan.Zero)));
+        schedule.Prayers.Add(new PrayerTime(PrayerType.Sunrise, new DateTimeOffset(2026, 3, 13, 7, 30, 0, TimeSpan.Zero)));
+        schedule.Prayers.Add(new PrayerTime(PrayerType.Dhuhr, new DateTimeOffset(2026, 3, 13, 13, 25, 0, TimeSpan.Zero)));
+        schedule.Prayers.Add(new PrayerTime(PrayerType.Asr, new DateTimeOffset(2026, 3, 13, 16, 43, 0, TimeSpan.Zero)));
+        schedule.Prayers.Add(new PrayerTime(PrayerType.Maghrib, new DateTimeOffset(2026, 3, 13, 19, 19, 0, TimeSpan.Zero)));
+        schedule.Prayers.Add(new PrayerTime(PrayerType.Isha, new DateTimeOffset(2026, 3, 13, 20, 44, 0, TimeSpan.Zero)));
+        return schedule;
     }
 }

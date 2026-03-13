@@ -127,11 +127,11 @@ public sealed class PrayerTimesCalculator : IPrayerTimesCalculator
 
         if (firstEnabled.HasValue)
         {
-            var tomorrowTime = firstEnabled.Value.DateTime.AddDays(1);
+            var nextFutureTime = RollForwardToFuture(firstEnabled.Value.DateTime, now);
             return Task.FromResult<NextPrayerResult?>(new NextPrayerResult(
                 firstEnabled.Value.Type,
-                tomorrowTime,
-                tomorrowTime - now,
+                nextFutureTime,
+                nextFutureTime - now,
                 isToday: false));
         }
 
@@ -171,7 +171,7 @@ public sealed class PrayerTimesCalculator : IPrayerTimesCalculator
             return Task.FromResult<NextNotificationCandidateResult?>(
                 new NextNotificationCandidateResult(
                     firstEnabled.Value.Type,
-                    firstEnabled.Value.DateTime.AddDays(1)));
+                    RollForwardToFuture(firstEnabled.Value.DateTime, now)));
         }
 
         return Task.FromResult<NextNotificationCandidateResult?>(null);
@@ -212,7 +212,7 @@ public sealed class PrayerTimesCalculator : IPrayerTimesCalculator
             if (!firstEnabled.HasValue)
                 return Task.FromResult<CountdownTargetResult?>(null);
 
-            target     = firstEnabled.Value.DateTime.AddDays(1);
+            target     = RollForwardToFuture(firstEnabled.Value.DateTime, now);
             prayerType = firstEnabled.Value.Type;
         }
 
@@ -336,5 +336,12 @@ public sealed class PrayerTimesCalculator : IPrayerTimesCalculator
     private static double Acos(double x) => Rad2Deg * Math.Acos(x);
     private static double Atan2(double y, double x) => Rad2Deg * Math.Atan2(y, x);
     private static double Acot(double x) => Rad2Deg * Math.Atan(1.0 / x);
-}
 
+    private static DateTimeOffset RollForwardToFuture(DateTimeOffset candidate, DateTimeOffset now)
+    {
+        while (candidate <= now)
+            candidate = candidate.AddDays(1);
+
+        return candidate;
+    }
+}
