@@ -19,11 +19,11 @@ public partial class HomePage : ContentPage
 #endif
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
-        _ = _vm.LoadAsync();
-        _ = ReconcileNotificationsAsync();
+        await _vm.InitializeAsync();
+        await ReconcileNotificationsAsync();
     }
 
     protected override void OnDisappearing()

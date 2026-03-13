@@ -17,4 +17,11 @@ public interface ILocationService
     /// Requests a one-time GPS location update
     /// </summary>
     Task<LocationSnapshot?> RequestGpsLocationAsync();
+
+    /// <summary>
+    /// Tries to acquire a live GPS fix within <paramref name="timeout"/>.
+    /// Falls back to the stored snapshot if GPS is unavailable or times out.
+    /// Returns null only when no location has ever been captured.
+    /// </summary>
+    Task<LocationSnapshot?> TryGetGpsLocationAsync(TimeSpan timeout);
 }

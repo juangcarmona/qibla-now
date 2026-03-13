@@ -72,6 +72,47 @@ public sealed class LocationService : ILocationService
         }
     }
 
+    public async Task<LocationSnapshot?> TryGetGpsLocationAsync(TimeSpan timeout)
+    {
+        var mode = _settings.GetLocationMode();
+        if (mode == LocationMode.Manual)
+            return _settings.GetLastSnapshot();
+
+        // GPS mode: request permission then try a live fix within the timeout.
+        var permission = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+        if (permission != PermissionStatus.Granted)
+            permission = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+
+        if (permission == PermissionStatus.Granted)
+        {
+            try
+            {
+                using var cts = new CancellationTokenSource(timeout);
+                var request = new GeolocationRequest(GeolocationAccuracy.Medium, timeout);
+                var loc = await Geolocation.Default.GetLocationAsync(request, cts.Token);
+
+                if (loc is not null)
+                {
+                    var label = await TryReverseGeocodeAsync(loc.Latitude, loc.Longitude);
+                    var snap = new LocationSnapshot(LocationMode.GPS, loc.Latitude, loc.Longitude, label)
+                    {
+                        Timestamp = DateTimeOffset.UtcNow
+                    };
+                    _settings.SaveSnapshot(snap);
+                    _settings.SetLocationMode(LocationMode.GPS);
+                    return snap;
+                }
+            }
+            catch (FeatureNotSupportedException) { }
+            catch (FeatureNotEnabledException) { }
+            catch (PermissionException) { }
+            catch (OperationCanceledException) { }
+        }
+
+        // Fallback: return the last stored snapshot.
+        return _settings.GetLastSnapshot();
+    }
+
     private static async Task<string?> TryReverseGeocodeAsync(double lat, double lon)
     {
         try

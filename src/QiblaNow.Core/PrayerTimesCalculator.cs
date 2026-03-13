@@ -344,4 +344,29 @@ public sealed class PrayerTimesCalculator : IPrayerTimesCalculator
 
         return candidate;
     }
+
+    // ── Single-schedule helpers (no rollover) ───────────────────────────────
+
+    public PrayerTime? FindNextPrayerInSchedule(
+        DailyPrayerSchedule schedule,
+        IReadOnlySet<PrayerType> enabled,
+        DateTimeOffset now)
+    {
+        return schedule.Prayers
+            .Where(p => enabled.Contains(p.Type) && p.DateTime > now)
+            .OrderBy(p => p.DateTime)
+            .Cast<PrayerTime?>()
+            .FirstOrDefault();
+    }
+
+    public PrayerTime? FindFirstEnabledPrayer(
+        DailyPrayerSchedule schedule,
+        IReadOnlySet<PrayerType> enabled)
+    {
+        return schedule.Prayers
+            .Where(p => enabled.Contains(p.Type))
+            .OrderBy(p => p.DateTime)
+            .Cast<PrayerTime?>()
+            .FirstOrDefault();
+    }
 }
