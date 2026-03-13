@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:loc="clr-namespace:QiblaNow.App.Resources.Localization"
              x:Class="QiblaNow.App.Pages.AboutPage"
-             Title="About"
+             Title="{x:Static loc:AppResources.AboutPage_Title}"
              BackgroundColor="{StaticResource AppBackgroundLight}">
 
     <ScrollView>
@@ -24,18 +25,18 @@
                            HorizontalOptions="Center"
                            Aspect="AspectFit" />
 
-                    <Label Text="Qibla Now"
+                    <Label Text="{x:Static loc:AppResources.AppTitle}"
                            FontSize="26"
                            FontAttributes="Bold"
                            TextColor="{StaticResource Primary}"
                            HorizontalTextAlignment="Center" />
 
-                    <Label Text="Version 1.0"
+                    <Label Text="{x:Static loc:AppResources.AboutPage_Version}"
                            FontSize="14"
                            TextColor="{StaticResource Gray600}"
                            HorizontalTextAlignment="Center" />
 
-                    <Label Text="An offline-first Islamic utility for prayer times and Qibla direction."
+                    <Label Text="{x:Static loc:AppResources.AboutPage_Description}"
                            FontSize="14"
                            TextColor="{StaticResource OnSurfaceLight}"
                            HorizontalTextAlignment="Center"
@@ -53,28 +54,28 @@
                 </Border.StrokeShape>
 
                 <VerticalStackLayout Spacing="10">
-                    <Label Text="Features"
+                    <Label Text="{x:Static loc:AppResources.AboutPage_Features}"
                            FontSize="18"
                            FontAttributes="Bold"
                            TextColor="{StaticResource OnSurfaceLight}" />
 
-                    <Label Text="• Accurate prayer times for any location"
+                    <Label Text="{x:Static loc:AppResources.AboutPage_FeaturePrayerTimes}"
                            FontSize="14"
                            TextColor="{StaticResource OnSurfaceLight}" />
 
-                    <Label Text="• Qibla compass direction"
+                    <Label Text="{x:Static loc:AppResources.AboutPage_FeatureQibla}"
                            FontSize="14"
                            TextColor="{StaticResource OnSurfaceLight}" />
 
-                    <Label Text="• Prayer time notifications"
+                    <Label Text="{x:Static loc:AppResources.AboutPage_FeatureNotifications}"
                            FontSize="14"
                            TextColor="{StaticResource OnSurfaceLight}" />
 
-                    <Label Text="• Multiple calculation methods"
+                    <Label Text="{x:Static loc:AppResources.AboutPage_FeatureCalculationMethods}"
                            FontSize="14"
                            TextColor="{StaticResource OnSurfaceLight}" />
 
-                    <Label Text="• Works fully offline"
+                    <Label Text="{x:Static loc:AppResources.AboutPage_FeatureOffline}"
                            FontSize="14"
                            TextColor="{StaticResource OnSurfaceLight}" />
                 </VerticalStackLayout>
@@ -89,13 +90,13 @@
                 </Border.StrokeShape>
 
                 <VerticalStackLayout Spacing="12">
-                    <Label Text="Links"
+                    <Label Text="{x:Static loc:AppResources.AboutPage_Links}"
                            FontSize="18"
                            FontAttributes="Bold"
                            TextColor="{StaticResource OnSurfaceLight}" />
 
                     <VerticalStackLayout Spacing="4">
-                        <Label Text="Source code"
+                        <Label Text="{x:Static loc:AppResources.AboutPage_SourceCode}"
                                FontSize="13"
                                TextColor="{StaticResource Gray600}" />
                         <Label Text="github.com/juangcarmona/qibla-now"
@@ -108,7 +109,7 @@
                     </VerticalStackLayout>
 
                     <VerticalStackLayout Spacing="4">
-                        <Label Text="Website"
+                        <Label Text="{x:Static loc:AppResources.AboutPage_Website}"
                                FontSize="13"
                                TextColor="{StaticResource Gray600}" />
                         <Label Text="jgcarmona.com"
@@ -131,17 +132,17 @@
                 </Border.StrokeShape>
 
                 <VerticalStackLayout Spacing="12">
-                    <Label Text="Support"
+                    <Label Text="{x:Static loc:AppResources.AboutPage_Support}"
                            FontSize="18"
                            FontAttributes="Bold"
                            TextColor="{StaticResource OnSurfaceLight}" />
 
-                    <Label Text="Qibla Now is free and open source. If it helps you, you can support its development."
+                    <Label Text="{x:Static loc:AppResources.AboutPage_SupportDescription}"
                            FontSize="14"
                            TextColor="{StaticResource OnSurfaceLight}"
                            LineBreakMode="WordWrap" />
 
-                    <Button Text="Support this project"
+                    <Button Text="{x:Static loc:AppResources.AboutPage_SupportButton}"
                             Clicked="OnDonateClicked"
                             BackgroundColor="{StaticResource Primary}"
                             TextColor="{StaticResource White}"

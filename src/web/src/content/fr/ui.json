@@ -1,0 +1,25 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "features": "Fonctionnalités",
+    "about": "À propos",
+    "privacy": "Confidentialité",
+    "support": "Support"
+  },
+  "footer": {
+    "tagline": "Horaires de prière et direction de la Qibla avec clarté, confidentialité et rigueur technique."
+  },
+  "theme": {
+    "toggleLight": "Mode clair",
+    "toggleDark": "Mode sombre"
+  },
+  "fallback": {
+    "notAvailable": "Cette page n'est pas encore disponible en Français.",
+    "showing": "Contenu anglais affiché.",
+    "helpTranslate": "Aidez à traduire cette page."
+  },
+  "lang": {
+    "name": "Français",
+    "select": "Langue"
+  }
+}

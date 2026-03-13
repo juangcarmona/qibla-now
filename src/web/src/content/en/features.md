@@ -1,0 +1,16 @@
+---
+title: "Features | Qibla Now"
+description: "Prayer times, Qibla direction, map support, alarms, location modes, and focused settings in Qibla Now."
+headline: "Focused capabilities for daily prayer use."
+intro: "Qibla Now concentrates on the essential functions: prayer times, Qibla direction, alarms, map support, and precise settings without unnecessary complexity."
+feature1_h: "Prayer times"
+feature1_p: "Accurate daily prayer schedules with configurable calculation methods, madhab selection, and high-latitude rules. All calculations are performed locally, with no backend dependency."
+feature2_h: "Qibla direction"
+feature2_p: "Qibla Now uses great-circle bearing toward the Kaaba, shown through compass, map, and numeric direction. The map view illustrates the true geodesic line, not a straight line on a flat map."
+feature3_h: "Notifications and alarms"
+feature3_p: "Local notification scheduling for prayer times, with no cloud dependency. Alarms are reliable and configurable, respecting device battery and privacy constraints."
+feature4_h: "Location modes"
+feature4_p: "Multiple location modes: device GPS, manual entry, and saved locations. All modes are designed for privacy and offline-first use."
+feature5_h: "Settings and calculation controls"
+feature5_p: "Deep configuration: calculation method, madhab, high-latitude rules, display options, and notification preferences. All settings are stored locally and never sent to a backend."
+---

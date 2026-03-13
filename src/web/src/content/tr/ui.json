@@ -1,0 +1,25 @@
+{
+  "nav": {
+    "home": "Ana Sayfa",
+    "features": "Özellikler",
+    "about": "Hakkında",
+    "privacy": "Gizlilik",
+    "support": "Destek"
+  },
+  "footer": {
+    "tagline": "Netlik, gizlilik ve teknik titizlikle namaz vakitleri ve kıble yönü."
+  },
+  "theme": {
+    "toggleLight": "Açık mod",
+    "toggleDark": "Koyu mod"
+  },
+  "fallback": {
+    "notAvailable": "Bu sayfa henüz Türkçe olarak mevcut değil.",
+    "showing": "İngilizce içerik gösteriliyor.",
+    "helpTranslate": "Bu sayfanın çevirisine yardım edin."
+  },
+  "lang": {
+    "name": "Türkçe",
+    "select": "Dil"
+  }
+}

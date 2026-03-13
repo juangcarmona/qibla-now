@@ -1,0 +1,171 @@
+---
+import { LOCALES } from "../../lib/i18n";
+import { getPageContent, getUI } from "../../lib/content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import FallbackNotice from "../../components/FallbackNotice.astro";
+import HeroSection from "../../components/HeroSection.astro";
+
+export function getStaticPaths() {
+  return LOCALES.map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params as { lang: string };
+
+const { frontmatter: fm, isFallback } = await getPageContent(lang, "home");
+const ui = getUI(lang);
+---
+
+<BaseLayout title={fm.title ?? "Qibla Now"} description={fm.description} lang={lang}>
+  {
+    isFallback && (
+      <FallbackNotice
+        langName={ui?.lang?.name ?? lang}
+        notAvailable={ui?.fallback?.notAvailable ?? `This page is not yet available in ${lang}.`}
+        showing={ui?.fallback?.showing ?? "Showing English content."}
+        helpTranslate={ui?.fallback?.helpTranslate ?? "Help translate this page."}
+      />
+    )
+  }
+
+  <HeroSection
+    eyebrow={fm.hero_eyebrow}
+    headline={fm.hero_headline ?? "Prayer times and Qibla direction"}
+    lead={fm.hero_lead}
+    ctaPrimaryHref={`/${lang}/features`}
+    ctaPrimaryLabel={fm.hero_cta_primary ?? "See features"}
+    ctaSecondaryHref={`/${lang}/privacy`}
+    ctaSecondaryLabel={fm.hero_cta_secondary ?? "Privacy first"}
+    points={[fm.hero_point1, fm.hero_point2, fm.hero_point3].filter(Boolean)}
+  />
+
+  <!-- Feature cards -->
+  <section class="section">
+    <div class="grid-3">
+      <article class="card info-card">
+        <h3>{fm.feature1_title ?? "Prayer times"}</h3>
+        <p>{fm.feature1_desc}</p>
+      </article>
+      <article class="card info-card">
+        <h3>{fm.feature2_title ?? "Qibla direction"}</h3>
+        <p>{fm.feature2_desc}</p>
+      </article>
+      <article class="card info-card">
+        <h3>{fm.feature3_title ?? "Privacy by design"}</h3>
+        <p>{fm.feature3_desc}</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Why different -->
+  <section class="section">
+    <div class="grid-2">
+      <div>
+        {fm.why_eyebrow && <p class="eyebrow">{fm.why_eyebrow}</p>}
+        <h2>{fm.why_headline ?? "A tool, not a platform."}</h2>
+        {fm.why_para1 && <p>{fm.why_para1}</p>}
+        {fm.why_para2 && <p>{fm.why_para2}</p>}
+      </div>
+      <div class="card value-card">
+        <ul>
+          {
+            [
+              { title: fm.value1_title, desc: fm.value1_desc },
+              { title: fm.value2_title, desc: fm.value2_desc },
+              { title: fm.value3_title, desc: fm.value3_desc },
+              { title: fm.value4_title, desc: fm.value4_desc },
+            ]
+              .filter((v) => v.title)
+              .map((v) => (
+                <li>
+                  <strong>{v.title}:</strong> {v.desc}
+                </li>
+              ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust model -->
+  <section class="section">
+    <div class="card trust-card">
+      <div class="grid-2 trust-grid">
+        <div>
+          {fm.trust_eyebrow && <p class="eyebrow">{fm.trust_eyebrow}</p>}
+          <h2>{fm.trust_headline ?? "Designed to respect privacy."}</h2>
+          {fm.trust_para && <p>{fm.trust_para}</p>}
+        </div>
+        <div class="trust-points">
+          {
+            [
+              { title: fm.trust1_title, desc: fm.trust1_desc },
+              { title: fm.trust2_title, desc: fm.trust2_desc },
+              { title: fm.trust3_title, desc: fm.trust3_desc },
+              { title: fm.trust4_title, desc: fm.trust4_desc },
+            ]
+              .filter((t) => t.title)
+              .map((t) => (
+                <div>
+                  <strong>{t.title}</strong>
+                  <p>{t.desc}</p>
+                </div>
+              ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .info-card {
+    padding: 1.5rem;
+  }
+
+  .info-card h3 {
+    margin-top: 0;
+  }
+
+  .info-card p {
+    margin-bottom: 0;
+    color: var(--muted);
+  }
+
+  .value-card {
+    padding: 1.5rem;
+  }
+
+  .value-card ul {
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+
+  .value-card li + li {
+    margin-top: 0.8rem;
+  }
+
+  .trust-card {
+    padding: 1.5rem;
+  }
+
+  .trust-grid {
+    align-items: start;
+  }
+
+  .trust-points {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .trust-points > div {
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  .trust-points p {
+    margin-bottom: 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+</style>

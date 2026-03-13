@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- App-wide -->
+  <data name="AppTitle" xml:space="preserve">
+    <value>Qibla Now</value>
+  </data>
+
+  <!-- Home Page -->
+  <data name="HomePage_TapToGoBackToToday" xml:space="preserve">
+    <value>আজে ফিরে যেতে ট্যাপ করুন</value>
+  </data>
+  <data name="HomePage_CalculationMethodPrefix" xml:space="preserve">
+    <value>হিসাব পদ্ধতি:</value>
+  </data>
+  <data name="HomePage_NavQibla" xml:space="preserve">
+    <value>কিবলা</value>
+  </data>
+  <data name="HomePage_NavMap" xml:space="preserve">
+    <value>মানচিত্র</value>
+  </data>
+  <data name="HomePage_NavAlarms" xml:space="preserve">
+    <value>অ্যালার্ম</value>
+  </data>
+
+  <!-- Settings Page -->
+  <data name="SettingsPage_Title" xml:space="preserve">
+    <value>সেটিংস</value>
+  </data>
+  <data name="SettingsPage_Location" xml:space="preserve">
+    <value>অবস্থান</value>
+  </data>
+  <data name="SettingsPage_Display" xml:space="preserve">
+    <value>প্রদর্শন</value>
+  </data>
+  <data name="SettingsPage_DisplaySummary" xml:space="preserve">
+    <value>সময় ফরম্যাট, নামাজ দৃশ্যমানতা</value>
+  </data>
+  <data name="SettingsPage_Calculation" xml:space="preserve">
+    <value>গণনা</value>
+  </data>
+  <data name="SettingsPage_SoundNotifications" xml:space="preserve">
+    <value>শব্দ ও বিজ্ঞপ্তি</value>
+  </data>
+  <data name="SettingsPage_Language" xml:space="preserve">
+    <value>ভাষা</value>
+  </data>
+  <data name="SettingsPage_LanguageSummary" xml:space="preserve">
+    <value>ইন্টারফেস ভাষা</value>
+  </data>
+  <data name="SettingsPage_About" xml:space="preserve">
+    <value>পরিচিতি</value>
+  </data>
+  <data name="SettingsPage_AboutSummary" xml:space="preserve">
+    <value>অ্যাপ তথ্য</value>
+  </data>
+
+  <!-- Location Settings -->
+  <data name="LocationSettings_Title" xml:space="preserve">
+    <value>অবস্থান</value>
+  </data>
+  <data name="LocationSettings_LocationMode" xml:space="preserve">
+    <value>অবস্থান মোড</value>
+  </data>
+  <data name="LocationSettings_SelectMode" xml:space="preserve">
+    <value>মোড নির্বাচন করুন</value>
+  </data>
+  <data name="LocationSettings_GpsDescription" xml:space="preserve">
+    <value>স্বয়ংক্রিয়ভাবে আপনার অবস্থান শনাক্ত করতে GPS ব্যবহার করুন।</value>
+  </data>
+  <data name="LocationSettings_RequestGps" xml:space="preserve">
+    <value>GPS অবস্থান অনুরোধ করুন</value>
+  </data>
+  <data name="LocationSettings_Latitude" xml:space="preserve">
+    <value>অক্ষাংশ</value>
+  </data>
+  <data name="LocationSettings_Longitude" xml:space="preserve">
+    <value>দ্রাঘিমাংশ</value>
+  </data>
+  <data name="LocationSettings_SaveLocation" xml:space="preserve">
+    <value>অবস্থান সংরক্ষণ করুন</value>
+  </data>
+
+  <!-- Calculation Settings -->
+  <data name="CalculationSettings_Title" xml:space="preserve">
+    <value>গণনা</value>
+  </data>
+  <data name="CalculationSettings_Header" xml:space="preserve">
+    <value>নামাজ গণনা</value>
+  </data>
+  <data name="CalculationSettings_Method" xml:space="preserve">
+    <value>গণনা পদ্ধতি</value>
+  </data>
+  <data name="CalculationSettings_SelectMethod" xml:space="preserve">
+    <value>পদ্ধতি নির্বাচন করুন</value>
+  </data>
+  <data name="CalculationSettings_Madhab" xml:space="preserve">
+    <value>মাযহাব (আসর গণনা)</value>
+  </data>
+  <data name="CalculationSettings_SelectMadhab" xml:space="preserve">
+    <value>মাযহাব নির্বাচন করুন</value>
+  </data>
+  <data name="CalculationSettings_HighLatitudeRule" xml:space="preserve">
+    <value>উচ্চ অক্ষাংশ নিয়ম</value>
+  </data>
+  <data name="CalculationSettings_SelectRule" xml:space="preserve">
+    <value>নিয়ম নির্বাচন করুন</value>
+  </data>
+  <data name="CalculationSettings_AutoSave" xml:space="preserve">
+    <value>পরিবর্তনগুলি স্বয়ংক্রিয়ভাবে সংরক্ষিত হয়।</value>
+  </data>
+
+  <!-- Sound Settings -->
+  <data name="SoundSettings_Title" xml:space="preserve">
+    <value>শব্দ ও বিজ্ঞপ্তি</value>
+  </data>
+  <data name="SoundSettings_PrayerNotifications" xml:space="preserve">
+    <value>নামাজের বিজ্ঞপ্তি</value>
+  </data>
+  <data name="SoundSettings_NotificationsDescription" xml:space="preserve">
+    <value>প্রতিটি নামাজের সময় বিজ্ঞপ্তি পান।</value>
+  </data>
+  <data name="SoundSettings_Adhan" xml:space="preserve">
+    <value>আজানের শব্দ</value>
+  </data>
+  <data name="SoundSettings_AdhanComingSoon" xml:space="preserve">
+    <value>আজানের শব্দ নির্বাচন — শীঘ্রই আসছে।</value>
+  </data>
+
+  <!-- Prayer Names -->
+  <data name="Prayer_Fajr" xml:space="preserve">
+    <value>ফজর</value>
+  </data>
+  <data name="Prayer_Dhuhr" xml:space="preserve">
+    <value>যোহর</value>
+  </data>
+  <data name="Prayer_Asr" xml:space="preserve">
+    <value>আসর</value>
+  </data>
+  <data name="Prayer_Maghrib" xml:space="preserve">
+    <value>মাগরিব</value>
+  </data>
+  <data name="Prayer_Isha" xml:space="preserve">
+    <value>ইশা</value>
+  </data>
+
+  <!-- Display Settings -->
+  <data name="DisplaySettings_Title" xml:space="preserve">
+    <value>প্রদর্শন</value>
+  </data>
+  <data name="DisplaySettings_TimeFormat" xml:space="preserve">
+    <value>সময় ফরম্যাট</value>
+  </data>
+  <data name="DisplaySettings_24HourClock" xml:space="preserve">
+    <value>২৪ ঘণ্টার ঘড়ি ব্যবহার করুন</value>
+  </data>
+  <data name="DisplaySettings_TimeFormatComingSoon" xml:space="preserve">
+    <value>সময় ফরম্যাট সেটিং — শীঘ্রই আসছে।</value>
+  </data>
+  <data name="DisplaySettings_PrayerVisibility" xml:space="preserve">
+    <value>নামাজ দৃশ্যমানতা</value>
+  </data>
+  <data name="DisplaySettings_PrayerVisibilityComingSoon" xml:space="preserve">
+    <value>কোন নামাজের সময় দেখাবেন তা বেছে নিন — শীঘ্রই আসছে।</value>
+  </data>
+  <data name="DisplaySettings_HijriAdjustment" xml:space="preserve">
+    <value>হিজরি তারিখ সমন্বয়</value>
+  </data>
+  <data name="DisplaySettings_HijriAdjustmentComingSoon" xml:space="preserve">
+    <value>প্রদর্শিত হিজরি তারিখ ±৩ দিন সমন্বয় করুন — শীঘ্রই আসছে।</value>
+  </data>
+
+  <!-- About Page -->
+  <data name="AboutPage_Title" xml:space="preserve">
+    <value>পরিচিতি</value>
+  </data>
+  <data name="AboutPage_Version" xml:space="preserve">
+    <value>সংস্করণ ১.০</value>
+  </data>
+  <data name="AboutPage_Description" xml:space="preserve">
+    <value>নামাজের সময় এবং কিবলার দিকনির্দেশনার জন্য অফলাইন ইসলামিক অ্যাপ।</value>
+  </data>
+  <data name="AboutPage_Features" xml:space="preserve">
+    <value>বৈশিষ্ট্য</value>
+  </data>
+  <data name="AboutPage_FeaturePrayerTimes" xml:space="preserve">
+    <value>• যেকোনো স্থানের জন্য সঠিক নামাজের সময়</value>
+  </data>
+  <data name="AboutPage_FeatureQibla" xml:space="preserve">
+    <value>• কিবলা কম্পাসের দিক</value>
+  </data>
+  <data name="AboutPage_FeatureNotifications" xml:space="preserve">
+    <value>• নামাজের সময় বিজ্ঞপ্তি</value>
+  </data>
+  <data name="AboutPage_FeatureCalculationMethods" xml:space="preserve">
+    <value>• একাধিক গণনা পদ্ধতি</value>
+  </data>
+  <data name="AboutPage_FeatureOffline" xml:space="preserve">
+    <value>• সম্পূর্ণ অফলাইনে কাজ করে</value>
+  </data>
+  <data name="AboutPage_Links" xml:space="preserve">
+    <value>লিঙ্ক</value>
+  </data>
+  <data name="AboutPage_SourceCode" xml:space="preserve">
+    <value>সোর্স কোড</value>
+  </data>
+  <data name="AboutPage_Website" xml:space="preserve">
+    <value>ওয়েবসাইট</value>
+  </data>
+  <data name="AboutPage_Support" xml:space="preserve">
+    <value>সহায়তা</value>
+  </data>
+  <data name="AboutPage_SupportDescription" xml:space="preserve">
+    <value>Qibla Now বিনামূল্যে এবং ওপেন সোর্স। যদি উপকারী হয়, তাহলে আপনি এর উন্নয়নে সহায়তা করতে পারেন।</value>
+  </data>
+  <data name="AboutPage_SupportButton" xml:space="preserve">
+    <value>এই প্রকল্পে সহায়তা করুন</value>
+  </data>
+
+  <!-- Map Page -->
+  <data name="MapPage_Title" xml:space="preserve">
+    <value>মানচিত্র</value>
+  </data>
+  <data name="MapPage_QiblaColumn" xml:space="preserve">
+    <value>কিবলা</value>
+  </data>
+  <data name="MapPage_HeadingColumn" xml:space="preserve">
+    <value>দিকনির্দেশ</value>
+  </data>
+  <data name="MapPage_ErrorColumn" xml:space="preserve">
+    <value>ত্রুটি</value>
+  </data>
+
+  <!-- Qibla Page -->
+  <data name="QiblaPage_Title" xml:space="preserve">
+    <value>কিবলা</value>
+  </data>
+  <data name="QiblaPage_QiblaColumn" xml:space="preserve">
+    <value>কিবলা</value>
+  </data>
+  <data name="QiblaPage_HeadingColumn" xml:space="preserve">
+    <value>দিকনির্দেশ</value>
+  </data>
+  <data name="QiblaPage_ErrorColumn" xml:space="preserve">
+    <value>ত্রুটি</value>
+  </data>
+
+  <!-- Prayer Times Page -->
+  <data name="PrayerTimesPage_Title" xml:space="preserve">
+    <value>নামাজের সময়</value>
+  </data>
+
+  <!-- Language Settings -->
+  <data name="LanguageSettings_Title" xml:space="preserve">
+    <value>ভাষা</value>
+  </data>
+  <data name="LanguageSettings_AppLanguage" xml:space="preserve">
+    <value>অ্যাপ ভাষা</value>
+  </data>
+  <data name="LanguageSettings_Description" xml:space="preserve">
+    <value>অ্যাপ ইন্টারফেসের জন্য ভাষা নির্বাচন করুন।</value>
+  </data>
+  <data name="LanguageSettings_RestartNote" xml:space="preserve">
+    <value>নির্বাচনের পরে ভাষা পরিবর্তন অবিলম্বে প্রযোজ্য হয়।</value>
+  </data>
+  <data name="LanguageSettings_SystemDefault" xml:space="preserve">
+    <value>সিস্টেম ডিফল্ট</value>
+  </data>
+  <data name="LanguageSettings_English" xml:space="preserve">
+    <value>ইংরেজি</value>
+  </data>
+  <data name="LanguageSettings_Arabic" xml:space="preserve">
+    <value>আরবি</value>
+  </data>
+  <data name="LanguageSettings_Spanish" xml:space="preserve">
+    <value>স্প্যানিশ</value>
+  </data>
+
+</root>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:loc="clr-namespace:QiblaNow.App.Resources.Localization"
+             xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"
+             x:Class="QiblaNow.App.Pages.LanguageSettingsPage"
+             Title="{x:Static loc:AppResources.LanguageSettings_Title}"
+             BackgroundColor="{StaticResource AppBackgroundLight}">
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="20,16,20,20" Spacing="16">
+
+                <Border Padding="18,16"
+                        BackgroundColor="{StaticResource White}"
+                        StrokeThickness="0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="18" />
+                    </Border.StrokeShape>
+
+                    <VerticalStackLayout Spacing="16">
+
+                        <Label Text="{x:Static loc:AppResources.LanguageSettings_AppLanguage}"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource OnSurfaceLight}" />
+
+                        <Label Text="{x:Static loc:AppResources.LanguageSettings_Description}"
+                               FontSize="13"
+                               TextColor="{StaticResource Gray600}"
+                               LineBreakMode="WordWrap" />
+
+                        <Picker x:Name="LanguagePicker"
+                                HorizontalOptions="Fill"
+                                SelectedIndexChanged="OnLanguageSelected" />
+
+                        <Label Text="{x:Static loc:AppResources.LanguageSettings_RestartNote}"
+                               FontSize="12"
+                               Opacity="0.6"
+                               TextColor="{StaticResource Gray500}"
+                               LineBreakMode="WordWrap"
+                               HorizontalTextAlignment="Center" />
+
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Border Grid.Row="1"
+                BackgroundColor="{StaticResource White}"
+                StrokeThickness="0"
+                Padding="0,4">
+            <admob:MTAdView
+                x:Name="BottomBanner"
+                HorizontalOptions="Center" />
+        </Border>
+    </Grid>
+</ContentPage>

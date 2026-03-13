@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="QiblaNow.App.Pages.DisplaySettingsPage"
              xmlns:app="clr-namespace:QiblaNow.App"
-             xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"   
-             Title="Display"
+             xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"
+             xmlns:loc="clr-namespace:QiblaNow.App.Resources.Localization"
+             Title="{x:Static loc:AppResources.DisplaySettings_Title}"
              BackgroundColor="{StaticResource AppBackgroundLight}">
     <Grid RowDefinitions="*,Auto">
         <ScrollView>
@@ -19,13 +20,13 @@
                     </Border.StrokeShape>
 
                     <VerticalStackLayout Spacing="12">
-                        <Label Text="Time Format"
+                        <Label Text="{x:Static loc:AppResources.DisplaySettings_TimeFormat}"
                            FontSize="18" FontAttributes="Bold"
                            TextColor="{StaticResource OnSurfaceLight}" />
 
                         <Grid ColumnDefinitions="*,Auto">
                             <Label Grid.Column="0"
-                               Text="Use 24-hour clock"
+                               Text="{x:Static loc:AppResources.DisplaySettings_24HourClock}"
                                FontSize="15"
                                TextColor="{StaticResource OnSurfaceLight}"
                                VerticalOptions="Center" />
@@ -34,7 +35,7 @@
                                 OnColor="{StaticResource Primary}" />
                         </Grid>
 
-                        <Label Text="Time format setting — coming soon."
+                        <Label Text="{x:Static loc:AppResources.DisplaySettings_TimeFormatComingSoon}"
                            FontSize="12" Opacity="0.55"
                            TextColor="{StaticResource Gray500}" />
                     </VerticalStackLayout>
@@ -49,10 +50,10 @@
                     </Border.StrokeShape>
 
                     <VerticalStackLayout Spacing="10">
-                        <Label Text="Prayer Visibility"
+                        <Label Text="{x:Static loc:AppResources.DisplaySettings_PrayerVisibility}"
                            FontSize="18" FontAttributes="Bold"
                            TextColor="{StaticResource OnSurfaceLight}" />
-                        <Label Text="Choose which prayer times to show — coming soon."
+                        <Label Text="{x:Static loc:AppResources.DisplaySettings_PrayerVisibilityComingSoon}"
                            FontSize="13" TextColor="{StaticResource Gray500}"
                            LineBreakMode="WordWrap" />
                     </VerticalStackLayout>
@@ -67,10 +68,10 @@
                     </Border.StrokeShape>
 
                     <VerticalStackLayout Spacing="10">
-                        <Label Text="Hijri Date Adjustment"
+                        <Label Text="{x:Static loc:AppResources.DisplaySettings_HijriAdjustment}"
                            FontSize="18" FontAttributes="Bold"
                            TextColor="{StaticResource OnSurfaceLight}" />
-                        <Label Text="Adjust the displayed Hijri date by ±3 days — coming soon."
+                        <Label Text="{x:Static loc:AppResources.DisplaySettings_HijriAdjustmentComingSoon}"
                            FontSize="13" TextColor="{StaticResource Gray500}"
                            LineBreakMode="WordWrap" />
                     </VerticalStackLayout>

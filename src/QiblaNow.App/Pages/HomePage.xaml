@@ -5,9 +5,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.Presentation"
     xmlns:app="clr-namespace:QiblaNow.App"
-    xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"   
+    xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"
+    xmlns:loc="clr-namespace:QiblaNow.App.Resources.Localization"
     x:DataType="viewmodels:HomeViewModel"
-    Title="Qibla Now"
+    Title="{x:Static loc:AppResources.AppTitle}"
     BackgroundColor="{StaticResource AppBackgroundLight}">
 
     <ContentPage.ToolbarItems>
@@ -72,7 +73,7 @@
                                    HorizontalTextAlignment="Center"
                                    TextColor="{StaticResource OnSurfaceLight}" />
 
-                                <Label Text="Tap to go back to today"
+                                <Label Text="{x:Static loc:AppResources.HomePage_TapToGoBackToToday}"
                                    FontSize="12"
                                    HorizontalTextAlignment="Center"
                                    TextColor="{StaticResource Primary}"
@@ -247,7 +248,7 @@
                                            HorizontalOptions="Center"
                                            Opacity="0.7"
                                            Margin="0,6,0,0">
-                            <Label Text="Calculation Method:"
+                            <Label Text="{x:Static loc:AppResources.HomePage_CalculationMethodPrefix}"
                                FontSize="{OnIdiom Default=13, Tablet=16}"
                                TextColor="{StaticResource OnSurfaceLight}" />
                             <Label Text="{Binding MethodLabel}"
@@ -270,7 +271,7 @@
                   ColumnSpacing="10"
                   Margin="0,8,0,0">
 
-                    <Button Text="Qibla"
+                    <Button Text="{x:Static loc:AppResources.HomePage_NavQibla}"
                         HeightRequest="52"
                         FontAttributes="Bold"
                         BackgroundColor="{StaticResource Primary}"
@@ -278,14 +279,14 @@
                         Command="{Binding GoQiblaCommand}" />
 
                     <Button Grid.Column="1"
-                        Text="Map"
+                        Text="{x:Static loc:AppResources.HomePage_NavMap}"
                         HeightRequest="52"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="{StaticResource OnPrimary}"
                         Command="{Binding GoMapCommand}" />
 
                     <Button Grid.Column="2"
-                        Text="Alarms"
+                        Text="{x:Static loc:AppResources.HomePage_NavAlarms}"
                         HeightRequest="52"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="{StaticResource OnPrimary}"

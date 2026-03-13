@@ -1,0 +1,39 @@
+---
+import { LOCALES } from "../../lib/i18n";
+import { getPageContent, getUI } from "../../lib/content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import FallbackNotice from "../../components/FallbackNotice.astro";
+
+export function getStaticPaths() {
+  return LOCALES.map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params as { lang: string };
+
+// Privacy only exists in English — other languages will always fall back
+const { frontmatter: fm, Content, isFallback } = await getPageContent(lang, "privacy");
+const ui = getUI(lang);
+---
+
+<BaseLayout
+  title={fm.title ?? `Privacy Policy | Qibla Now`}
+  description={fm.description}
+  lang={lang}
+>
+  {
+    isFallback && (
+      <FallbackNotice
+        langName={ui?.lang?.name ?? lang}
+        notAvailable={ui?.fallback?.notAvailable ?? `This page is not yet available in ${lang}.`}
+        showing={ui?.fallback?.showing ?? "Showing English content."}
+        helpTranslate={ui?.fallback?.helpTranslate ?? "Help translate this page."}
+      />
+    )
+  }
+
+  <section class="section">
+    <div class="prose">
+      {Content && <Content />}
+    </div>
+  </section>
+</BaseLayout>

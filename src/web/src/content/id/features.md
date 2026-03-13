@@ -1,0 +1,16 @@
+---
+title: "Fitur | Qibla Now"
+description: "Waktu salat, arah kiblat, dukungan peta, alarm, mode lokasi, dan pengaturan terfokus di Qibla Now."
+headline: "Kemampuan terfokus untuk penggunaan salat harian."
+intro: "Qibla Now berkonsentrasi pada fungsi esensial: waktu salat, arah kiblat, alarm, dukungan peta, dan pengaturan tepat tanpa kompleksitas yang tidak perlu."
+feature1_h: "Waktu salat"
+feature1_p: "Jadwal salat harian akurat dengan metode perhitungan yang dapat dikonfigurasi, pilihan mazhab, dan aturan lintang tinggi. Semua perhitungan dilakukan secara lokal."
+feature2_h: "Arah kiblat"
+feature2_p: "Qibla Now menggunakan bearing lingkaran besar menuju Ka'bah, ditampilkan melalui kompas, peta, dan arah numerik. Tampilan peta mengilustrasikan garis geodesik sebenarnya."
+feature3_h: "Notifikasi dan alarm"
+feature3_p: "Penjadwalan notifikasi lokal untuk waktu salat, tanpa bergantung cloud. Alarm andal dan dapat dikonfigurasi, menghormati baterai perangkat."
+feature4_h: "Mode lokasi"
+feature4_p: "Berbagai mode lokasi: GPS perangkat, entri manual, dan lokasi tersimpan. Semua mode dirancang untuk privasi dan penggunaan luring."
+feature5_h: "Pengaturan dan kontrol perhitungan"
+feature5_p: "Konfigurasi mendalam: metode perhitungan, mazhab, aturan lintang tinggi, opsi tampilan, dan preferensi notifikasi. Semua pengaturan disimpan secara lokal."
+---

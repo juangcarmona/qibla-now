@@ -1,0 +1,130 @@
+---
+interface Props {
+  eyebrow?: string;
+  headline: string;
+  lead?: string;
+  ctaPrimaryHref?: string;
+  ctaPrimaryLabel?: string;
+  ctaSecondaryHref?: string;
+  ctaSecondaryLabel?: string;
+  points?: string[];
+  screenshotSrc?: string;
+  screenshotAlt?: string;
+}
+
+const {
+  eyebrow,
+  headline,
+  lead,
+  ctaPrimaryHref,
+  ctaPrimaryLabel,
+  ctaSecondaryHref,
+  ctaSecondaryLabel,
+  points = [],
+  screenshotSrc = '/screenshots/home.png',
+  screenshotAlt = 'Qibla Now app screenshot',
+} = Astro.props;
+---
+
+<section class="hero section">
+  <div class="hero-grid">
+    <div class="hero-content">
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h1>{headline}</h1>
+      {lead && <p class="lead">{lead}</p>}
+
+      {
+        (ctaPrimaryHref || ctaSecondaryHref) && (
+          <div class="hero-actions">
+            {ctaPrimaryHref && (
+              <a class="button button-primary" href={ctaPrimaryHref}>
+                {ctaPrimaryLabel}
+              </a>
+            )}
+            {ctaSecondaryHref && (
+              <a class="button button-secondary" href={ctaSecondaryHref}>
+                {ctaSecondaryLabel}
+              </a>
+            )}
+          </div>
+        )
+      }
+
+      {
+        points.length > 0 && (
+          <ul class="hero-points">
+            {points.map((p) => p && <li>{p}</li>)}
+          </ul>
+        )
+      }
+    </div>
+
+    <aside class="hero-panel card">
+      <img src={screenshotSrc} alt={screenshotAlt} class="hero-image" loading="eager" />
+    </aside>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-top: 3rem;
+  }
+
+  .hero-grid {
+    display: grid;
+    gap: 2rem;
+    align-items: stretch;
+  }
+
+  .hero-content h1 {
+    margin-top: 0.5rem;
+  }
+
+  .lead {
+    font-size: 1.1rem;
+    max-width: 46rem;
+    color: var(--muted);
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin: 1.5rem 0;
+  }
+
+  .hero-points {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    padding: 0;
+    margin: 1.25rem 0 0;
+    list-style: none;
+  }
+
+  .hero-points li {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  .hero-panel {
+    background: linear-gradient(180deg, var(--surface) 0%, var(--surface-alt) 100%);
+  }
+
+  .hero-image {
+    width: 100%;
+    border-radius: 12px;
+    display: block;
+  }
+
+  @media (min-width: 900px) {
+    .hero-grid {
+      grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+    }
+  }
+</style>

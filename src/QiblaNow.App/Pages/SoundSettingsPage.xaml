@@ -4,8 +4,9 @@
              xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.Presentation"
              x:Class="QiblaNow.App.Pages.SoundSettingsPage"
              xmlns:app="clr-namespace:QiblaNow.App"
-             xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"   
-             Title="Sound &amp; Notifications"
+             xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"
+             xmlns:loc="clr-namespace:QiblaNow.App.Resources.Localization"
+             Title="{x:Static loc:AppResources.SoundSettings_Title}"
              BackgroundColor="{StaticResource AppBackgroundLight}"
              x:DataType="viewmodels:SettingsViewModel">
     <Grid RowDefinitions="*,Auto">
@@ -21,11 +22,11 @@
                     </Border.StrokeShape>
 
                     <VerticalStackLayout Spacing="14">
-                        <Label Text="Prayer Notifications"
+                        <Label Text="{x:Static loc:AppResources.SoundSettings_PrayerNotifications}"
                            FontSize="18" FontAttributes="Bold"
                            TextColor="{StaticResource OnSurfaceLight}" />
 
-                        <Label Text="Receive a notification at each prayer time."
+                        <Label Text="{x:Static loc:AppResources.SoundSettings_NotificationsDescription}"
                            FontSize="13" TextColor="{StaticResource Gray600}"
                            LineBreakMode="WordWrap" />
 
@@ -37,7 +38,7 @@
                           Margin="0,2,0,0">
 
                             <Label Grid.Row="0" Grid.Column="0"
-                               Text="Fajr" FontSize="15"
+                               Text="{x:Static loc:AppResources.Prayer_Fajr}" FontSize="15"
                                TextColor="{StaticResource OnSurfaceLight}"
                                VerticalOptions="Center" />
                             <Switch Grid.Row="0" Grid.Column="1"
@@ -45,7 +46,7 @@
                                 OnColor="{StaticResource Primary}" />
 
                             <Label Grid.Row="1" Grid.Column="0"
-                               Text="Dhuhr" FontSize="15"
+                               Text="{x:Static loc:AppResources.Prayer_Dhuhr}" FontSize="15"
                                TextColor="{StaticResource OnSurfaceLight}"
                                VerticalOptions="Center" />
                             <Switch Grid.Row="1" Grid.Column="1"
@@ -53,7 +54,7 @@
                                 OnColor="{StaticResource Primary}" />
 
                             <Label Grid.Row="2" Grid.Column="0"
-                               Text="Asr" FontSize="15"
+                               Text="{x:Static loc:AppResources.Prayer_Asr}" FontSize="15"
                                TextColor="{StaticResource OnSurfaceLight}"
                                VerticalOptions="Center" />
                             <Switch Grid.Row="2" Grid.Column="1"
@@ -61,7 +62,7 @@
                                 OnColor="{StaticResource Primary}" />
 
                             <Label Grid.Row="3" Grid.Column="0"
-                               Text="Maghrib" FontSize="15"
+                               Text="{x:Static loc:AppResources.Prayer_Maghrib}" FontSize="15"
                                TextColor="{StaticResource OnSurfaceLight}"
                                VerticalOptions="Center" />
                             <Switch Grid.Row="3" Grid.Column="1"
@@ -69,7 +70,7 @@
                                 OnColor="{StaticResource Primary}" />
 
                             <Label Grid.Row="4" Grid.Column="0"
-                               Text="Isha" FontSize="15"
+                               Text="{x:Static loc:AppResources.Prayer_Isha}" FontSize="15"
                                TextColor="{StaticResource OnSurfaceLight}"
                                VerticalOptions="Center" />
                             <Switch Grid.Row="4" Grid.Column="1"
@@ -89,10 +90,10 @@
                     </Border.StrokeShape>
 
                     <VerticalStackLayout Spacing="10">
-                        <Label Text="Adhan Sound"
+                        <Label Text="{x:Static loc:AppResources.SoundSettings_Adhan}"
                            FontSize="18" FontAttributes="Bold"
                            TextColor="{StaticResource OnSurfaceLight}" />
-                        <Label Text="Adhan sound selection — coming soon."
+                        <Label Text="{x:Static loc:AppResources.SoundSettings_AdhanComingSoon}"
                            FontSize="13" TextColor="{StaticResource Gray500}"
                            LineBreakMode="WordWrap" />
                     </VerticalStackLayout>

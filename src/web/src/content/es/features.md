@@ -1,0 +1,16 @@
+---
+title: "Características | Qibla Now"
+description: "Horarios de oración, dirección de la Qibla, soporte de mapas, alarmas, modos de ubicación y configuración en Qibla Now."
+headline: "Capacidades esenciales para el uso diario de la oración."
+intro: "Qibla Now se centra en las funciones esenciales: horarios de oración, dirección de la Qibla, alarmas, soporte de mapas y configuración precisa sin complejidad innecesaria."
+feature1_h: "Horarios de oración"
+feature1_p: "Horarios diarios precisos con métodos de cálculo configurables, selección de madhab y reglas para latitudes altas. Todos los cálculos se realizan localmente, sin dependencia de servidores."
+feature2_h: "Dirección de la Qibla"
+feature2_p: "Qibla Now usa el rumbo ortodrómico hacia la Kaaba, mostrado mediante brújula, mapa y dirección numérica. La vista del mapa ilustra la línea geodésica real."
+feature3_h: "Notificaciones y alarmas"
+feature3_p: "Programación de notificaciones locales para los tiempos de oración, sin dependencia de la nube. Las alarmas son fiables y configurables."
+feature4_h: "Modos de ubicación"
+feature4_p: "Múltiples modos de ubicación: GPS del dispositivo, entrada manual y ubicaciones guardadas. Todos los modos están diseñados para la privacidad y el uso sin conexión."
+feature5_h: "Configuración y controles de cálculo"
+feature5_p: "Configuración profunda: método de cálculo, madhab, reglas para latitudes altas, opciones de pantalla y preferencias de notificación. Toda la configuración se almacena localmente."
+---

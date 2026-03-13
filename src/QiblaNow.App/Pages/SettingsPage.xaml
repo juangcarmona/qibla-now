@@ -4,8 +4,9 @@
              xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.Presentation"
              x:Class="QiblaNow.App.Pages.SettingsPage"
              xmlns:app="clr-namespace:QiblaNow.App"
-             xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"   
-             Title="Settings"
+             xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"
+             xmlns:loc="clr-namespace:QiblaNow.App.Resources.Localization"
+             Title="{x:Static loc:AppResources.SettingsPage_Title}"
              BackgroundColor="{StaticResource AppBackgroundLight}"
              x:DataType="viewmodels:SettingsViewModel">
     <Grid RowDefinitions="*,Auto">
@@ -41,7 +42,7 @@
                                    HorizontalOptions="Center" VerticalOptions="Center" />
                             </Border>
                             <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                                <Label Text="Location"
+                                <Label Text="{x:Static loc:AppResources.SettingsPage_Location}"
                                    FontSize="16" FontAttributes="Bold"
                                    TextColor="{StaticResource OnSurfaceLight}" />
                                 <Label Text="{Binding LocationSummary}"
@@ -76,10 +77,10 @@
                                    HorizontalOptions="Center" VerticalOptions="Center" />
                             </Border>
                             <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                                <Label Text="Display"
+                                <Label Text="{x:Static loc:AppResources.SettingsPage_Display}"
                                    FontSize="16" FontAttributes="Bold"
                                    TextColor="{StaticResource OnSurfaceLight}" />
-                                <Label Text="Time format, prayer visibility"
+                                <Label Text="{x:Static loc:AppResources.SettingsPage_DisplaySummary}"
                                    FontSize="13" TextColor="{StaticResource Gray600}" />
                             </VerticalStackLayout>
                             <Label Grid.Column="2" Text="›" FontSize="22"
@@ -110,7 +111,7 @@
                                    HorizontalOptions="Center" VerticalOptions="Center" />
                             </Border>
                             <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                                <Label Text="Calculation"
+                                <Label Text="{x:Static loc:AppResources.SettingsPage_Calculation}"
                                    FontSize="16" FontAttributes="Bold"
                                    TextColor="{StaticResource OnSurfaceLight}" />
                                 <Label Text="{Binding CalculationSummary}"
@@ -144,10 +145,44 @@
                                    HorizontalOptions="Center" VerticalOptions="Center" />
                             </Border>
                             <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                                <Label Text="Sound &amp; Notifications"
+                                <Label Text="{x:Static loc:AppResources.SettingsPage_SoundNotifications}"
                                    FontSize="16" FontAttributes="Bold"
                                    TextColor="{StaticResource OnSurfaceLight}" />
                                 <Label Text="{Binding NotificationSummary}"
+                                   FontSize="13" TextColor="{StaticResource Gray600}" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" FontSize="22"
+                               TextColor="{StaticResource Gray400}"
+                               VerticalOptions="Center" />
+                        </Grid>
+
+                        <BoxView HeightRequest="0.5"
+                             Color="{StaticResource Gray200}"
+                             Margin="16,0" />
+
+                        <!-- Language row -->
+                        <Grid Padding="16,14"
+                          ColumnDefinitions="44,*,Auto"
+                          ColumnSpacing="12">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding GoLanguageSettingsCommand}" />
+                            </Grid.GestureRecognizers>
+                            <Border Grid.Column="0"
+                                BackgroundColor="{StaticResource Secondary}"
+                                WidthRequest="36" HeightRequest="36"
+                                HorizontalOptions="Center" VerticalOptions="Center"
+                                StrokeThickness="0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <Label Text="🌐" FontSize="18"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label Text="{x:Static loc:AppResources.SettingsPage_Language}"
+                                   FontSize="16" FontAttributes="Bold"
+                                   TextColor="{StaticResource OnSurfaceLight}" />
+                                <Label Text="{x:Static loc:AppResources.SettingsPage_LanguageSummary}"
                                    FontSize="13" TextColor="{StaticResource Gray600}" />
                             </VerticalStackLayout>
                             <Label Grid.Column="2" Text="›" FontSize="22"
@@ -185,10 +220,10 @@
                                HorizontalOptions="Center" VerticalOptions="Center" />
                         </Border>
                         <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                            <Label Text="About"
+                            <Label Text="{x:Static loc:AppResources.SettingsPage_About}"
                                FontSize="16" FontAttributes="Bold"
                                TextColor="{StaticResource OnSurfaceLight}" />
-                            <Label Text="App information"
+                            <Label Text="{x:Static loc:AppResources.SettingsPage_AboutSummary}"
                                FontSize="13" TextColor="{StaticResource Gray600}" />
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" FontSize="22"

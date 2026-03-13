@@ -1,0 +1,45 @@
+---
+interface Props {
+  langName: string;
+  notAvailable: string;
+  showing: string;
+  helpTranslate: string;
+}
+
+const { langName, notAvailable, showing, helpTranslate } = Astro.props;
+---
+
+<div class="fallback-notice" role="note">
+  <p>
+    <strong>{notAvailable.replace('English', langName)}</strong>
+    {showing}
+    <a href="https://github.com/juancarmonaep/qibla-now" target="_blank" rel="noopener noreferrer"
+      >{helpTranslate}</a
+    >
+  </p>
+</div>
+
+<style>
+  .fallback-notice {
+    background: var(--accent-subtle, color-mix(in srgb, var(--accent) 12%, transparent));
+    border-left: 3px solid var(--accent);
+    padding: 0.7rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+
+  .fallback-notice p {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: baseline;
+  }
+
+  .fallback-notice a {
+    color: var(--brand-dark);
+    font-weight: 600;
+    text-decoration: underline;
+  }
+</style>

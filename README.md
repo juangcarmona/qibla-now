@@ -1,16 +1,40 @@
 # Qibla Now
 
-Qibla Now is an Android-first, offline-first Islamic utility app built with .NET MAUI.
+![App Icon](assets/qibla-now-icon.png)
 
-It provides:
+Qibla Now is an offline-first Islamic utility app for Android, iOS, Windows, and Mac, built with .NET MAUI.
 
-- Accurate daily prayer times (multiple calculation methods)
-- Fine-grained configurable Adhan alarms
-- Qibla direction via compass, map, and numeric bearing modes
-- Full RTL support and internationalization
-- Privacy-first architecture (no backend, no accounts, no analytics)
+## Features
+- **Prayer Times:** Accurate for any location, using multiple calculation methods and madhab options.
+- **Qibla Direction:** Compass-based, with true Qibla azimuth and error display.
+- **Map:** Shows Qibla as a long-curve (great circle) path, not a straight line, for true geodesic accuracy.
+- **Adhan Alarms:** Fine-grained configurable notifications for each prayer.
+- **Localization:** Supports 9 languages (English, Arabic, Spanish, French, Urdu, Bengali, Indonesian, Turkish, Persian). All translations are maintained in RESX files.
+- **RTL Support:** Full right-to-left layout for Arabic-script languages.
+- **Privacy:** No location or personal data is sent to any server. All calculations are done locally. No ads, no analytics, no tracking.
 
-All calculations are performed locally on-device. No personal data is collected, stored remotely, or transmitted.
+## Translations
+All visible app text is localized. See `src/QiblaNow.App/Resources/Localization/AppResources.*.resx` for full language support. Prayer names use standard terminology for each language.
 
-This project follows a strict Spec-Driven Development approach.  
-Architecture and milestones are defined before implementation.
+## Supported Languages
+
+| Culture | Language | Native Name | Flag |
+|--------|---------|-------------|------|
+| en | English | English | 🇬🇧 |
+| es | Spanish | Español | 🇪🇸 |
+| fr | French | Français | 🇫🇷 |
+| ar | Arabic | العربية | 🇸🇦 |
+| ur | Urdu | اردو | 🇵🇰 |
+| bn | Bengali | বাংলা | 🇧🇩 |
+| id | Indonesian | Bahasa Indonesia | 🇮🇩 |
+| tr | Turkish | Türkçe | 🇹🇷 |
+| fa | Persian | فارسی | 🇮🇷 |
+
+## Map Curves
+The Qibla path on the map is shown as a curved line (great circle), not a straight line, because the shortest path on a sphere is a curve. This ensures the Qibla direction is accurate for all locations.
+
+## Privacy
+Qibla Now does not collect or transmit any user data. Location is used only for prayer time and Qibla calculations, and never leaves your device.
+
+## Open Source
+Qibla Now is free and open source. Contributions and translations are welcome.

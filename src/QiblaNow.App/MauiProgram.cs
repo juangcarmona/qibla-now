@@ -14,6 +14,9 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
+        // Apply persisted language before any XAML is inflated
+        LocalizationHelper.ApplyPersistedCulture();
+
         var builder = MauiApp.CreateBuilder();
 
         builder
@@ -51,6 +54,7 @@ public static class MauiProgram
         builder.Services.AddTransient<QiblaPage>();
 
         builder.Services.AddTransient<SettingsPage>();
+        builder.Services.AddTransient<LanguageSettingsPage>();
         builder.Services.AddTransient<LocationSettingsPage>();
         builder.Services.AddTransient<CalculationSettingsPage>();
         builder.Services.AddTransient<SoundSettingsPage>();

@@ -1,9 +1,13 @@
 :root {
+  /* Light mode (default) */
   --bg: #f7f4ea;
   --surface: #ffffff;
+  --surface-alt: #f0ede0;
   --text: #102418;
   --muted: #526057;
   --border: #d9dfd8;
+  --header-bg: rgba(247, 244, 234, 0.92);
+  --footer-bg: #ffffff;
 
   --brand: #0b6e4f;
   --brand-dark: #064e3b;
@@ -12,6 +16,23 @@
   --max-width: 1120px;
   --radius: 18px;
   --shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme='dark'] {
+  --bg: #0e1a12;
+  --surface: #162319;
+  --surface-alt: #1c2d21;
+  --text: #deeae0;
+  --muted: #7fa085;
+  --border: #2c3f31;
+  --header-bg: rgba(14, 26, 18, 0.93);
+  --footer-bg: #162319;
+
+  --brand: #34c97e;
+  --brand-dark: #5cd49c;
+  --accent: #d4b06a;
+
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
 *,
@@ -43,22 +64,132 @@ main {
   flex: 1;
 }
 
-/* Minimalist adjustments */
-.button,
-.button-primary,
-.button-secondary {
-  border-radius: 0;
+/* ── Transitions ─────────────────────────────────── */
+html {
+  transition: background-color 0.2s, color 0.2s;
 }
 
-.card {
-  border-radius: 0;
+/* ── Typography ──────────────────────────────────── */
+h1, h2, h3, h4 {
+  line-height: 1.25;
+  color: var(--text);
 }
 
-nav a,
-nav a.active {
-  border-radius: 0;
+a {
+  color: var(--brand-dark);
+  text-decoration: none;
 }
 
+a:hover {
+  text-decoration: underline;
+}
+
+p {
+  margin-top: 0;
+}
+
+/* ── Layout helpers ──────────────────────────────── */
 .section {
   padding: 3rem 0;
 }
+
+.grid-2 {
+  display: grid;
+  gap: 2rem;
+}
+
+.grid-3 {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 700px) {
+  .grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 860px) {
+  .grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ── Card ────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+}
+
+/* ── Buttons ─────────────────────────────────────── */
+.button,
+.button-primary,
+.button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1.3rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  font-family: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.button-primary {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+}
+
+.button-primary:hover {
+  background: var(--brand-dark);
+  border-color: var(--brand-dark);
+  text-decoration: none;
+  color: #fff;
+}
+
+.button-secondary {
+  background: transparent;
+  color: var(--brand-dark);
+  border-color: var(--brand);
+}
+
+.button-secondary:hover {
+  background: var(--brand);
+  color: #fff;
+  text-decoration: none;
+}
+
+/* ── Eyebrow label ───────────────────────────────── */
+.eyebrow {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--brand);
+  margin-bottom: 0.4rem;
+}
+
+/* ── Container ───────────────────────────────────── */
+.container {
+  width: min(var(--max-width), calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+/* ── Prose (markdown content) ────────────────────── */
+.prose {
+  max-width: 72ch;
+}
+
+.prose h1 { font-size: 1.9rem; margin-bottom: 1rem; }
+.prose h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 0.6rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+.prose h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.4rem; }
+.prose ul, .prose ol { padding-left: 1.4rem; }
+.prose li { margin-bottom: 0.3rem; }
+.prose strong { color: var(--text); }
+.prose a { color: var(--brand-dark); text-decoration: underline; }
+.prose hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }

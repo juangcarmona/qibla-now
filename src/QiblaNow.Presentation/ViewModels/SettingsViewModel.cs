@@ -161,6 +161,9 @@ public sealed partial class SettingsViewModel : ObservableObject
     private Task GoLocationSettings() => Shell.Current.GoToAsync("location-settings");
 
     [RelayCommand]
+    private Task GoLanguageSettings() => Shell.Current.GoToAsync("language-settings");
+
+    [RelayCommand]
     private Task GoCalculationSettings() => Shell.Current.GoToAsync("calculation-settings");
 
     [RelayCommand]

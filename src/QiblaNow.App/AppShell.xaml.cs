@@ -15,6 +15,7 @@ namespace QiblaNow.App
             Routing.RegisterRoute("calculation-settings", typeof(CalculationSettingsPage));
             Routing.RegisterRoute("sound-settings", typeof(SoundSettingsPage));
             Routing.RegisterRoute("display-settings", typeof(DisplaySettingsPage));
+            Routing.RegisterRoute("language-settings", typeof(LanguageSettingsPage));
             Routing.RegisterRoute("about", typeof(AboutPage));
         }
     }

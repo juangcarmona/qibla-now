@@ -3,10 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.Presentation"
              xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"
+             xmlns:loc="clr-namespace:QiblaNow.App.Resources.Localization"
              x:Class="QiblaNow.App.Pages.QiblaPage"
              x:DataType="viewmodels:MapViewModel"
              BackgroundColor="{StaticResource AppBackgroundLight}"
-             Title="Qibla">
+             Title="{x:Static loc:AppResources.QiblaPage_Title}">
 
     <Grid RowDefinitions="Auto,*,Auto">
 
@@ -31,7 +32,7 @@
                 <Grid ColumnDefinitions="*,*,*"
                       ColumnSpacing="12">
                     <VerticalStackLayout Grid.Column="0" Spacing="2">
-                        <Label Text="Qibla"
+                        <Label Text="{x:Static loc:AppResources.QiblaPage_QiblaColumn}"
                                FontSize="12"
                                TextColor="{StaticResource Gray600}"
                                HorizontalTextAlignment="Center" />
@@ -43,7 +44,7 @@
                     </VerticalStackLayout>
 
                     <VerticalStackLayout Grid.Column="1" Spacing="2">
-                        <Label Text="Heading"
+                        <Label Text="{x:Static loc:AppResources.QiblaPage_HeadingColumn}"
                                FontSize="12"
                                TextColor="{StaticResource Gray600}"
                                HorizontalTextAlignment="Center" />
@@ -55,7 +56,7 @@
                     </VerticalStackLayout>
 
                     <VerticalStackLayout Grid.Column="2" Spacing="2">
-                        <Label Text="Error"
+                        <Label Text="{x:Static loc:AppResources.QiblaPage_ErrorColumn}"
                                FontSize="12"
                                TextColor="{StaticResource Gray600}"
                                HorizontalTextAlignment="Center" />

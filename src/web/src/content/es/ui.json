@@ -1,0 +1,25 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "features": "Características",
+    "about": "Acerca de",
+    "privacy": "Privacidad",
+    "support": "Soporte"
+  },
+  "footer": {
+    "tagline": "Horarios de oración y dirección de la Qibla con claridad, privacidad y rigor técnico."
+  },
+  "theme": {
+    "toggleLight": "Modo claro",
+    "toggleDark": "Modo oscuro"
+  },
+  "fallback": {
+    "notAvailable": "Esta página aún no está disponible en Español.",
+    "showing": "Mostrando contenido en inglés.",
+    "helpTranslate": "Ayuda a traducir esta página."
+  },
+  "lang": {
+    "name": "Español",
+    "select": "Idioma"
+  }
+}

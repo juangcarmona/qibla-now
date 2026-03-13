@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- App-wide -->
+  <data name="AppTitle" xml:space="preserve">
+    <value>قبلة الآن</value>
+  </data>
+
+  <!-- Home Page -->
+  <data name="HomePage_TapToGoBackToToday" xml:space="preserve">
+    <value>اضغط للعودة إلى اليوم</value>
+  </data>
+  <data name="HomePage_CalculationMethodPrefix" xml:space="preserve">
+    <value>طريقة الحساب:</value>
+  </data>
+  <data name="HomePage_NavQibla" xml:space="preserve">
+    <value>القبلة</value>
+  </data>
+  <data name="HomePage_NavMap" xml:space="preserve">
+    <value>الخريطة</value>
+  </data>
+  <data name="HomePage_NavAlarms" xml:space="preserve">
+    <value>التنبيهات</value>
+  </data>
+
+  <!-- Settings Page -->
+  <data name="SettingsPage_Title" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="SettingsPage_Location" xml:space="preserve">
+    <value>الموقع</value>
+  </data>
+  <data name="SettingsPage_Display" xml:space="preserve">
+    <value>العرض</value>
+  </data>
+  <data name="SettingsPage_DisplaySummary" xml:space="preserve">
+    <value>تنسيق الوقت، رؤية الصلوات</value>
+  </data>
+  <data name="SettingsPage_Calculation" xml:space="preserve">
+    <value>الحساب</value>
+  </data>
+  <data name="SettingsPage_SoundNotifications" xml:space="preserve">
+    <value>الصوت والإشعارات</value>
+  </data>
+  <data name="SettingsPage_Language" xml:space="preserve">
+    <value>اللغة</value>
+  </data>
+  <data name="SettingsPage_LanguageSummary" xml:space="preserve">
+    <value>لغة الواجهة</value>
+  </data>
+  <data name="SettingsPage_About" xml:space="preserve">
+    <value>حول التطبيق</value>
+  </data>
+  <data name="SettingsPage_AboutSummary" xml:space="preserve">
+    <value>معلومات التطبيق</value>
+  </data>
+
+  <!-- Location Settings -->
+  <data name="LocationSettings_Title" xml:space="preserve">
+    <value>الموقع</value>
+  </data>
+  <data name="LocationSettings_LocationMode" xml:space="preserve">
+    <value>وضع الموقع</value>
+  </data>
+  <data name="LocationSettings_SelectMode" xml:space="preserve">
+    <value>اختر الوضع</value>
+  </data>
+  <data name="LocationSettings_GpsDescription" xml:space="preserve">
+    <value>استخدم GPS للكشف عن موقعك تلقائيًا.</value>
+  </data>
+  <data name="LocationSettings_RequestGps" xml:space="preserve">
+    <value>طلب موقع GPS</value>
+  </data>
+  <data name="LocationSettings_Latitude" xml:space="preserve">
+    <value>خط العرض</value>
+  </data>
+  <data name="LocationSettings_Longitude" xml:space="preserve">
+    <value>خط الطول</value>
+  </data>
+  <data name="LocationSettings_SaveLocation" xml:space="preserve">
+    <value>حفظ الموقع</value>
+  </data>
+
+  <!-- Calculation Settings -->
+  <data name="CalculationSettings_Title" xml:space="preserve">
+    <value>الحساب</value>
+  </data>
+  <data name="CalculationSettings_Header" xml:space="preserve">
+    <value>حساب مواقيت الصلاة</value>
+  </data>
+  <data name="CalculationSettings_Method" xml:space="preserve">
+    <value>طريقة الحساب</value>
+  </data>
+  <data name="CalculationSettings_SelectMethod" xml:space="preserve">
+    <value>اختر الطريقة</value>
+  </data>
+  <data name="CalculationSettings_Madhab" xml:space="preserve">
+    <value>المذهب (حساب العصر)</value>
+  </data>
+  <data name="CalculationSettings_SelectMadhab" xml:space="preserve">
+    <value>اختر المذهب</value>
+  </data>
+  <data name="CalculationSettings_HighLatitudeRule" xml:space="preserve">
+    <value>قاعدة خطوط العرض العالية</value>
+  </data>
+  <data name="CalculationSettings_SelectRule" xml:space="preserve">
+    <value>اختر القاعدة</value>
+  </data>
+  <data name="CalculationSettings_AutoSave" xml:space="preserve">
+    <value>يتم حفظ التغييرات تلقائيًا.</value>
+  </data>
+
+  <!-- Sound Settings -->
+  <data name="SoundSettings_Title" xml:space="preserve">
+    <value>الصوت والإشعارات</value>
+  </data>
+  <data name="SoundSettings_PrayerNotifications" xml:space="preserve">
+    <value>إشعارات الصلاة</value>
+  </data>
+  <data name="SoundSettings_NotificationsDescription" xml:space="preserve">
+    <value>استلم إشعارًا لكل وقت صلاة.</value>
+  </data>
+  <data name="SoundSettings_Adhan" xml:space="preserve">
+    <value>صوت الأذان</value>
+  </data>
+  <data name="SoundSettings_AdhanComingSoon" xml:space="preserve">
+    <value>اختيار صوت الأذان — قريبًا.</value>
+  </data>
+
+  <!-- Prayer Names -->
+  <data name="Prayer_Fajr" xml:space="preserve">
+    <value>الفجر</value>
+  </data>
+  <data name="Prayer_Dhuhr" xml:space="preserve">
+    <value>الظهر</value>
+  </data>
+  <data name="Prayer_Asr" xml:space="preserve">
+    <value>العصر</value>
+  </data>
+  <data name="Prayer_Maghrib" xml:space="preserve">
+    <value>المغرب</value>
+  </data>
+  <data name="Prayer_Isha" xml:space="preserve">
+    <value>العشاء</value>
+  </data>
+
+  <!-- Display Settings -->
+  <data name="DisplaySettings_Title" xml:space="preserve">
+    <value>العرض</value>
+  </data>
+  <data name="DisplaySettings_TimeFormat" xml:space="preserve">
+    <value>تنسيق الوقت</value>
+  </data>
+  <data name="DisplaySettings_24HourClock" xml:space="preserve">
+    <value>استخدام ساعة 24 ساعة</value>
+  </data>
+  <data name="DisplaySettings_TimeFormatComingSoon" xml:space="preserve">
+    <value>إعداد تنسيق الوقت — قريبًا.</value>
+  </data>
+  <data name="DisplaySettings_PrayerVisibility" xml:space="preserve">
+    <value>ظهور الصلوات</value>
+  </data>
+  <data name="DisplaySettings_PrayerVisibilityComingSoon" xml:space="preserve">
+    <value>اختر مواقيت الصلاة للعرض — قريبًا.</value>
+  </data>
+  <data name="DisplaySettings_HijriAdjustment" xml:space="preserve">
+    <value>ضبط التاريخ الهجري</value>
+  </data>
+  <data name="DisplaySettings_HijriAdjustmentComingSoon" xml:space="preserve">
+    <value>ضبط التاريخ الهجري المعروض بمقدار ±3 أيام — قريبًا.</value>
+  </data>
+
+  <!-- About Page -->
+  <data name="AboutPage_Title" xml:space="preserve">
+    <value>حول التطبيق</value>
+  </data>
+  <data name="AboutPage_Version" xml:space="preserve">
+    <value>الإصدار 1.0</value>
+  </data>
+  <data name="AboutPage_Description" xml:space="preserve">
+    <value>تطبيق إسلامي يعمل دون إنترنت لمواقيت الصلاة واتجاه القبلة.</value>
+  </data>
+  <data name="AboutPage_Features" xml:space="preserve">
+    <value>المميزات</value>
+  </data>
+  <data name="AboutPage_FeaturePrayerTimes" xml:space="preserve">
+    <value>• مواقيت صلاة دقيقة لأي موقع</value>
+  </data>
+  <data name="AboutPage_FeatureQibla" xml:space="preserve">
+    <value>• اتجاه القبلة بالبوصلة</value>
+  </data>
+  <data name="AboutPage_FeatureNotifications" xml:space="preserve">
+    <value>• إشعارات مواقيت الصلاة</value>
+  </data>
+  <data name="AboutPage_FeatureCalculationMethods" xml:space="preserve">
+    <value>• طرق حساب متعددة</value>
+  </data>
+  <data name="AboutPage_FeatureOffline" xml:space="preserve">
+    <value>• يعمل بالكامل دون إنترنت</value>
+  </data>
+  <data name="AboutPage_Links" xml:space="preserve">
+    <value>روابط</value>
+  </data>
+  <data name="AboutPage_SourceCode" xml:space="preserve">
+    <value>الكود المصدري</value>
+  </data>
+  <data name="AboutPage_Website" xml:space="preserve">
+    <value>الموقع الإلكتروني</value>
+  </data>
+  <data name="AboutPage_Support" xml:space="preserve">
+    <value>الدعم</value>
+  </data>
+  <data name="AboutPage_SupportDescription" xml:space="preserve">
+    <value>قبلة الآن مجاني ومفتوح المصدر. إذا أعجبك، يمكنك دعم تطويره.</value>
+  </data>
+  <data name="AboutPage_SupportButton" xml:space="preserve">
+    <value>ادعم هذا المشروع</value>
+  </data>
+
+  <!-- Map Page -->
+  <data name="MapPage_Title" xml:space="preserve">
+    <value>الخريطة</value>
+  </data>
+  <data name="MapPage_QiblaColumn" xml:space="preserve">
+    <value>القبلة</value>
+  </data>
+  <data name="MapPage_HeadingColumn" xml:space="preserve">
+    <value>الاتجاه</value>
+  </data>
+  <data name="MapPage_ErrorColumn" xml:space="preserve">
+    <value>الخطأ</value>
+  </data>
+
+  <!-- Qibla Page -->
+  <data name="QiblaPage_Title" xml:space="preserve">
+    <value>القبلة</value>
+  </data>
+  <data name="QiblaPage_QiblaColumn" xml:space="preserve">
+    <value>القبلة</value>
+  </data>
+  <data name="QiblaPage_HeadingColumn" xml:space="preserve">
+    <value>الاتجاه</value>
+  </data>
+  <data name="QiblaPage_ErrorColumn" xml:space="preserve">
+    <value>الخطأ</value>
+  </data>
+
+  <!-- Prayer Times Page -->
+  <data name="PrayerTimesPage_Title" xml:space="preserve">
+    <value>أوقات الصلاة</value>
+  </data>
+
+  <!-- Language Settings -->
+  <data name="LanguageSettings_Title" xml:space="preserve">
+    <value>اللغة</value>
+  </data>
+  <data name="LanguageSettings_AppLanguage" xml:space="preserve">
+    <value>لغة التطبيق</value>
+  </data>
+  <data name="LanguageSettings_Description" xml:space="preserve">
+    <value>اختر لغة واجهة التطبيق.</value>
+  </data>
+  <data name="LanguageSettings_RestartNote" xml:space="preserve">
+    <value>تُطبَّق تغييرات اللغة فورًا بعد الاختيار.</value>
+  </data>
+  <data name="LanguageSettings_SystemDefault" xml:space="preserve">
+    <value>إعداد النظام</value>
+  </data>
+  <data name="LanguageSettings_English" xml:space="preserve">
+    <value>الإنجليزية</value>
+  </data>
+  <data name="LanguageSettings_Arabic" xml:space="preserve">
+    <value>العربية</value>
+  </data>
+  <data name="LanguageSettings_Spanish" xml:space="preserve">
+    <value>الإسبانية</value>
+  </data>
+
+</root>

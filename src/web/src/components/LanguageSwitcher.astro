@@ -1,0 +1,118 @@
+---
+import { LOCALES, LOCALE_NAMES } from '../lib/i18n';
+
+interface Props {
+  lang: string;
+  selectLabel?: string;
+}
+
+const { lang, selectLabel = 'Language' } = Astro.props;
+
+// Derive current page from pathname for building equivalent links
+const pathParts = Astro.url.pathname.split('/').filter(Boolean);
+const currentPage = pathParts.slice(1).join('/') || '';
+
+const hrefFor = (targetLang: string) =>
+  currentPage ? `/${targetLang}/${currentPage}` : `/${targetLang}`;
+---
+
+<div class="lang-switcher">
+  <button class="lang-btn" aria-haspopup="listbox" aria-label={selectLabel} id="lang-btn">
+    <span class="lang-current">{LOCALE_NAMES[lang as keyof typeof LOCALE_NAMES] ?? lang}</span>
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+      <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+  <ul class="lang-dropdown" id="lang-dropdown" role="listbox" aria-label={selectLabel}>
+    {
+      LOCALES.map((locale) => (
+        <li role="option" aria-selected={locale === lang}>
+          <a
+            href={hrefFor(locale)}
+            class={locale === lang ? 'active' : undefined}
+            hreflang={locale}
+          >
+            {LOCALE_NAMES[locale]}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<script>
+  const btn = document.getElementById('lang-btn');
+  const dropdown = document.getElementById('lang-dropdown');
+
+  btn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = dropdown?.classList.toggle('open');
+    btn.setAttribute('aria-expanded', String(open));
+  });
+
+  document.addEventListener('click', () => {
+    dropdown?.classList.remove('open');
+    btn?.setAttribute('aria-expanded', 'false');
+  });
+</script>
+
+<style>
+  .lang-switcher {
+    position: relative;
+  }
+
+  .lang-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.4rem 0.65rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: inherit;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .lang-btn:hover {
+    color: var(--text);
+    border-color: var(--brand);
+  }
+
+  .lang-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    min-width: 160px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    list-style: none;
+    margin: 0;
+    padding: 0.3rem 0;
+    z-index: 100;
+    box-shadow: var(--shadow);
+  }
+
+  .lang-dropdown.open {
+    display: block;
+  }
+
+  .lang-dropdown a {
+    display: block;
+    padding: 0.45rem 0.9rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.1s, color 0.1s;
+  }
+
+  .lang-dropdown a:hover,
+  .lang-dropdown a.active {
+    background: var(--surface-alt);
+    color: var(--brand-dark);
+  }
+</style>

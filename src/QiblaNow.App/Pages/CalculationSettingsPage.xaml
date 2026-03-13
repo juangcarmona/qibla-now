@@ -4,8 +4,9 @@
              xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.Presentation"
              x:Class="QiblaNow.App.Pages.CalculationSettingsPage"
              xmlns:app="clr-namespace:QiblaNow.App"
-             xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"   
-             Title="Calculation"
+             xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"
+             xmlns:loc="clr-namespace:QiblaNow.App.Resources.Localization"
+             Title="{x:Static loc:AppResources.CalculationSettings_Title}"
              BackgroundColor="{StaticResource AppBackgroundLight}"
              x:DataType="viewmodels:SettingsViewModel">
     <Grid RowDefinitions="*,Auto">
@@ -21,17 +22,17 @@
 
                     <VerticalStackLayout Spacing="18">
 
-                        <Label Text="Prayer Calculation"
+                        <Label Text="{x:Static loc:AppResources.CalculationSettings_Header}"
                            FontSize="18" FontAttributes="Bold"
                            TextColor="{StaticResource OnSurfaceLight}" />
 
                         <!-- Calculation Method -->
                         <VerticalStackLayout Spacing="6">
-                            <Label Text="Calculation Method"
+                            <Label Text="{x:Static loc:AppResources.CalculationSettings_Method}"
                                FontSize="13" TextColor="{StaticResource Gray600}" />
                             <Picker ItemsSource="{Binding CalculationMethodOptions}"
                                 SelectedItem="{Binding SelectedMethod}"
-                                Title="Select Method"
+                                Title="{x:Static loc:AppResources.CalculationSettings_SelectMethod}"
                                 HorizontalOptions="Fill" />
                         </VerticalStackLayout>
 
@@ -39,11 +40,11 @@
 
                         <!-- Madhab -->
                         <VerticalStackLayout Spacing="6">
-                            <Label Text="Madhab (Asr Calculation)"
+                            <Label Text="{x:Static loc:AppResources.CalculationSettings_Madhab}"
                                FontSize="13" TextColor="{StaticResource Gray600}" />
                             <Picker ItemsSource="{Binding MadhabOptions}"
                                 SelectedItem="{Binding SelectedMadhab}"
-                                Title="Select Madhab"
+                                Title="{x:Static loc:AppResources.CalculationSettings_SelectMadhab}"
                                 HorizontalOptions="Fill" />
                         </VerticalStackLayout>
 
@@ -51,15 +52,15 @@
 
                         <!-- High Latitude Rule -->
                         <VerticalStackLayout Spacing="6">
-                            <Label Text="High Latitude Rule"
+                            <Label Text="{x:Static loc:AppResources.CalculationSettings_HighLatitudeRule}"
                                FontSize="13" TextColor="{StaticResource Gray600}" />
                             <Picker ItemsSource="{Binding HighLatitudeRuleOptions}"
                                 SelectedItem="{Binding SelectedHighLatitudeRule}"
-                                Title="Select Rule"
+                                Title="{x:Static loc:AppResources.CalculationSettings_SelectRule}"
                                 HorizontalOptions="Fill" />
                         </VerticalStackLayout>
 
-                        <Label Text="Changes are saved automatically."
+                        <Label Text="{x:Static loc:AppResources.CalculationSettings_AutoSave}"
                            FontSize="12" Opacity="0.6"
                            TextColor="{StaticResource Gray500}"
                            HorizontalTextAlignment="Center"

@@ -1,0 +1,16 @@
+---
+title: "Fonctionnalités | Qibla Now"
+description: "Horaires de prière, direction de la Qibla, support de cartes, alarmes, modes de localisation et paramètres dans Qibla Now."
+headline: "Fonctionnalités essentielles pour la prière quotidienne."
+intro: "Qibla Now se concentre sur les fonctions essentielles : horaires de prière, direction de la Qibla, alarmes, support de cartes et paramètres précis sans complexité inutile."
+feature1_h: "Horaires de prière"
+feature1_p: "Horaires quotidiens précis avec méthodes de calcul configurables, choix du madhab et règles pour hautes latitudes. Tous les calculs sont effectués localement."
+feature2_h: "Direction de la Qibla"
+feature2_p: "Qibla Now utilise le relèvement orthodromique vers la Kaaba, affiché via boussole, carte et direction numérique. La vue carte illustre la ligne géodésique réelle."
+feature3_h: "Notifications et alarmes"
+feature3_p: "Planification locale des notifications pour les heures de prière, sans dépendance au cloud. Les alarmes sont fiables et configurables."
+feature4_h: "Modes de localisation"
+feature4_p: "Plusieurs modes de localisation : GPS de l'appareil, saisie manuelle et lieux enregistrés. Tous les modes sont conçus pour la confidentialité et l'utilisation hors ligne."
+feature5_h: "Paramètres et contrôles de calcul"
+feature5_p: "Configuration avancée : méthode de calcul, madhab, règles pour hautes latitudes, options d'affichage et préférences de notification. Tous les paramètres sont stockés localement."
+---

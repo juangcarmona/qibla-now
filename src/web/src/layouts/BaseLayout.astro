@@ -6,28 +6,46 @@ import "../styles/global.css";
 interface Props {
   title: string;
   description?: string;
+  lang?: string;
 }
 
 const {
   title,
-  description = "Qibla Now is an offline-first Islamic utility for accurate prayer times, precise Qibla direction, local alarms, and privacy-first daily use."
+  description = "Qibla Now is an offline-first Islamic utility for accurate prayer times, precise Qibla direction, local alarms, and privacy-first daily use.",
+  lang = "en",
 } = Astro.props;
+
+const dir = ["ar", "ur", "fa"].includes(lang) ? "rtl" : "ltr";
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang} dir={dir}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
     <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Anti-flash theme script: runs synchronously before render -->
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          if (stored === "dark" || (!stored && prefersDark)) {
+            document.documentElement.setAttribute("data-theme", "dark");
+          } else {
+            document.documentElement.setAttribute("data-theme", "light");
+          }
+        } catch (_) {}
+      })();
+    </script>
   </head>
   <body>
-    <Header />
+    <Header lang={lang} />
     <main>
       <slot />
     </main>
-    <Footer />
+    <Footer lang={lang} />
   </body>
 </html>

@@ -1,0 +1,15 @@
+---
+interface Props {
+  eyebrow?: string;
+  headline?: string;
+  class?: string;
+}
+
+const { eyebrow, headline, class: className } = Astro.props;
+---
+
+<section class={`section${className ? ` ${className}` : ''}`}>
+  {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+  {headline && <h2>{headline}</h2>}
+  <slot />
+</section>

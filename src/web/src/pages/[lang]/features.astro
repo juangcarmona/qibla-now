@@ -1,0 +1,110 @@
+---
+import { LOCALES } from "../../lib/i18n";
+import { getPageContent, getUI } from "../../lib/content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import FallbackNotice from "../../components/FallbackNotice.astro";
+
+export function getStaticPaths() {
+  return LOCALES.map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params as { lang: string };
+
+const { frontmatter: fm, isFallback } = await getPageContent(lang, "features");
+const ui = getUI(lang);
+
+const featureRows = [
+  { h: fm.feature1_h, p: fm.feature1_p, img: "/screenshots/home.png", alt: "Prayer times screen" },
+  { h: fm.feature2_h, p: fm.feature2_p, img: "/screenshots/map.png", alt: "Qibla map screen" },
+  { h: fm.feature3_h, p: fm.feature3_p, img: "/screenshots/notification-settings.png", alt: "Notification settings" },
+  { h: fm.feature4_h, p: fm.feature4_p, img: "/screenshots/location-settings.png", alt: "Location settings" },
+  { h: fm.feature5_h, p: fm.feature5_p, img: null, alt: "" },
+];
+---
+
+<BaseLayout
+  title={fm.title ?? `Features | Qibla Now`}
+  description={fm.description}
+  lang={lang}
+>
+  {
+    isFallback && (
+      <FallbackNotice
+        langName={ui?.lang?.name ?? lang}
+        notAvailable={ui?.fallback?.notAvailable ?? `This page is not yet available in ${lang}.`}
+        showing={ui?.fallback?.showing ?? "Showing English content."}
+        helpTranslate={ui?.fallback?.helpTranslate ?? "Help translate this page."}
+      />
+    )
+  }
+
+  <section class="section">
+    <p class="eyebrow">Features</p>
+    <h1>{fm.headline ?? "Focused capabilities for daily prayer use."}</h1>
+    {fm.intro && <p class="lead">{fm.intro}</p>}
+  </section>
+
+  {
+    featureRows
+      .filter((row) => row.h)
+      .map((row, i) => (
+        <section class="section">
+          <div class={`grid-2 feature-row${i % 2 === 1 ? " reverse" : ""}`}>
+            <div>
+              <h2>{row.h}</h2>
+              <p>{row.p}</p>
+            </div>
+            {row.img ? (
+              <img src={row.img} alt={row.alt} class="feature-img" loading="lazy" />
+            ) : (
+              <div class="settings-gallery">
+                <img src="/screenshots/display-settings.png" alt="Display settings" loading="lazy" />
+                <img src="/screenshots/calculation-settings.png" alt="Calculation settings" loading="lazy" />
+                <img src="/screenshots/settings.png" alt="General settings" loading="lazy" />
+              </div>
+            )}
+          </div>
+        </section>
+      ))
+  }
+</BaseLayout>
+
+<style>
+  .lead {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 60ch;
+  }
+
+  .feature-img {
+    width: 100%;
+    max-width: 360px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+  }
+
+  .settings-gallery {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .settings-gallery img {
+    width: 120px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+  }
+
+  @media (min-width: 860px) {
+    .feature-row.reverse {
+      direction: rtl;
+    }
+
+    .feature-row.reverse > * {
+      direction: ltr;
+    }
+  }
+</style>

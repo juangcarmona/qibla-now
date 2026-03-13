@@ -1,0 +1,25 @@
+{
+  "nav": {
+    "home": "Beranda",
+    "features": "Fitur",
+    "about": "Tentang",
+    "privacy": "Privasi",
+    "support": "Dukungan"
+  },
+  "footer": {
+    "tagline": "Waktu salat dan arah kiblat dengan kejernihan, privasi, dan ketelitian teknis."
+  },
+  "theme": {
+    "toggleLight": "Mode terang",
+    "toggleDark": "Mode gelap"
+  },
+  "fallback": {
+    "notAvailable": "Halaman ini belum tersedia dalam Bahasa Indonesia.",
+    "showing": "Menampilkan konten bahasa Inggris.",
+    "helpTranslate": "Bantu terjemahkan halaman ini."
+  },
+  "lang": {
+    "name": "Indonesia",
+    "select": "Bahasa"
+  }
+}

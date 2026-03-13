@@ -9,7 +9,9 @@
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new AppShell());
+            var shell = new AppShell();
+            shell.FlowDirection = LocalizationHelper.GetFlowDirection();
+            return new Window(shell);
         }
     }
 }

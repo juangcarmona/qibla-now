@@ -1,0 +1,16 @@
+---
+title: "Özellikler | Qibla Now"
+description: "Qibla Now'da namaz vakitleri, kıble yönü, harita desteği, alarmlar, konum modları ve odaklanmış ayarlar."
+headline: "Günlük namaz kullanımı için odaklanmış yetenekler."
+intro: "Qibla Now temel işlevlere odaklanır: namaz vakitleri, kıble yönü, alarmlar, harita desteği ve gereksiz karmaşıklık olmadan hassas ayarlar."
+feature1_h: "Namaz vakitleri"
+feature1_p: "Yapılandırılabilir hesaplama yöntemleri, mezhep seçimi ve yüksek enlem kuralları ile doğru günlük namaz programları. Tüm hesaplamalar arka uç bağımlılığı olmadan yerel olarak gerçekleştirilir."
+feature2_h: "Kıble yönü"
+feature2_p: "Qibla Now, Kabe'ye doğru büyük daire yönünü kullanır; pusula, harita ve sayısal yön üzerinden gösterilir. Harita görünümü gerçek jeodezik çizgiyi gösterir."
+feature3_h: "Bildirimler ve alarmlar"
+feature3_p: "Namaz vakitleri için bulut bağımlılığı olmadan yerel bildirim planlaması. Alarmlar güvenilir ve yapılandırılabilirdir."
+feature4_h: "Konum modları"
+feature4_p: "Çoklu konum modları: cihaz GPS, manuel giriş ve kaydedilmiş konumlar. Tüm modlar gizlilik ve çevrimdışı kullanım için tasarlanmıştır."
+feature5_h: "Ayarlar ve hesaplama kontrolleri"
+feature5_p: "Derin yapılandırma: hesaplama yöntemi, mezhep, yüksek enlem kuralları, görüntüleme seçenekleri ve bildirim tercihleri. Tüm ayarlar yerel olarak saklanır."
+---

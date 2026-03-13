@@ -1,0 +1,25 @@
+{
+  "nav": {
+    "home": "Home",
+    "features": "Features",
+    "about": "About",
+    "privacy": "Privacy",
+    "support": "Support"
+  },
+  "footer": {
+    "tagline": "Prayer times and Qibla direction with clarity, privacy, and technical rigor."
+  },
+  "theme": {
+    "toggleLight": "Switch to light mode",
+    "toggleDark": "Switch to dark mode"
+  },
+  "fallback": {
+    "notAvailable": "This page is not yet available in English.",
+    "showing": "Showing English content.",
+    "helpTranslate": "Help translate this page."
+  },
+  "lang": {
+    "name": "English",
+    "select": "Language"
+  }
+}

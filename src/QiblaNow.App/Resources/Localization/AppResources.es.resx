@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- App-wide -->
+  <data name="AppTitle" xml:space="preserve">
+    <value>Qibla Now</value>
+  </data>
+
+  <!-- Home Page -->
+  <data name="HomePage_TapToGoBackToToday" xml:space="preserve">
+    <value>Toca para volver a hoy</value>
+  </data>
+  <data name="HomePage_CalculationMethodPrefix" xml:space="preserve">
+    <value>Método de cálculo:</value>
+  </data>
+  <data name="HomePage_NavQibla" xml:space="preserve">
+    <value>Qibla</value>
+  </data>
+  <data name="HomePage_NavMap" xml:space="preserve">
+    <value>Mapa</value>
+  </data>
+  <data name="HomePage_NavAlarms" xml:space="preserve">
+    <value>Alarmas</value>
+  </data>
+
+  <!-- Settings Page -->
+  <data name="SettingsPage_Title" xml:space="preserve">
+    <value>Ajustes</value>
+  </data>
+  <data name="SettingsPage_Location" xml:space="preserve">
+    <value>Ubicación</value>
+  </data>
+  <data name="SettingsPage_Display" xml:space="preserve">
+    <value>Pantalla</value>
+  </data>
+  <data name="SettingsPage_DisplaySummary" xml:space="preserve">
+    <value>Formato de hora, visibilidad</value>
+  </data>
+  <data name="SettingsPage_Calculation" xml:space="preserve">
+    <value>Cálculo</value>
+  </data>
+  <data name="SettingsPage_SoundNotifications" xml:space="preserve">
+    <value>Sonido y notificaciones</value>
+  </data>
+  <data name="SettingsPage_Language" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="SettingsPage_LanguageSummary" xml:space="preserve">
+    <value>Idioma de la interfaz</value>
+  </data>
+  <data name="SettingsPage_About" xml:space="preserve">
+    <value>Acerca de</value>
+  </data>
+  <data name="SettingsPage_AboutSummary" xml:space="preserve">
+    <value>Información de la app</value>
+  </data>
+
+  <!-- Location Settings -->
+  <data name="LocationSettings_Title" xml:space="preserve">
+    <value>Ubicación</value>
+  </data>
+  <data name="LocationSettings_LocationMode" xml:space="preserve">
+    <value>Modo de ubicación</value>
+  </data>
+  <data name="LocationSettings_SelectMode" xml:space="preserve">
+    <value>Seleccionar modo</value>
+  </data>
+  <data name="LocationSettings_GpsDescription" xml:space="preserve">
+    <value>Usar GPS para detectar tu ubicación automáticamente.</value>
+  </data>
+  <data name="LocationSettings_RequestGps" xml:space="preserve">
+    <value>Solicitar ubicación GPS</value>
+  </data>
+  <data name="LocationSettings_Latitude" xml:space="preserve">
+    <value>Latitud</value>
+  </data>
+  <data name="LocationSettings_Longitude" xml:space="preserve">
+    <value>Longitud</value>
+  </data>
+  <data name="LocationSettings_SaveLocation" xml:space="preserve">
+    <value>Guardar ubicación</value>
+  </data>
+
+  <!-- Calculation Settings -->
+  <data name="CalculationSettings_Title" xml:space="preserve">
+    <value>Cálculo</value>
+  </data>
+  <data name="CalculationSettings_Header" xml:space="preserve">
+    <value>Cálculo de oraciones</value>
+  </data>
+  <data name="CalculationSettings_Method" xml:space="preserve">
+    <value>Método de cálculo</value>
+  </data>
+  <data name="CalculationSettings_SelectMethod" xml:space="preserve">
+    <value>Seleccionar método</value>
+  </data>
+  <data name="CalculationSettings_Madhab" xml:space="preserve">
+    <value>Madhab (cálculo del Asr)</value>
+  </data>
+  <data name="CalculationSettings_SelectMadhab" xml:space="preserve">
+    <value>Seleccionar Madhab</value>
+  </data>
+  <data name="CalculationSettings_HighLatitudeRule" xml:space="preserve">
+    <value>Regla de latitud alta</value>
+  </data>
+  <data name="CalculationSettings_SelectRule" xml:space="preserve">
+    <value>Seleccionar regla</value>
+  </data>
+  <data name="CalculationSettings_AutoSave" xml:space="preserve">
+    <value>Los cambios se guardan automáticamente.</value>
+  </data>
+
+  <!-- Sound Settings -->
+  <data name="SoundSettings_Title" xml:space="preserve">
+    <value>Sonido y notificaciones</value>
+  </data>
+  <data name="SoundSettings_PrayerNotifications" xml:space="preserve">
+    <value>Notificaciones de oración</value>
+  </data>
+  <data name="SoundSettings_NotificationsDescription" xml:space="preserve">
+    <value>Recibe una notificación en cada hora de oración.</value>
+  </data>
+  <data name="SoundSettings_Adhan" xml:space="preserve">
+    <value>Sonido del Adhan</value>
+  </data>
+  <data name="SoundSettings_AdhanComingSoon" xml:space="preserve">
+    <value>Selección de sonido del Adhan — próximamente.</value>
+  </data>
+
+  <!-- Prayer Names -->
+  <data name="Prayer_Fajr" xml:space="preserve">
+    <value>Fajr</value>
+  </data>
+  <data name="Prayer_Dhuhr" xml:space="preserve">
+    <value>Dhuhr</value>
+  </data>
+  <data name="Prayer_Asr" xml:space="preserve">
+    <value>Asr</value>
+  </data>
+  <data name="Prayer_Maghrib" xml:space="preserve">
+    <value>Maghrib</value>
+  </data>
+  <data name="Prayer_Isha" xml:space="preserve">
+    <value>Isha</value>
+  </data>
+
+  <!-- Display Settings -->
+  <data name="DisplaySettings_Title" xml:space="preserve">
+    <value>Pantalla</value>
+  </data>
+  <data name="DisplaySettings_TimeFormat" xml:space="preserve">
+    <value>Formato de hora</value>
+  </data>
+  <data name="DisplaySettings_24HourClock" xml:space="preserve">
+    <value>Usar reloj de 24 horas</value>
+  </data>
+  <data name="DisplaySettings_TimeFormatComingSoon" xml:space="preserve">
+    <value>Ajuste de formato de hora — próximamente.</value>
+  </data>
+  <data name="DisplaySettings_PrayerVisibility" xml:space="preserve">
+    <value>Visibilidad de oraciones</value>
+  </data>
+  <data name="DisplaySettings_PrayerVisibilityComingSoon" xml:space="preserve">
+    <value>Elige qué horas de oración mostrar — próximamente.</value>
+  </data>
+  <data name="DisplaySettings_HijriAdjustment" xml:space="preserve">
+    <value>Ajuste de fecha Hijri</value>
+  </data>
+  <data name="DisplaySettings_HijriAdjustmentComingSoon" xml:space="preserve">
+    <value>Ajusta la fecha Hijri mostrada en ±3 días — próximamente.</value>
+  </data>
+
+  <!-- About Page -->
+  <data name="AboutPage_Title" xml:space="preserve">
+    <value>Acerca de</value>
+  </data>
+  <data name="AboutPage_Version" xml:space="preserve">
+    <value>Versión 1.0</value>
+  </data>
+  <data name="AboutPage_Description" xml:space="preserve">
+    <value>Una aplicación islámica sin conexión para tiempos de oración y dirección de la Qibla.</value>
+  </data>
+  <data name="AboutPage_Features" xml:space="preserve">
+    <value>Características</value>
+  </data>
+  <data name="AboutPage_FeaturePrayerTimes" xml:space="preserve">
+    <value>• Horarios de oración precisos para cualquier ubicación</value>
+  </data>
+  <data name="AboutPage_FeatureQibla" xml:space="preserve">
+    <value>• Dirección de la brújula hacia la Qibla</value>
+  </data>
+  <data name="AboutPage_FeatureNotifications" xml:space="preserve">
+    <value>• Notificaciones de tiempo de oración</value>
+  </data>
+  <data name="AboutPage_FeatureCalculationMethods" xml:space="preserve">
+    <value>• Múltiples métodos de cálculo</value>
+  </data>
+  <data name="AboutPage_FeatureOffline" xml:space="preserve">
+    <value>• Funciona completamente sin conexión</value>
+  </data>
+  <data name="AboutPage_Links" xml:space="preserve">
+    <value>Enlaces</value>
+  </data>
+  <data name="AboutPage_SourceCode" xml:space="preserve">
+    <value>Código fuente</value>
+  </data>
+  <data name="AboutPage_Website" xml:space="preserve">
+    <value>Sitio web</value>
+  </data>
+  <data name="AboutPage_Support" xml:space="preserve">
+    <value>Apoyo</value>
+  </data>
+  <data name="AboutPage_SupportDescription" xml:space="preserve">
+    <value>Qibla Now es gratuito y de código abierto. Si te ayuda, puedes apoyar su desarrollo.</value>
+  </data>
+  <data name="AboutPage_SupportButton" xml:space="preserve">
+    <value>Apoyar este proyecto</value>
+  </data>
+
+  <!-- Map Page -->
+  <data name="MapPage_Title" xml:space="preserve">
+    <value>Mapa</value>
+  </data>
+  <data name="MapPage_QiblaColumn" xml:space="preserve">
+    <value>Qibla</value>
+  </data>
+  <data name="MapPage_HeadingColumn" xml:space="preserve">
+    <value>Rumbo</value>
+  </data>
+  <data name="MapPage_ErrorColumn" xml:space="preserve">
+    <value>Error</value>
+  </data>
+
+  <!-- Qibla Page -->
+  <data name="QiblaPage_Title" xml:space="preserve">
+    <value>Qibla</value>
+  </data>
+  <data name="QiblaPage_QiblaColumn" xml:space="preserve">
+    <value>Qibla</value>
+  </data>
+  <data name="QiblaPage_HeadingColumn" xml:space="preserve">
+    <value>Rumbo</value>
+  </data>
+  <data name="QiblaPage_ErrorColumn" xml:space="preserve">
+    <value>Error</value>
+  </data>
+
+  <!-- Prayer Times Page -->
+  <data name="PrayerTimesPage_Title" xml:space="preserve">
+    <value>Tiempos de oración</value>
+  </data>
+
+  <!-- Language Settings -->
+  <data name="LanguageSettings_Title" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="LanguageSettings_AppLanguage" xml:space="preserve">
+    <value>Idioma de la app</value>
+  </data>
+  <data name="LanguageSettings_Description" xml:space="preserve">
+    <value>Selecciona el idioma de la interfaz.</value>
+  </data>
+  <data name="LanguageSettings_RestartNote" xml:space="preserve">
+    <value>El cambio de idioma se aplica inmediatamente.</value>
+  </data>
+  <data name="LanguageSettings_SystemDefault" xml:space="preserve">
+    <value>Idioma del sistema</value>
+  </data>
+  <data name="LanguageSettings_English" xml:space="preserve">
+    <value>Inglés</value>
+  </data>
+  <data name="LanguageSettings_Arabic" xml:space="preserve">
+    <value>Árabe</value>
+  </data>
+  <data name="LanguageSettings_Spanish" xml:space="preserve">
+    <value>Español</value>
+  </data>
+
+</root>

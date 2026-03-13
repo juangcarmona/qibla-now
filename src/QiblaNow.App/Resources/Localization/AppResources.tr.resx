@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- App-wide -->
+  <data name="AppTitle" xml:space="preserve">
+    <value>Qibla Now</value>
+  </data>
+
+  <!-- Home Page -->
+  <data name="HomePage_TapToGoBackToToday" xml:space="preserve">
+    <value>Bugüne dönmek için dokun</value>
+  </data>
+  <data name="HomePage_CalculationMethodPrefix" xml:space="preserve">
+    <value>Hesaplama Yöntemi:</value>
+  </data>
+  <data name="HomePage_NavQibla" xml:space="preserve">
+    <value>Kıble</value>
+  </data>
+  <data name="HomePage_NavMap" xml:space="preserve">
+    <value>Harita</value>
+  </data>
+  <data name="HomePage_NavAlarms" xml:space="preserve">
+    <value>Alarmlar</value>
+  </data>
+
+  <!-- Settings Page -->
+  <data name="SettingsPage_Title" xml:space="preserve">
+    <value>Ayarlar</value>
+  </data>
+  <data name="SettingsPage_Location" xml:space="preserve">
+    <value>Konum</value>
+  </data>
+  <data name="SettingsPage_Display" xml:space="preserve">
+    <value>Görünüm</value>
+  </data>
+  <data name="SettingsPage_DisplaySummary" xml:space="preserve">
+    <value>Saat formatı, namaz görünürlüğü</value>
+  </data>
+  <data name="SettingsPage_Calculation" xml:space="preserve">
+    <value>Hesaplama</value>
+  </data>
+  <data name="SettingsPage_SoundNotifications" xml:space="preserve">
+    <value>Ses &amp; Bildirimler</value>
+  </data>
+  <data name="SettingsPage_Language" xml:space="preserve">
+    <value>Dil</value>
+  </data>
+  <data name="SettingsPage_LanguageSummary" xml:space="preserve">
+    <value>Arayüz dili</value>
+  </data>
+  <data name="SettingsPage_About" xml:space="preserve">
+    <value>Hakkında</value>
+  </data>
+  <data name="SettingsPage_AboutSummary" xml:space="preserve">
+    <value>Uygulama bilgisi</value>
+  </data>
+
+  <!-- Location Settings -->
+  <data name="LocationSettings_Title" xml:space="preserve">
+    <value>Konum</value>
+  </data>
+  <data name="LocationSettings_LocationMode" xml:space="preserve">
+    <value>Konum Modu</value>
+  </data>
+  <data name="LocationSettings_SelectMode" xml:space="preserve">
+    <value>Mod Seç</value>
+  </data>
+  <data name="LocationSettings_GpsDescription" xml:space="preserve">
+    <value>Konumunuzu otomatik olarak tespit etmek için GPS kullanın.</value>
+  </data>
+  <data name="LocationSettings_RequestGps" xml:space="preserve">
+    <value>GPS Konumu İste</value>
+  </data>
+  <data name="LocationSettings_Latitude" xml:space="preserve">
+    <value>Enlem</value>
+  </data>
+  <data name="LocationSettings_Longitude" xml:space="preserve">
+    <value>Boylam</value>
+  </data>
+  <data name="LocationSettings_SaveLocation" xml:space="preserve">
+    <value>Konumu Kaydet</value>
+  </data>
+
+  <!-- Calculation Settings -->
+  <data name="CalculationSettings_Title" xml:space="preserve">
+    <value>Hesaplama</value>
+  </data>
+  <data name="CalculationSettings_Header" xml:space="preserve">
+    <value>Namaz Hesaplama</value>
+  </data>
+  <data name="CalculationSettings_Method" xml:space="preserve">
+    <value>Hesaplama Yöntemi</value>
+  </data>
+  <data name="CalculationSettings_SelectMethod" xml:space="preserve">
+    <value>Yöntem Seç</value>
+  </data>
+  <data name="CalculationSettings_Madhab" xml:space="preserve">
+    <value>Mezhep (İkindi Hesabı)</value>
+  </data>
+  <data name="CalculationSettings_SelectMadhab" xml:space="preserve">
+    <value>Mezhep Seç</value>
+  </data>
+  <data name="CalculationSettings_HighLatitudeRule" xml:space="preserve">
+    <value>Yüksek Enlem Kuralı</value>
+  </data>
+  <data name="CalculationSettings_SelectRule" xml:space="preserve">
+    <value>Kural Seç</value>
+  </data>
+  <data name="CalculationSettings_AutoSave" xml:space="preserve">
+    <value>Değişiklikler otomatik olarak kaydedilir.</value>
+  </data>
+
+  <!-- Sound Settings -->
+  <data name="SoundSettings_Title" xml:space="preserve">
+    <value>Ses &amp; Bildirimler</value>
+  </data>
+  <data name="SoundSettings_PrayerNotifications" xml:space="preserve">
+    <value>Namaz Bildirimleri</value>
+  </data>
+  <data name="SoundSettings_NotificationsDescription" xml:space="preserve">
+    <value>Her namaz vaktinde bildirim alın.</value>
+  </data>
+  <data name="SoundSettings_Adhan" xml:space="preserve">
+    <value>Ezan Sesi</value>
+  </data>
+  <data name="SoundSettings_AdhanComingSoon" xml:space="preserve">
+    <value>Ezan sesi seçimi — yakında.</value>
+  </data>
+
+  <!-- Prayer Names -->
+  <data name="Prayer_Fajr" xml:space="preserve">
+    <value>Sabah</value>
+  </data>
+  <data name="Prayer_Dhuhr" xml:space="preserve">
+    <value>Öğle</value>
+  </data>
+  <data name="Prayer_Asr" xml:space="preserve">
+    <value>İkindi</value>
+  </data>
+  <data name="Prayer_Maghrib" xml:space="preserve">
+    <value>Akşam</value>
+  </data>
+  <data name="Prayer_Isha" xml:space="preserve">
+    <value>Yatsı</value>
+  </data>
+
+  <!-- Display Settings -->
+  <data name="DisplaySettings_Title" xml:space="preserve">
+    <value>Görünüm</value>
+  </data>
+  <data name="DisplaySettings_TimeFormat" xml:space="preserve">
+    <value>Saat Formatı</value>
+  </data>
+  <data name="DisplaySettings_24HourClock" xml:space="preserve">
+    <value>24 saatlik saat kullan</value>
+  </data>
+  <data name="DisplaySettings_TimeFormatComingSoon" xml:space="preserve">
+    <value>Saat formatı ayarı — yakında.</value>
+  </data>
+  <data name="DisplaySettings_PrayerVisibility" xml:space="preserve">
+    <value>Namaz Görünürlüğü</value>
+  </data>
+  <data name="DisplaySettings_PrayerVisibilityComingSoon" xml:space="preserve">
+    <value>Hangi namaz vakitlerinin gösterileceğini seçin — yakında.</value>
+  </data>
+  <data name="DisplaySettings_HijriAdjustment" xml:space="preserve">
+    <value>Hicri Tarih Ayarı</value>
+  </data>
+  <data name="DisplaySettings_HijriAdjustmentComingSoon" xml:space="preserve">
+    <value>Görüntülenen Hicri tarihi ±3 gün ayarlayın — yakında.</value>
+  </data>
+
+  <!-- About Page -->
+  <data name="AboutPage_Title" xml:space="preserve">
+    <value>Hakkında</value>
+  </data>
+  <data name="AboutPage_Version" xml:space="preserve">
+    <value>Sürüm 1.0</value>
+  </data>
+  <data name="AboutPage_Description" xml:space="preserve">
+    <value>Namaz vakitleri ve kıble yönü için çevrimdışı öncelikli İslami uygulama.</value>
+  </data>
+  <data name="AboutPage_Features" xml:space="preserve">
+    <value>Özellikler</value>
+  </data>
+  <data name="AboutPage_FeaturePrayerTimes" xml:space="preserve">
+    <value>• Herhangi bir konum için doğru namaz vakitleri</value>
+  </data>
+  <data name="AboutPage_FeatureQibla" xml:space="preserve">
+    <value>• Kıble pusulası yönü</value>
+  </data>
+  <data name="AboutPage_FeatureNotifications" xml:space="preserve">
+    <value>• Namaz vakti bildirimleri</value>
+  </data>
+  <data name="AboutPage_FeatureCalculationMethods" xml:space="preserve">
+    <value>• Çoklu hesaplama yöntemleri</value>
+  </data>
+  <data name="AboutPage_FeatureOffline" xml:space="preserve">
+    <value>• Tamamen çevrimdışı çalışır</value>
+  </data>
+  <data name="AboutPage_Links" xml:space="preserve">
+    <value>Bağlantılar</value>
+  </data>
+  <data name="AboutPage_SourceCode" xml:space="preserve">
+    <value>Kaynak kodu</value>
+  </data>
+  <data name="AboutPage_Website" xml:space="preserve">
+    <value>Web sitesi</value>
+  </data>
+  <data name="AboutPage_Support" xml:space="preserve">
+    <value>Destek</value>
+  </data>
+  <data name="AboutPage_SupportDescription" xml:space="preserve">
+    <value>Qibla Now ücretsiz ve açık kaynaklıdır. Faydalı bulduysanız geliştirmesini destekleyebilirsiniz.</value>
+  </data>
+  <data name="AboutPage_SupportButton" xml:space="preserve">
+    <value>Bu projeyi destekle</value>
+  </data>
+
+  <!-- Map Page -->
+  <data name="MapPage_Title" xml:space="preserve">
+    <value>Harita</value>
+  </data>
+  <data name="MapPage_QiblaColumn" xml:space="preserve">
+    <value>Kıble</value>
+  </data>
+  <data name="MapPage_HeadingColumn" xml:space="preserve">
+    <value>Başlık</value>
+  </data>
+  <data name="MapPage_ErrorColumn" xml:space="preserve">
+    <value>Hata</value>
+  </data>
+
+  <!-- Qibla Page -->
+  <data name="QiblaPage_Title" xml:space="preserve">
+    <value>Kıble</value>
+  </data>
+  <data name="QiblaPage_QiblaColumn" xml:space="preserve">
+    <value>Kıble</value>
+  </data>
+  <data name="QiblaPage_HeadingColumn" xml:space="preserve">
+    <value>Başlık</value>
+  </data>
+  <data name="QiblaPage_ErrorColumn" xml:space="preserve">
+    <value>Hata</value>
+  </data>
+
+  <!-- Prayer Times Page -->
+  <data name="PrayerTimesPage_Title" xml:space="preserve">
+    <value>Namaz Vakitleri</value>
+  </data>
+
+  <!-- Language Settings -->
+  <data name="LanguageSettings_Title" xml:space="preserve">
+    <value>Dil</value>
+  </data>
+  <data name="LanguageSettings_AppLanguage" xml:space="preserve">
+    <value>Uygulama Dili</value>
+  </data>
+  <data name="LanguageSettings_Description" xml:space="preserve">
+    <value>Uygulama arayüzü için dili seçin.</value>
+  </data>
+  <data name="LanguageSettings_RestartNote" xml:space="preserve">
+    <value>Dil değişikliği seçimin hemen ardından uygulanır.</value>
+  </data>
+  <data name="LanguageSettings_SystemDefault" xml:space="preserve">
+    <value>Sistem Varsayılanı</value>
+  </data>
+  <data name="LanguageSettings_English" xml:space="preserve">
+    <value>İngilizce</value>
+  </data>
+  <data name="LanguageSettings_Arabic" xml:space="preserve">
+    <value>Arapça</value>
+  </data>
+  <data name="LanguageSettings_Spanish" xml:space="preserve">
+    <value>İspanyolca</value>
+  </data>
+
+</root>
