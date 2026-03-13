@@ -1,6 +1,6 @@
 # Qibla Now
 
-![App Icon](assets/qibla-now-icon.png)
+![App Icon](https://github.com/juangcarmona/qibla-now/blob/main/assets/ic_launcher_512.png)
 
 Qibla Now is an offline-first Islamic utility app for Android, iOS, Windows, and Mac, built with .NET MAUI.
 
