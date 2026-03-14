@@ -233,7 +233,7 @@
     <value>About</value>
   </data>
   <data name="AboutPage_Version" xml:space="preserve">
-    <value>Version 1.0</value>
+    <value>Version</value>
   </data>
   <data name="AboutPage_Description" xml:space="preserve">
     <value>An offline-first Islamic utility for prayer times and Qibla direction.</value>

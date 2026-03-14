@@ -187,7 +187,7 @@
     <value>حول التطبيق</value>
   </data>
   <data name="AboutPage_Version" xml:space="preserve">
-    <value>الإصدار 1.0</value>
+    <value>الإصدار</value>
   </data>
   <data name="AboutPage_Description" xml:space="preserve">
     <value>تطبيق إسلامي يعمل دون إنترنت لمواقيت الصلاة واتجاه القبلة.</value>

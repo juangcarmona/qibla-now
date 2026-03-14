@@ -31,10 +31,14 @@
                            TextColor="{StaticResource Primary}"
                            HorizontalTextAlignment="Center" />
 
-                    <Label Text="{x:Static loc:AppResources.AboutPage_Version}"
-                           FontSize="14"
-                           TextColor="{StaticResource Gray600}"
-                           HorizontalTextAlignment="Center" />
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="4" FlowDirection="LeftToRight">
+                        <Label Text="{x:Static loc:AppResources.AboutPage_Version}"
+                               FontSize="14"
+                               TextColor="{StaticResource Gray600}" />
+                        <Label Text="{Binding AppVersion}"
+                               FontSize="14"
+                               TextColor="{StaticResource Gray600}" />
+                    </HorizontalStackLayout>
 
                     <Label Text="{x:Static loc:AppResources.AboutPage_Description}"
                            FontSize="14"

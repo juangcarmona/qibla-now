@@ -187,7 +187,7 @@
     <value>Acerca de</value>
   </data>
   <data name="AboutPage_Version" xml:space="preserve">
-    <value>Versión 1.0</value>
+    <value>Versión</value>
   </data>
   <data name="AboutPage_Description" xml:space="preserve">
     <value>Una aplicación islámica sin conexión para tiempos de oración y dirección de la Qibla.</value>
