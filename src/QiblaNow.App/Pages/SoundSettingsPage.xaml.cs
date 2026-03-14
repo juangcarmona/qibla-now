@@ -12,4 +12,11 @@ public partial class SoundSettingsPage : ContentPage
         BottomBanner.AdsId = AdMobConfig.BannerId;
 #endif
     }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        if (BindingContext is SettingsViewModel vm)
+            vm.Cleanup();
+    }
 }

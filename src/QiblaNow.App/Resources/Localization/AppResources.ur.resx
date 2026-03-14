@@ -135,8 +135,23 @@
   <data name="SoundSettings_Adhan" xml:space="preserve">
     <value>اذان کی آواز</value>
   </data>
-  <data name="SoundSettings_AdhanComingSoon" xml:space="preserve">
-    <value>اذان کی آواز کا انتخاب — جلد آ رہا ہے۔</value>
+  <data name="SoundSettings_AdhanDescription" xml:space="preserve">
+    <value>وہ اذان منتخب کریں جو ہر نماز کی اطلاع کے ساتھ بجے گی۔</value>
+  </data>
+  <data name="SoundSettings_AdhanDefault" xml:space="preserve">
+    <value>سسٹم کی دھن آواز</value>
+  </data>
+  <data name="SoundSettings_Adhan1" xml:space="preserve">
+    <value>اذان 1</value>
+  </data>
+  <data name="SoundSettings_Adhan2" xml:space="preserve">
+    <value>اذان 2</value>
+  </data>
+  <data name="SoundSettings_Adhan3" xml:space="preserve">
+    <value>اذان 3</value>
+  </data>
+  <data name="SoundSettings_Preview" xml:space="preserve">
+    <value>&#9654;</value>
   </data>
 
   <!-- Prayer Names -->

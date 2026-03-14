@@ -64,7 +64,12 @@ public static class AppResources
     public static string SoundSettings_PrayerNotifications => Get();
     public static string SoundSettings_NotificationsDescription => Get();
     public static string SoundSettings_Adhan => Get();
-    public static string SoundSettings_AdhanComingSoon => Get();
+    public static string SoundSettings_AdhanDescription => Get();
+    public static string SoundSettings_AdhanDefault => Get();
+    public static string SoundSettings_Adhan1 => Get();
+    public static string SoundSettings_Adhan2 => Get();
+    public static string SoundSettings_Adhan3 => Get();
+    public static string SoundSettings_Preview => Get();
 
     // Prayer Names
     public static string Prayer_Fajr => Get();

@@ -181,8 +181,23 @@
   <data name="SoundSettings_Adhan" xml:space="preserve">
     <value>Adhan Sound</value>
   </data>
-  <data name="SoundSettings_AdhanComingSoon" xml:space="preserve">
-    <value>Adhan sound selection — coming soon.</value>
+  <data name="SoundSettings_AdhanDescription" xml:space="preserve">
+    <value>Select the Adhan to play with each prayer notification.</value>
+  </data>
+  <data name="SoundSettings_AdhanDefault" xml:space="preserve">
+    <value>System Default</value>
+  </data>
+  <data name="SoundSettings_Adhan1" xml:space="preserve">
+    <value>Adhan 1</value>
+  </data>
+  <data name="SoundSettings_Adhan2" xml:space="preserve">
+    <value>Adhan 2</value>
+  </data>
+  <data name="SoundSettings_Adhan3" xml:space="preserve">
+    <value>Adhan 3</value>
+  </data>
+  <data name="SoundSettings_Preview" xml:space="preserve">
+    <value>&#9654;</value>
   </data>
 
   <!-- Prayer Names -->

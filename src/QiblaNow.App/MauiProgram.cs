@@ -44,8 +44,10 @@ public static class MauiProgram
 #if ANDROID
         builder.Services.AddSingleton<Android.Content.Context>(Android.App.Application.Context);
         builder.Services.AddSingleton<INotificationScheduler, Platforms.Android.AndroidNotificationScheduler>();
+        builder.Services.AddSingleton<IAdhanPlayer, Platforms.Android.AndroidAdhanPlayer>();
 #else
         builder.Services.AddSingleton<INotificationScheduler, QiblaNow.Core.Abstractions.NullNotificationScheduler>();
+        builder.Services.AddSingleton<IAdhanPlayer, QiblaNow.Core.Abstractions.NullAdhanPlayer>();
 #endif
 
         builder.Services.AddTransient<MapViewModel>();

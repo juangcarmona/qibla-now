@@ -158,7 +158,8 @@ public sealed class SettingsStore : ISettingsStore
                 DhuhrEnabled   = Preferences.Default.Get("dhuhr_enabled",   true),
                 AsrEnabled     = Preferences.Default.Get("asr_enabled",     true),
                 MaghribEnabled = Preferences.Default.Get("maghrib_enabled", true),
-                IshaEnabled    = Preferences.Default.Get("isha_enabled",    true)
+                IshaEnabled    = Preferences.Default.Get("isha_enabled",    true),
+                SelectedAdhan  = (AdhanSound)Preferences.Default.Get("adhan_sound", (int)AdhanSound.Adhan1)
             };
             return settings;
         }
@@ -177,6 +178,7 @@ public sealed class SettingsStore : ISettingsStore
             Preferences.Default.Set("asr_enabled", settings.AsrEnabled);
             Preferences.Default.Set("maghrib_enabled", settings.MaghribEnabled);
             Preferences.Default.Set("isha_enabled", settings.IshaEnabled);
+            Preferences.Default.Set("adhan_sound", (int)settings.SelectedAdhan);
         }
         catch
         {

@@ -13,6 +13,12 @@ public sealed class PrayerNotificationSettings
     public bool IshaEnabled { get; set; } = true;
 
     /// <summary>
+    /// The Adhan sound to play when a prayer notification fires.
+    /// Defaults to Adhan1 so notifications are audible on first install.
+    /// </summary>
+    public AdhanSound SelectedAdhan { get; set; } = AdhanSound.Adhan1;
+
+    /// <summary>
     /// Checks if any prayer notification is enabled
     /// </summary>
     public bool IsAnyEnabled => FajrEnabled || DhuhrEnabled || AsrEnabled || MaghribEnabled || IshaEnabled;

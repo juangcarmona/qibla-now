@@ -1,6 +1,7 @@
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
+using Android.Media;
 using AndroidX.Core.App;
 using QiblaNow.Core.Abstractions;
 using QiblaNow.Core.Models;
@@ -14,8 +15,19 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
     private readonly IPrayerTimesCalculator _calculator;
 
     private const string PrayerTypeExtra = "prayer_type";
-    private const string NotificationChannelId = "prayer_notifications";
-    private const string NotificationChannelName = "Prayer Notifications";
+
+    // One channel per selectable sound because Android 8.0+ locks a channel's sound URI
+    // after the first createNotificationChannel() call.  Changing sound requires a new
+    // channel ID — that is the only supported mechanism without user intervention.
+    private const string ChannelIdDefault = "prayer_default";
+    private const string ChannelIdAdhan1  = "prayer_adhan1";
+    private const string ChannelIdAdhan2  = "prayer_adhan2";
+    private const string ChannelIdAdhan3  = "prayer_adhan3";
+
+    // Legacy channel created by earlier app versions without a sound URI.
+    // Not deleted (Android does not guarantee a clean delete) but no longer used
+    // for posting new notifications.
+    private const string ChannelIdLegacy  = "prayer_notifications";
 
     public AndroidNotificationScheduler(
         Context context,
@@ -34,7 +46,7 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
             ArgumentNullException.ThrowIfNull(candidate);
 
             await CancelAllNotificationsAsync();
-            CreateNotificationChannel();
+            CreateNotificationChannels();
 
             var pendingIntent = CreateAlarmPendingIntent(candidate.Type);
 
@@ -183,26 +195,85 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
             PendingIntentFlags.NoCreate | PendingIntentFlags.Immutable);
     }
 
-    private void CreateNotificationChannel()
+    // ── Notification channels ─────────────────────────────────────────────────
+
+    private void CreateNotificationChannels()
     {
         if (!OperatingSystem.IsAndroidVersionAtLeast(26))
             return;
 
-        var channel = new NotificationChannel(
-            NotificationChannelId,
-            NotificationChannelName,
-            NotificationImportance.High)
+        var notificationManager = _context.GetSystemService(Context.NotificationService) as NotificationManager;
+        if (notificationManager == null)
+            return;
+
+        // AudioAttributes required when setting a custom sound on a channel (API 21+)
+        var audioAttrs = new AudioAttributes.Builder()
+            .SetUsage(AudioUsageKind.Notification)!
+            .SetContentType(AudioContentType.Sonification)!
+            .Build()!;
+
+        EnsureChannel(
+            notificationManager, ChannelIdDefault, "Prayer Notifications (Default)",
+            RingtoneManager.GetDefaultUri(RingtoneType.Notification),
+            audioAttrs);
+
+        EnsureChannel(
+            notificationManager, ChannelIdAdhan1, "Prayer Notifications (Adhan 1)",
+            BuildRawUri("adhan"),
+            audioAttrs);
+
+        EnsureChannel(
+            notificationManager, ChannelIdAdhan2, "Prayer Notifications (Adhan 2)",
+            BuildRawUri("adhan2"),
+            audioAttrs);
+
+        EnsureChannel(
+            notificationManager, ChannelIdAdhan3, "Prayer Notifications (Adhan 3)",
+            BuildRawUri("adhan3"),
+            audioAttrs);
+    }
+
+    private void EnsureChannel(
+        NotificationManager manager,
+        string id,
+        string name,
+        global::Android.Net.Uri? soundUri,
+        AudioAttributes attrs)
+    {
+        // createNotificationChannel is idempotent by ID — existing channel settings
+        // (including sound) are NOT overwritten.  A distinct ID per sound means the
+        // correct URI is locked in on first install.
+        var channel = new NotificationChannel(id, name, NotificationImportance.High)
         {
             Description = "Prayer time notifications"
         };
 
-        var notificationManager = _context.GetSystemService(Context.NotificationService) as NotificationManager;
-        notificationManager?.CreateNotificationChannel(channel);
+        if (soundUri != null)
+            channel.SetSound(soundUri, attrs);
+
+        manager.CreateNotificationChannel(channel);
+    }
+
+    private global::Android.Net.Uri BuildRawUri(string rawName) =>
+        global::Android.Net.Uri.Parse(
+            $"android.resource://{_context.PackageName}/raw/{rawName}")!;
+
+    private string GetActiveChannelId()
+    {
+        var adhan = _settingsStore.GetNotificationSettings().SelectedAdhan;
+        return adhan switch
+        {
+            AdhanSound.Adhan1  => ChannelIdAdhan1,
+            AdhanSound.Adhan2  => ChannelIdAdhan2,
+            AdhanSound.Adhan3  => ChannelIdAdhan3,
+            AdhanSound.Default => ChannelIdDefault,
+            _                  => ChannelIdAdhan1,
+        };
     }
 
     private void ShowPrayerNotification(PrayerType prayerType)
     {
-        CreateNotificationChannel();
+        CreateNotificationChannels();
 
         if (OperatingSystem.IsAndroidVersionAtLeast(33) &&
             _context.CheckSelfPermission(global::Android.Manifest.Permission.PostNotifications) != Permission.Granted)
@@ -213,18 +284,21 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
 
         var prayerName = prayerType switch
         {
-            PrayerType.Fajr => "Fajr",
+            PrayerType.Fajr    => "Fajr",
             PrayerType.Sunrise => "Sunrise",
-            PrayerType.Dhuhr => "Dhuhr",
-            PrayerType.Asr => "Asr",
+            PrayerType.Dhuhr   => "Dhuhr",
+            PrayerType.Asr     => "Asr",
             PrayerType.Maghrib => "Maghrib",
-            PrayerType.Isha => "Isha",
-            _ => "Prayer"
+            PrayerType.Isha    => "Isha",
+            _                  => "Prayer"
         };
 
         var timeText = DateTimeOffset.Now.ToString("HH:mm");
 
-        var builder = new NotificationCompat.Builder(_context, NotificationChannelId);
+        // Select the channel that matches the user's Adhan preference.
+        // The channel's sound URI was locked in at creation time (see CreateNotificationChannels).
+        var channelId = GetActiveChannelId();
+        var builder = new NotificationCompat.Builder(_context, channelId);
         builder.SetSmallIcon(Resource.Drawable.ic_prayer_notification);
         builder.SetContentTitle($"{prayerName} — {timeText}");
         builder.SetContentText($"It's time for {prayerName}");

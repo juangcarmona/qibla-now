@@ -63,6 +63,7 @@ public class DIAndViewModelTests
         services.AddSingleton<ISettingsStore, StubSettingsStore>();
         services.AddSingleton<ILocationService, StubLocationService>();
         services.AddSingleton<INotificationScheduler, NullNotificationScheduler>();
+        services.AddSingleton<IAdhanPlayer, NullAdhanPlayer>();
         services.AddTransient<PrayerTimesViewModel>();
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<QiblaViewModel>();
