@@ -7,4 +7,8 @@
 		<item name="colorSecondary">@color/maui_tertiary</item>
 		<item name="android:statusBarColor">@color/maui_primary_dark</item>
 	</style>
+	</resources>
+	<style name="Maui.SplashTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+		<item name="android:windowBackground">@drawable/maui_splash</item>
+	</style>
 </resources>

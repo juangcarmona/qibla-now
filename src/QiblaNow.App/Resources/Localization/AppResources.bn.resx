@@ -135,8 +135,23 @@
   <data name="SoundSettings_Adhan" xml:space="preserve">
     <value>আজানের শব্দ</value>
   </data>
-  <data name="SoundSettings_AdhanComingSoon" xml:space="preserve">
-    <value>আজানের শব্দ নির্বাচন — শীঘ্রই আসছে।</value>
+  <data name="SoundSettings_AdhanDescription" xml:space="preserve">
+    <value>প্রতিটি নামাজের বিজ্ঞপ্তির সাথে বাজানোর জন্য আজান বেছুন।</value>
+  </data>
+  <data name="SoundSettings_AdhanDefault" xml:space="preserve">
+    <value>সিস্টেম ডিফল্ট</value>
+  </data>
+  <data name="SoundSettings_Adhan1" xml:space="preserve">
+    <value>আজান 1</value>
+  </data>
+  <data name="SoundSettings_Adhan2" xml:space="preserve">
+    <value>আজান 2</value>
+  </data>
+  <data name="SoundSettings_Adhan3" xml:space="preserve">
+    <value>আজান 3</value>
+  </data>
+  <data name="SoundSettings_Preview" xml:space="preserve">
+    <value>&#9654;</value>
   </data>
 
   <!-- Prayer Names -->
@@ -187,7 +202,7 @@
     <value>পরিচিতি</value>
   </data>
   <data name="AboutPage_Version" xml:space="preserve">
-    <value>সংস্করণ ১.০</value>
+    <value>সংস্করণ</value>
   </data>
   <data name="AboutPage_Description" xml:space="preserve">
     <value>নামাজের সময় এবং কিবলার দিকনির্দেশনার জন্য অফলাইন ইসলামিক অ্যাপ।</value>

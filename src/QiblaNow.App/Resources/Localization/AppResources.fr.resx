@@ -135,8 +135,23 @@
   <data name="SoundSettings_Adhan" xml:space="preserve">
     <value>Son de l'adhan</value>
   </data>
-  <data name="SoundSettings_AdhanComingSoon" xml:space="preserve">
-    <value>Sélection du son de l'adhan — bientôt disponible.</value>
+  <data name="SoundSettings_AdhanDescription" xml:space="preserve">
+    <value>Sélectionnez l'adhan à jouer avec chaque notification de prière.</value>
+  </data>
+  <data name="SoundSettings_AdhanDefault" xml:space="preserve">
+    <value>Par défaut du système</value>
+  </data>
+  <data name="SoundSettings_Adhan1" xml:space="preserve">
+    <value>Adhan 1</value>
+  </data>
+  <data name="SoundSettings_Adhan2" xml:space="preserve">
+    <value>Adhan 2</value>
+  </data>
+  <data name="SoundSettings_Adhan3" xml:space="preserve">
+    <value>Adhan 3</value>
+  </data>
+  <data name="SoundSettings_Preview" xml:space="preserve">
+    <value>&#9654;</value>
   </data>
 
   <!-- Prayer Names -->
@@ -187,7 +202,7 @@
     <value>À propos</value>
   </data>
   <data name="AboutPage_Version" xml:space="preserve">
-    <value>Version 1.0</value>
+    <value>Version</value>
   </data>
   <data name="AboutPage_Description" xml:space="preserve">
     <value>Une application islamique hors ligne pour les horaires de prière et la direction de la Qibla.</value>

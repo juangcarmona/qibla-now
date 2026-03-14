@@ -135,8 +135,23 @@
   <data name="SoundSettings_Adhan" xml:space="preserve">
     <value>Suara Adzan</value>
   </data>
-  <data name="SoundSettings_AdhanComingSoon" xml:space="preserve">
-    <value>Pemilihan suara adzan — segera hadir.</value>
+  <data name="SoundSettings_AdhanDescription" xml:space="preserve">
+    <value>Pilih adzan yang diputar bersama setiap notifikasi shalat.</value>
+  </data>
+  <data name="SoundSettings_AdhanDefault" xml:space="preserve">
+    <value>Default Sistem</value>
+  </data>
+  <data name="SoundSettings_Adhan1" xml:space="preserve">
+    <value>Adzan 1</value>
+  </data>
+  <data name="SoundSettings_Adhan2" xml:space="preserve">
+    <value>Adzan 2</value>
+  </data>
+  <data name="SoundSettings_Adhan3" xml:space="preserve">
+    <value>Adzan 3</value>
+  </data>
+  <data name="SoundSettings_Preview" xml:space="preserve">
+    <value>&#9654;</value>
   </data>
 
   <!-- Prayer Names -->
@@ -187,7 +202,7 @@
     <value>Tentang</value>
   </data>
   <data name="AboutPage_Version" xml:space="preserve">
-    <value>Versi 1.0</value>
+    <value>Versi</value>
   </data>
   <data name="AboutPage_Description" xml:space="preserve">
     <value>Aplikasi islami offline-first untuk waktu shalat dan arah kiblat.</value>

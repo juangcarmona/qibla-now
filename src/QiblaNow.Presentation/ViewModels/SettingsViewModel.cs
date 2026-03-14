@@ -11,6 +11,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     private readonly ISettingsStore   _settingsStore;
     private readonly ILocationService _locationService;
     private readonly INotificationScheduler _notificationScheduler;
+    private readonly IAdhanPlayer _adhanPlayer;
 
     [ObservableProperty] private LocationMode _locationMode;
     [ObservableProperty] private string _latitude     = string.Empty;
@@ -72,11 +73,63 @@ public sealed partial class SettingsViewModel : ObservableObject
         set { NotificationSettings.IshaEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(AnyNotificationEnabled)); OnPropertyChanged(nameof(NotificationSummary)); SaveAndReconcileNotifications(); }
     }
 
+    // ── Adhan sound selection ────────────────────────────────────────────
+
+    public AdhanSound SelectedAdhan
+    {
+        get => NotificationSettings.SelectedAdhan;
+        set
+        {
+            if (NotificationSettings.SelectedAdhan == value) return;
+            NotificationSettings.SelectedAdhan = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(IsDefaultSoundSelected));
+            OnPropertyChanged(nameof(IsAdhan1Selected));
+            OnPropertyChanged(nameof(IsAdhan2Selected));
+            OnPropertyChanged(nameof(IsAdhan3Selected));
+            _settingsStore.SaveNotificationSettings(NotificationSettings);
+        }
+    }
+
+    public bool IsDefaultSoundSelected => SelectedAdhan == AdhanSound.Default;
+    public bool IsAdhan1Selected       => SelectedAdhan == AdhanSound.Adhan1;
+    public bool IsAdhan2Selected       => SelectedAdhan == AdhanSound.Adhan2;
+    public bool IsAdhan3Selected       => SelectedAdhan == AdhanSound.Adhan3;
+
+    [RelayCommand]
+    private void SelectDefaultSound() => SelectedAdhan = AdhanSound.Default;
+
+    [RelayCommand]
+    private void SelectAdhan1() => SelectedAdhan = AdhanSound.Adhan1;
+
+    [RelayCommand]
+    private void SelectAdhan2() => SelectedAdhan = AdhanSound.Adhan2;
+
+    [RelayCommand]
+    private void SelectAdhan3() => SelectedAdhan = AdhanSound.Adhan3;
+
+    [RelayCommand]
+    private void PreviewDefaultSound() => _adhanPlayer.Preview(AdhanSound.Default);
+
+    [RelayCommand]
+    private void PreviewAdhan1() => _adhanPlayer.Preview(AdhanSound.Adhan1);
+
+    [RelayCommand]
+    private void PreviewAdhan2() => _adhanPlayer.Preview(AdhanSound.Adhan2);
+
+    [RelayCommand]
+    private void PreviewAdhan3() => _adhanPlayer.Preview(AdhanSound.Adhan3);
+
     private void SaveAndReconcileNotifications()
     {
         _settingsStore.SaveNotificationSettings(NotificationSettings);
         _ = _notificationScheduler.ReconcileOnStartupAsync();
     }
+
+    /// <summary>
+    /// Stops any active Adhan preview. Called by the page's OnDisappearing.
+    /// </summary>
+    public void Cleanup() => _adhanPlayer.StopPreview();
 
     public bool AnyNotificationEnabled => NotificationSettings.IsAnyEnabled;
 
@@ -210,13 +263,19 @@ public sealed partial class SettingsViewModel : ObservableObject
         OnPropertyChanged(nameof(MaghribEnabled));
         OnPropertyChanged(nameof(IshaEnabled));
         OnPropertyChanged(nameof(AnyNotificationEnabled));
+        OnPropertyChanged(nameof(SelectedAdhan));
+        OnPropertyChanged(nameof(IsDefaultSoundSelected));
+        OnPropertyChanged(nameof(IsAdhan1Selected));
+        OnPropertyChanged(nameof(IsAdhan2Selected));
+        OnPropertyChanged(nameof(IsAdhan3Selected));
     }
 
-    public SettingsViewModel(ISettingsStore settingsStore, ILocationService locationService, INotificationScheduler notificationScheduler)
+    public SettingsViewModel(ISettingsStore settingsStore, ILocationService locationService, INotificationScheduler notificationScheduler, IAdhanPlayer adhanPlayer)
     {
         _settingsStore          = settingsStore;
         _locationService        = locationService;
         _notificationScheduler  = notificationScheduler;
+        _adhanPlayer            = adhanPlayer;
 
         // Initialise from persisted state
         _calculationSettings  = _settingsStore.GetCalculationSettings();

@@ -4,11 +4,14 @@ public partial class AboutPage : ContentPage
 {
     private const string GithubUrl = "https://github.com/juangcarmona/qibla-now";
     private const string WebsiteUrl = "https://jgcarmona.com/";
-    private const string DonateUrl = "https://github.com/sponsors/juangcarmona"; // replace if needed
+    private const string DonateUrl = "https://github.com/sponsors/juangcarmona";
+
+    public string AppVersion => AppInfo.Current.VersionString;
 
     public AboutPage()
     {
         InitializeComponent();
+        BindingContext = this;
     }
 
     private async void OnGithubTapped(object? sender, TappedEventArgs e)

@@ -135,8 +135,23 @@
   <data name="SoundSettings_Adhan" xml:space="preserve">
     <value>Ezan Sesi</value>
   </data>
-  <data name="SoundSettings_AdhanComingSoon" xml:space="preserve">
-    <value>Ezan sesi seçimi — yakında.</value>
+  <data name="SoundSettings_AdhanDescription" xml:space="preserve">
+    <value>Her namaz bildiriminde çalınacak ezanı seçin.</value>
+  </data>
+  <data name="SoundSettings_AdhanDefault" xml:space="preserve">
+    <value>Sistem Varsayılanı</value>
+  </data>
+  <data name="SoundSettings_Adhan1" xml:space="preserve">
+    <value>Ezan 1</value>
+  </data>
+  <data name="SoundSettings_Adhan2" xml:space="preserve">
+    <value>Ezan 2</value>
+  </data>
+  <data name="SoundSettings_Adhan3" xml:space="preserve">
+    <value>Ezan 3</value>
+  </data>
+  <data name="SoundSettings_Preview" xml:space="preserve">
+    <value>&#9654;</value>
   </data>
 
   <!-- Prayer Names -->
@@ -187,7 +202,7 @@
     <value>Hakkında</value>
   </data>
   <data name="AboutPage_Version" xml:space="preserve">
-    <value>Sürüm 1.0</value>
+    <value>Sürüm</value>
   </data>
   <data name="AboutPage_Description" xml:space="preserve">
     <value>Namaz vakitleri ve kıble yönü için çevrimdışı öncelikli İslami uygulama.</value>
