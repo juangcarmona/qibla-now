@@ -12,6 +12,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     private readonly ILocationService _locationService;
     private readonly INotificationScheduler _notificationScheduler;
     private readonly IAdhanPlayer _adhanPlayer;
+    private readonly INotificationSettingsOpener _notificationSettingsOpener;
 
     [ObservableProperty] private LocationMode _locationMode;
     [ObservableProperty] private string _latitude     = string.Empty;
@@ -119,6 +120,9 @@ public sealed partial class SettingsViewModel : ObservableObject
 
     [RelayCommand]
     private void PreviewAdhan3() => _adhanPlayer.Preview(AdhanSound.Adhan3);
+
+    [RelayCommand]
+    private Task OpenChannelSettingsAsync() => _notificationSettingsOpener.OpenChannelSettingsAsync();
 
     private void SaveAndReconcileNotifications()
     {
@@ -270,12 +274,13 @@ public sealed partial class SettingsViewModel : ObservableObject
         OnPropertyChanged(nameof(IsAdhan3Selected));
     }
 
-    public SettingsViewModel(ISettingsStore settingsStore, ILocationService locationService, INotificationScheduler notificationScheduler, IAdhanPlayer adhanPlayer)
+    public SettingsViewModel(ISettingsStore settingsStore, ILocationService locationService, INotificationScheduler notificationScheduler, IAdhanPlayer adhanPlayer, INotificationSettingsOpener notificationSettingsOpener)
     {
-        _settingsStore          = settingsStore;
-        _locationService        = locationService;
-        _notificationScheduler  = notificationScheduler;
-        _adhanPlayer            = adhanPlayer;
+        _settingsStore               = settingsStore;
+        _locationService             = locationService;
+        _notificationScheduler       = notificationScheduler;
+        _adhanPlayer                 = adhanPlayer;
+        _notificationSettingsOpener  = notificationSettingsOpener;
 
         // Initialise from persisted state
         _calculationSettings  = _settingsStore.GetCalculationSettings();

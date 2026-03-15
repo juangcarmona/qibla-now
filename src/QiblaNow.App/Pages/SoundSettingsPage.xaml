@@ -214,6 +214,32 @@
                                     Padding="0" FontSize="14" />
 
                         </Grid>
+
+                        <!-- Android-only: explain channel-locked sound behaviour and offer a shortcut -->
+                        <BoxView IsVisible="{OnPlatform Android=True, Default=False}"
+                                 HeightRequest="0.5" Color="{StaticResource Gray200}" Margin="0,6,0,0" />
+
+                        <Label IsVisible="{OnPlatform Android=True, Default=False}"
+                               Text="{x:Static loc:AppResources.SoundSettings_AndroidChannelNote}"
+                               FontSize="12"
+                               TextColor="{StaticResource Gray500}"
+                               LineBreakMode="WordWrap"
+                               Margin="0,4,0,0" />
+
+                        <Button IsVisible="{OnPlatform Android=True, Default=False}"
+                                Text="{x:Static loc:AppResources.SoundSettings_OpenChannelSettings}"
+                                Command="{Binding OpenChannelSettingsCommand}"
+                                BackgroundColor="Transparent"
+                                TextColor="{StaticResource Primary}"
+                                BorderColor="{StaticResource Primary}"
+                                BorderWidth="1"
+                                CornerRadius="8"
+                                HeightRequest="40"
+                                HorizontalOptions="Start"
+                                FontSize="13"
+                                Padding="12,0"
+                                Margin="0,4,0,0" />
+
                     </VerticalStackLayout>
                 </Border>
 
