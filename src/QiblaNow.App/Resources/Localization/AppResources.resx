@@ -199,6 +199,12 @@
   <data name="SoundSettings_Preview" xml:space="preserve">
     <value>&#9654;</value>
   </data>
+  <data name="SoundSettings_AndroidChannelNote" xml:space="preserve">
+    <value>On Android, notification sounds are managed per channel. If you have changed the sound in system settings, it may override this selection.</value>
+  </data>
+  <data name="SoundSettings_OpenChannelSettings" xml:space="preserve">
+    <value>Open System Notification Settings</value>
+  </data>
 
   <!-- Prayer Names -->
   <data name="Prayer_Fajr" xml:space="preserve">
