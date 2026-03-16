@@ -26,15 +26,15 @@
                            FontSize="18" FontAttributes="Bold"
                            TextColor="{StaticResource OnSurfaceLight}" />
 
-                        <Label Text="{x:Static loc:AppResources.SoundSettings_NotificationsDescription}"
+                        <!--<Label Text="{x:Static loc:AppResources.SoundSettings_NotificationsDescription}"
                            FontSize="13" TextColor="{StaticResource Gray600}"
-                           LineBreakMode="WordWrap" />
+                           LineBreakMode="WordWrap" />-->
 
-                        <BoxView HeightRequest="0.5" Color="{StaticResource Gray200}" Margin="0,2" />
+                        <!--<BoxView HeightRequest="0.5" Color="{StaticResource Gray200}" Margin="0,2" />-->
 
                         <Grid ColumnDefinitions="*,Auto"
                           RowDefinitions="Auto,Auto,Auto,Auto,Auto"
-                          RowSpacing="12"
+                          RowSpacing="4"
                           Margin="0,2,0,0">
 
                             <Label Grid.Row="0" Grid.Column="0"
@@ -102,7 +102,7 @@
                         <!-- Each row: tap anywhere on the label to select; ▶ button to preview -->
                         <Grid ColumnDefinitions="*,Auto"
                               RowDefinitions="Auto,Auto,Auto,Auto"
-                              RowSpacing="12"
+                              RowSpacing="4"
                               Margin="0,2,0,0">
 
                             <!-- System Default -->
@@ -116,7 +116,7 @@
                                                  Binding="{Binding IsDefaultSoundSelected}"
                                                  Value="True">
                                         <Setter Property="FontAttributes" Value="Bold" />
-                                        <Setter Property="TextColor" Value="{StaticResource Primary}" />
+                                        <Setter Property="TextColor" Value="{StaticResource Tertiary}" />
                                     </DataTrigger>
                                 </Label.Triggers>
                                 <Label.GestureRecognizers>
@@ -130,7 +130,15 @@
                                     TextColor="White"
                                     CornerRadius="8"
                                     HeightRequest="36" WidthRequest="44"
-                                    Padding="0" FontSize="14" />
+                                    Padding="0" FontSize="14" >
+                                <Button.Triggers>
+                                    <DataTrigger TargetType="Button"
+                                                 Binding="{Binding IsDefaultSoundSelected}"
+                                                 Value="True">
+                                        <Setter Property="BackgroundColor" Value="{StaticResource Tertiary}" />
+                                    </DataTrigger>
+                                </Button.Triggers>
+                            </Button>
 
                             <!-- Adhan 1 -->
                             <Label Grid.Row="1" Grid.Column="0"
@@ -143,7 +151,7 @@
                                                  Binding="{Binding IsAdhan1Selected}"
                                                  Value="True">
                                         <Setter Property="FontAttributes" Value="Bold" />
-                                        <Setter Property="TextColor" Value="{StaticResource Primary}" />
+                                        <Setter Property="TextColor" Value="{StaticResource Tertiary}" />
                                     </DataTrigger>
                                 </Label.Triggers>
                                 <Label.GestureRecognizers>
@@ -157,7 +165,15 @@
                                     TextColor="White"
                                     CornerRadius="8"
                                     HeightRequest="36" WidthRequest="44"
-                                    Padding="0" FontSize="14" />
+                                    Padding="0" FontSize="14" >
+                                <Button.Triggers>
+                                    <DataTrigger TargetType="Button"
+                                                 Binding="{Binding IsAdhan1Selected}"
+                                                 Value="True">
+                                        <Setter Property="BackgroundColor" Value="{StaticResource Tertiary}" />
+                                    </DataTrigger>
+                                </Button.Triggers>
+                            </Button>
 
                             <!-- Adhan 2 -->
                             <Label Grid.Row="2" Grid.Column="0"
@@ -170,7 +186,7 @@
                                                  Binding="{Binding IsAdhan2Selected}"
                                                  Value="True">
                                         <Setter Property="FontAttributes" Value="Bold" />
-                                        <Setter Property="TextColor" Value="{StaticResource Primary}" />
+                                        <Setter Property="TextColor" Value="{StaticResource Tertiary}" />
                                     </DataTrigger>
                                 </Label.Triggers>
                                 <Label.GestureRecognizers>
@@ -184,7 +200,15 @@
                                     TextColor="White"
                                     CornerRadius="8"
                                     HeightRequest="36" WidthRequest="44"
-                                    Padding="0" FontSize="14" />
+                                    Padding="0" FontSize="14" >
+                                <Button.Triggers>
+                                    <DataTrigger TargetType="Button"
+                                                 Binding="{Binding IsAdhan2Selected}"
+                                                 Value="True">
+                                        <Setter Property="BackgroundColor" Value="{StaticResource Tertiary}" />
+                                    </DataTrigger>
+                                </Button.Triggers>
+                            </Button>
 
                             <!-- Adhan 3 -->
                             <Label Grid.Row="3" Grid.Column="0"
@@ -197,7 +221,7 @@
                                                  Binding="{Binding IsAdhan3Selected}"
                                                  Value="True">
                                         <Setter Property="FontAttributes" Value="Bold" />
-                                        <Setter Property="TextColor" Value="{StaticResource Primary}" />
+                                        <Setter Property="TextColor" Value="{StaticResource Tertiary}" />
                                     </DataTrigger>
                                 </Label.Triggers>
                                 <Label.GestureRecognizers>
@@ -211,9 +235,43 @@
                                     TextColor="White"
                                     CornerRadius="8"
                                     HeightRequest="36" WidthRequest="44"
-                                    Padding="0" FontSize="14" />
+                                    Padding="0" FontSize="14" >
+                                <Button.Triggers>
+                                    <DataTrigger TargetType="Button"
+                                                 Binding="{Binding IsAdhan3Selected}"
+                                                 Value="True">
+                                        <Setter Property="BackgroundColor" Value="{StaticResource Tertiary}" />
+                                    </DataTrigger>
+                                </Button.Triggers>
+                            </Button>
 
                         </Grid>
+
+                        <!-- Android-only: explain channel-locked sound behaviour and offer a shortcut -->
+                        <BoxView IsVisible="{OnPlatform Android=True, Default=False}"
+                                 HeightRequest="0.5" Color="{StaticResource Gray200}" Margin="0,6,0,0" />
+
+                        <Label IsVisible="{OnPlatform Android=True, Default=False}"
+                               Text="{x:Static loc:AppResources.SoundSettings_AndroidChannelNote}"
+                               FontSize="12"
+                               TextColor="{StaticResource Gray500}"
+                               LineBreakMode="WordWrap"
+                               Margin="0,4,0,0" />
+
+                        <Button IsVisible="{OnPlatform Android=True, Default=False}"
+                                Text="{x:Static loc:AppResources.SoundSettings_OpenChannelSettings}"
+                                Command="{Binding OpenChannelSettingsCommand}"
+                                BackgroundColor="Transparent"
+                                TextColor="{StaticResource Primary}"
+                                BorderColor="{StaticResource Primary}"
+                                BorderWidth="1"
+                                CornerRadius="8"
+                                HeightRequest="40"
+                                HorizontalOptions="Start"
+                                FontSize="13"
+                                Padding="12,0"
+                                Margin="0,4,0,0" />
+
                     </VerticalStackLayout>
                 </Border>
 

@@ -70,6 +70,8 @@ public static class AppResources
     public static string SoundSettings_Adhan2 => Get();
     public static string SoundSettings_Adhan3 => Get();
     public static string SoundSettings_Preview => Get();
+    public static string SoundSettings_AndroidChannelNote => Get();
+    public static string SoundSettings_OpenChannelSettings => Get();
 
     // Prayer Names
     public static string Prayer_Fajr => Get();

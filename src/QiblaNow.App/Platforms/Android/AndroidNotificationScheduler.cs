@@ -199,9 +199,6 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
 
     private void CreateNotificationChannels()
     {
-        if (!OperatingSystem.IsAndroidVersionAtLeast(26))
-            return;
-
         var notificationManager = _context.GetSystemService(Context.NotificationService) as NotificationManager;
         if (notificationManager == null)
             return;
