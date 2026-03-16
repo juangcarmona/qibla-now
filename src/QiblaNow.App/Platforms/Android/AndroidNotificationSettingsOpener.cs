@@ -10,8 +10,8 @@ namespace QiblaNow.App.Platforms.Android;
 /// Adhan prayer channel.  This lets users inspect or override the sound that their device
 /// applies to prayer notifications.
 ///
-/// Android 8.0+ (API 26) locks channel sounds after first creation.  If the user wants a
-/// different sound than the app provides they can change it here, but only at the OS level.
+/// The minimum supported SDK is 26 (Android 8 Oreo), so the channel settings deep-link
+/// (ACTION_CHANNEL_NOTIFICATION_SETTINGS) is always available.
 /// </summary>
 public sealed class AndroidNotificationSettingsOpener : INotificationSettingsOpener
 {
@@ -34,24 +34,12 @@ public sealed class AndroidNotificationSettingsOpener : INotificationSettingsOpe
     {
         try
         {
-            Intent intent;
-
-            if (OperatingSystem.IsAndroidVersionAtLeast(26))
-            {
-                // Deep-link directly to the notification channel detail screen (API 26+).
-                var channelId = GetActiveChannelId();
-                intent = new Intent(Settings.ActionChannelNotificationSettings);
-                intent.PutExtra(Settings.ExtraAppPackage, _context.PackageName);
-                intent.PutExtra(Settings.ExtraChannelId,  channelId);
-            }
-            else
-            {
-                // Fallback: open the app's notification settings page (API < 26).
-                intent = new Intent(Settings.ActionApplicationDetailsSettings);
-                intent.SetData(
-                    global::Android.Net.Uri.Parse($"package:{_context.PackageName}"));
-            }
-
+            // Deep-link directly to the notification channel detail screen.
+            // This works on all supported devices since min SDK is now 26 (Android 8 Oreo).
+            var channelId = GetActiveChannelId();
+            var intent = new Intent(Settings.ActionChannelNotificationSettings);
+            intent.PutExtra(Settings.ExtraAppPackage, _context.PackageName);
+            intent.PutExtra(Settings.ExtraChannelId,  channelId);
             intent.SetFlags(ActivityFlags.NewTask);
             _context.StartActivity(intent);
         }
