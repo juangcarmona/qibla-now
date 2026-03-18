@@ -13,8 +13,15 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
     private readonly Context _context;
     private readonly ISettingsStore _settingsStore;
     private readonly IPrayerTimesCalculator _calculator;
+    private readonly IAdhanAlarmPlayer _alarmPlayer;
 
     private const string PrayerTypeExtra = "prayer_type";
+
+    // Request code base offsets to avoid PendingIntent collisions between alarm intents
+    // (used with GetBroadcast) and notification tap intents (used with GetActivity).
+    // Alarm intents use the prayer type value directly (0-5).
+    // Notification tap intents use this base + prayer type (100-105).
+    private const int NotificationTapRequestCodeBase = 100;
 
     // One channel per selectable sound because Android 8.0+ locks a channel's sound URI
     // after the first createNotificationChannel() call.  Changing sound requires a new
@@ -32,11 +39,13 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
     public AndroidNotificationScheduler(
         Context context,
         ISettingsStore settingsStore,
-        IPrayerTimesCalculator calculator)
+        IPrayerTimesCalculator calculator,
+        IAdhanAlarmPlayer alarmPlayer)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _settingsStore = settingsStore ?? throw new ArgumentNullException(nameof(settingsStore));
         _calculator = calculator ?? throw new ArgumentNullException(nameof(calculator));
+        _alarmPlayer = alarmPlayer ?? throw new ArgumentNullException(nameof(alarmPlayer));
     }
 
     public async Task ScheduleNextNotificationAsync(NextNotificationCandidateResult candidate)
@@ -161,7 +170,40 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
     {
         try
         {
+            System.Diagnostics.Debug.WriteLine($"HandleAlarmTriggeredAsync: {prayerType}");
+
+            // 1. Start Adhan playback immediately (alarm stream, respects alarm volume).
+            var selectedAdhan = _settingsStore.GetNotificationSettings().SelectedAdhan;
+            System.Diagnostics.Debug.WriteLine($"HandleAlarmTriggeredAsync: playing {selectedAdhan}");
+            _alarmPlayer.Play(selectedAdhan);
+
+            // 2. Post the notification (silent/minimal — audio is handled above).
             ShowPrayerNotification(prayerType);
+
+            // 3. Set the pending navigation so MainActivity can route to PrayerAlertPage
+            //    when the app is brought to the foreground via the notification tap.
+            PrayerNavigationRequest.Set(prayerType);
+
+            // 4. If the MAUI Shell is already active (app in foreground), navigate directly.
+            await MainThread.InvokeOnMainThreadAsync(async () =>
+            {
+                try
+                {
+                    if (Shell.Current != null)
+                    {
+                        PrayerNavigationRequest.TakeAndClear(); // consumed here
+                        await Shell.Current.GoToAsync(
+                            $"prayer-alert?prayerType={(int)prayerType}");
+                    }
+                }
+                catch (Exception navEx)
+                {
+                    System.Diagnostics.Debug.WriteLine(
+                        $"HandleAlarmTriggeredAsync: foreground navigation failed: {navEx.Message}");
+                }
+            });
+
+            // 5. Reschedule for the next prayer.
             await ReconcileOnStartupAsync();
         }
         catch (Exception ex)
@@ -304,13 +346,15 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
         builder.SetVisibility((int)NotificationVisibility.Public);
         builder.SetAutoCancel(true);
 
-        // Tap opens the main activity
+        // Tap opens the PrayerAlertPage by embedding the prayer type in the launch intent.
         var tapIntent = _context.PackageManager?.GetLaunchIntentForPackage(_context.PackageName ?? "");
         if (tapIntent != null)
         {
             tapIntent.SetFlags(ActivityFlags.ClearTop | ActivityFlags.SingleTop);
+            tapIntent.PutExtra(PrayerNavigationRequest.ExtraPrayerAlert, true);
+            tapIntent.PutExtra(PrayerNavigationRequest.ExtraPrayerType, (int)prayerType);
             var tapPendingIntent = PendingIntent.GetActivity(
-                _context, 0, tapIntent,
+                _context, NotificationTapRequestCodeBase + (int)prayerType, tapIntent,
                 PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable);
             builder.SetContentIntent(tapPendingIntent);
         }

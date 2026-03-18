@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.Presentation"
+             x:Class="QiblaNow.App.Pages.PrayerAlertPage"
+             Title="It's Prayer Time"
+             BackgroundColor="{StaticResource Primary}"
+             Shell.NavBarIsVisible="False"
+             x:DataType="viewmodels:PrayerAlertViewModel">
+
+    <Grid RowDefinitions="*,Auto,Auto,Auto,Auto,Auto,*">
+
+        <!-- Prayer symbol (bell icon from MaterialIcons — same font already used in the app) -->
+        <Label Grid.Row="1"
+               Text="&#xE8B8;"
+               FontFamily="MaterialIcons"
+               FontSize="96"
+               HorizontalOptions="Center"
+               TextColor="{StaticResource OnPrimary}"
+               Margin="0,0,0,8" />
+
+        <!-- Prayer name -->
+        <Label Grid.Row="2"
+               Text="{Binding PrayerName}"
+               FontSize="42"
+               FontAttributes="Bold"
+               HorizontalOptions="Center"
+               TextColor="{StaticResource OnPrimary}"
+               Margin="0,0,0,4" />
+
+        <!-- "It's time for prayer" sub-label -->
+        <Label Grid.Row="3"
+               Text="It's time for prayer"
+               FontSize="16"
+               HorizontalOptions="Center"
+               TextColor="{StaticResource Secondary}"
+               Margin="0,0,0,48" />
+
+        <!-- Action buttons -->
+        <VerticalStackLayout Grid.Row="4"
+                             Spacing="14"
+                             Padding="32,0"
+                             HorizontalOptions="Fill">
+
+            <!-- Stop Adhan -->
+            <Button Text="Stop Adhan"
+                    Command="{Binding StopAdhanCommand}"
+                    BackgroundColor="{StaticResource Tertiary}"
+                    TextColor="{StaticResource White}"
+                    FontAttributes="Bold"
+                    FontSize="17"
+                    CornerRadius="14"
+                    HeightRequest="54"
+                    HorizontalOptions="Fill" />
+
+            <!-- Show Qibla -->
+            <Button Text="Show Qibla"
+                    Command="{Binding GoQiblaCommand}"
+                    BackgroundColor="{StaticResource PrimaryDark}"
+                    TextColor="{StaticResource OnPrimary}"
+                    FontSize="16"
+                    CornerRadius="14"
+                    HeightRequest="50"
+                    HorizontalOptions="Fill" />
+
+            <!-- Show Map -->
+            <Button Text="Show Map"
+                    Command="{Binding GoMapCommand}"
+                    BackgroundColor="{StaticResource PrimaryDark}"
+                    TextColor="{StaticResource OnPrimary}"
+                    FontSize="16"
+                    CornerRadius="14"
+                    HeightRequest="50"
+                    HorizontalOptions="Fill" />
+
+        </VerticalStackLayout>
+
+        <!-- Go Home link -->
+        <Label Grid.Row="5"
+               Text="← Back to Home"
+               FontSize="14"
+               HorizontalOptions="Center"
+               TextColor="{StaticResource Secondary}"
+               Margin="0,20,0,0">
+            <Label.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding GoHomeCommand}" />
+            </Label.GestureRecognizers>
+        </Label>
+
+    </Grid>
+
+</ContentPage>

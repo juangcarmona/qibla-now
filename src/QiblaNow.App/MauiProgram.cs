@@ -45,14 +45,17 @@ public static class MauiProgram
         builder.Services.AddSingleton<Android.Content.Context>(Android.App.Application.Context);
         builder.Services.AddSingleton<INotificationScheduler, Platforms.Android.AndroidNotificationScheduler>();
         builder.Services.AddSingleton<IAdhanPlayer, Platforms.Android.AndroidAdhanPlayer>();
+        builder.Services.AddSingleton<IAdhanAlarmPlayer, Platforms.Android.AndroidAdhanAlarmPlayer>();
         builder.Services.AddSingleton<INotificationSettingsOpener, Platforms.Android.AndroidNotificationSettingsOpener>();
 #elif IOS || MACCATALYST
         builder.Services.AddSingleton<INotificationScheduler, QiblaNow.Core.Abstractions.NullNotificationScheduler>();
         builder.Services.AddSingleton<IAdhanPlayer, Platforms.iOS.iOSAdhanPlayer>();
+        builder.Services.AddSingleton<IAdhanAlarmPlayer, QiblaNow.Core.Abstractions.NullAdhanAlarmPlayer>();
         builder.Services.AddSingleton<INotificationSettingsOpener, QiblaNow.Core.Abstractions.NullNotificationSettingsOpener>();
 #else
         builder.Services.AddSingleton<INotificationScheduler, QiblaNow.Core.Abstractions.NullNotificationScheduler>();
         builder.Services.AddSingleton<IAdhanPlayer, QiblaNow.Core.Abstractions.NullAdhanPlayer>();
+        builder.Services.AddSingleton<IAdhanAlarmPlayer, QiblaNow.Core.Abstractions.NullAdhanAlarmPlayer>();
         builder.Services.AddSingleton<INotificationSettingsOpener, QiblaNow.Core.Abstractions.NullNotificationSettingsOpener>();
 #endif
 
@@ -68,6 +71,7 @@ public static class MauiProgram
         builder.Services.AddTransient<SoundSettingsPage>();
         builder.Services.AddTransient<DisplaySettingsPage>();
         builder.Services.AddTransient<AboutPage>();
+        builder.Services.AddTransient<PrayerAlertPage>();
 
         return builder.Build();
     }

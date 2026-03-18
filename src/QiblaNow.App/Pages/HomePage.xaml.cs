@@ -24,6 +24,9 @@ public partial class HomePage : ContentPage
         base.OnAppearing();
         await _vm.InitializeAsync();
         await ReconcileNotificationsAsync();
+#if ANDROID
+        await CheckPendingPrayerAlertAsync();
+#endif
     }
 
     protected override void OnDisappearing()
@@ -46,4 +49,30 @@ public partial class HomePage : ContentPage
             System.Diagnostics.Debug.WriteLine($"Notification reconciliation failed: {ex.Message}");
         }
     }
+
+#if ANDROID
+    /// <summary>
+    /// Checks for a pending prayer-alert navigation request (set by
+    /// <see cref="Platforms.Android.PrayerNavigationRequest"/> when the Shell was not yet
+    /// ready at the time the alarm fired or the notification was tapped).
+    /// </summary>
+    private static async Task CheckPendingPrayerAlertAsync()
+    {
+        try
+        {
+            var pending = Platforms.Android.PrayerNavigationRequest.TakeAndClear();
+            if (pending.HasValue)
+            {
+                await Task.Yield();
+                await Shell.Current.GoToAsync(
+                    $"prayer-alert?prayerType={(int)pending.Value}");
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(
+                $"HomePage: pending prayer-alert navigation failed: {ex.Message}");
+        }
+    }
+#endif
 }

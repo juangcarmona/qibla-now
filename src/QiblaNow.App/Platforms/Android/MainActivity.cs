@@ -4,6 +4,8 @@ using Android.Content;
 using Android.OS;
 using Android.Provider;
 using Plugin.MauiMtAdmob;
+using QiblaNow.App.Platforms.Android;
+using QiblaNow.Core.Models;
 
 namespace QiblaNow.App
 {
@@ -37,9 +39,56 @@ namespace QiblaNow.App
                         debugMode: false
 #endif
             );
+
+            // Handle prayer alert from notification tap (cold start).
+            HandlePrayerAlertIntent(Intent);
         }
 
+        protected override void OnNewIntent(Intent? intent)
+        {
+            base.OnNewIntent(intent);
 
+            // Handle prayer alert from notification tap (warm start / app already running).
+            HandlePrayerAlertIntent(intent);
+        }
+
+        private static void HandlePrayerAlertIntent(Intent? intent)
+        {
+            if (intent?.GetBooleanExtra(PrayerNavigationRequest.ExtraPrayerAlert, false) != true)
+                return;
+
+            var prayerTypeValue = intent.GetIntExtra(PrayerNavigationRequest.ExtraPrayerType, -1);
+            if (prayerTypeValue < 0 || !Enum.IsDefined(typeof(PrayerType), prayerTypeValue))
+                return;
+
+            var prayerType = (PrayerType)prayerTypeValue;
+            System.Diagnostics.Debug.WriteLine(
+                $"MainActivity.HandlePrayerAlertIntent: navigating to prayer-alert for {prayerType}");
+
+            // Ensure Shell is ready before navigating.
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                try
+                {
+                    if (Shell.Current != null)
+                    {
+                        PrayerNavigationRequest.TakeAndClear(); // clear any background-set pending
+                        await Shell.Current.GoToAsync(
+                            $"prayer-alert?prayerType={(int)prayerType}");
+                    }
+                    else
+                    {
+                        // Shell not yet ready — store for HomePage to consume on appearing.
+                        PrayerNavigationRequest.Set(prayerType);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(
+                        $"MainActivity: navigation to prayer-alert failed: {ex.Message}");
+                }
+            });
+        }
 
         private void EnsureExactAlarmAccess()
         {
