@@ -164,6 +164,12 @@
 		</AssemblyAttribute>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <MauiAsset Include="Platforms\Android\Resources\raw\adhan.mp3" />
+	  <MauiAsset Include="Platforms\Android\Resources\raw\adhan2.mp3" />
+	  <MauiAsset Include="Platforms\Android\Resources\raw\adhan3.mp3" />
+	</ItemGroup>
+
 	<Target Name="ShowMapsApiKey" BeforeTargets="Build">
 		<Message Text="MapsApiKey='$(MapsApiKey)'" Importance="High" />
 		<Message Text="AndroidManifestPlaceholders='$(AndroidManifestPlaceholders)'" Importance="High" />
