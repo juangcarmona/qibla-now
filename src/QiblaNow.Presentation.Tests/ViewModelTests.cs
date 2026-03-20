@@ -17,6 +17,30 @@ public class ViewModelTests
         Assert.True(true);
     }
 
+    [Fact]
+    public void PrayerAlertViewModel_UpdateAlert_Sets_Values()
+    {
+        var vm = new PrayerAlertViewModel();
+
+        vm.UpdateAlert("Fajr", "05:20", "05:21");
+
+        Assert.Equal("Fajr", vm.PrayerName);
+        Assert.Equal("05:20", vm.PrayerTime);
+        Assert.Equal("05:21", vm.CurrentTime);
+    }
+
+    [Fact]
+    public void PrayerAlertViewModel_UpdateAlert_Uses_Fallbacks_For_Empty_Values()
+    {
+        var vm = new PrayerAlertViewModel();
+
+        vm.UpdateAlert("", "", "");
+
+        Assert.Equal("Prayer", vm.PrayerName);
+        Assert.Equal("--:--", vm.PrayerTime);
+        Assert.Equal("--:--", vm.CurrentTime);
+    }
+
     // ── Sound selection tests ──────────────────────────────────────────────────
 
     private static SettingsViewModel BuildSettingsViewModel(

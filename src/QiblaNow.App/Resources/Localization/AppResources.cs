@@ -121,6 +121,12 @@ public static class AppResources
 
     // Prayer Times Page
     public static string PrayerTimesPage_Title => Get();
+    
+    // Prayer Alert Page
+    public static string PrayerAlertPage_Title => Get();
+    public static string PrayerAlertPage_Home => Get();
+    public static string PrayerAlertPage_ItIsTimeToPray => Get();
+    public static string PrayerAlertPage_CurrentTimeFormat => Get();
 
     // Language Settings
     public static string LanguageSettings_Title => Get();

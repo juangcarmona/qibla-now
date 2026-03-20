@@ -329,6 +329,20 @@
     <value>Prayer Times</value>
   </data>
 
+  <!-- Prayer Alert Page -->
+  <data name="PrayerAlertPage_Title" xml:space="preserve">
+    <value>Prayer Alert</value>
+  </data>
+  <data name="PrayerAlertPage_Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="PrayerAlertPage_ItIsTimeToPray" xml:space="preserve">
+    <value>It's time to pray</value>
+  </data>
+  <data name="PrayerAlertPage_CurrentTimeFormat" xml:space="preserve">
+    <value>Current time: {0}</value>
+  </data>
+
   <!-- Language Settings -->
   <data name="LanguageSettings_Title" xml:space="preserve">
     <value>Language</value>

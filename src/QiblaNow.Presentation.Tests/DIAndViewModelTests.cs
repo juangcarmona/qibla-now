@@ -69,6 +69,7 @@ public class DIAndViewModelTests
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<QiblaViewModel>();
         services.AddTransient<MapViewModel>();
+        services.AddTransient<PrayerAlertViewModel>();
         return services.BuildServiceProvider();
     }
 
@@ -81,11 +82,13 @@ public class DIAndViewModelTests
         var settingsViewModel = sp.GetRequiredService<SettingsViewModel>();
         var qiblaViewModel    = sp.GetRequiredService<QiblaViewModel>();
         var mapViewModel      = sp.GetRequiredService<MapViewModel>();
+        var prayerAlertViewModel = sp.GetRequiredService<PrayerAlertViewModel>();
 
         Assert.NotNull(timesViewModel);
         Assert.NotNull(settingsViewModel);
         Assert.NotNull(qiblaViewModel);
         Assert.NotNull(mapViewModel);
+        Assert.NotNull(prayerAlertViewModel);
     }
 
     [Fact]
@@ -97,11 +100,13 @@ public class DIAndViewModelTests
         var settingsViewModel    = sp.GetRequiredService<SettingsViewModel>();
         var qiblaViewModel       = sp.GetRequiredService<QiblaViewModel>();
         var mapViewModel         = sp.GetRequiredService<MapViewModel>();
+        var prayerAlertViewModel = sp.GetRequiredService<PrayerAlertViewModel>();
 
         Assert.IsAssignableFrom<ObservableObject>(prayerTimesViewModel);
         Assert.IsAssignableFrom<ObservableObject>(settingsViewModel);
         Assert.IsAssignableFrom<ObservableObject>(qiblaViewModel);
         Assert.IsAssignableFrom<ObservableObject>(mapViewModel);
+        Assert.IsAssignableFrom<ObservableObject>(prayerAlertViewModel);
     }
 
     [Fact]
@@ -118,4 +123,3 @@ public class DIAndViewModelTests
         Assert.NotSame(timesViewModel, timesViewModel2);
     }
 }
-
