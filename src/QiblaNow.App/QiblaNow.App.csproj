@@ -144,6 +144,9 @@
 		<MauiXaml Update="Pages\LanguageSettingsPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
+		<MauiXaml Update="Pages\PrayerAlertPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 	</ItemGroup>
 
 	<Import Project="QiblaNow.App.secrets.props" Condition="Exists('QiblaNow.App.secrets.props')" />

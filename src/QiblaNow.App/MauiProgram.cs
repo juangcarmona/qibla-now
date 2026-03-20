@@ -58,6 +58,7 @@ public static class MauiProgram
 
         builder.Services.AddTransient<MapViewModel>();
         builder.Services.AddTransient<MapPage>();
+        builder.Services.AddTransient<PrayerAlertPage>();
 
         builder.Services.AddTransient<QiblaPage>();
 

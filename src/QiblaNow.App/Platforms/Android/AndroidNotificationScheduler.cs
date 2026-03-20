@@ -10,6 +10,11 @@ namespace QiblaNow.App.Platforms.Android;
 
 public sealed class AndroidNotificationScheduler : INotificationScheduler
 {
+    internal const string TapActionOpenPrayerAlert = "com.jgcarmona.qiblanow.OPEN_PRAYER_ALERT";
+    internal const string TapExtraPrayerName = "tap_prayer_name";
+    internal const string TapExtraPrayerTime = "tap_prayer_time";
+    internal const string TapExtraCurrentTime = "tap_current_time";
+
     private readonly Context _context;
     private readonly ISettingsStore _settingsStore;
     private readonly IPrayerTimesCalculator _calculator;
@@ -308,6 +313,10 @@ public sealed class AndroidNotificationScheduler : INotificationScheduler
         var tapIntent = _context.PackageManager?.GetLaunchIntentForPackage(_context.PackageName ?? "");
         if (tapIntent != null)
         {
+            tapIntent.SetAction(TapActionOpenPrayerAlert);
+            tapIntent.PutExtra(TapExtraPrayerName, prayerName);
+            tapIntent.PutExtra(TapExtraPrayerTime, timeText);
+            tapIntent.PutExtra(TapExtraCurrentTime, DateTimeOffset.Now.ToString("HH:mm"));
             tapIntent.SetFlags(ActivityFlags.ClearTop | ActivityFlags.SingleTop);
             var tapPendingIntent = PendingIntent.GetActivity(
                 _context, 0, tapIntent,

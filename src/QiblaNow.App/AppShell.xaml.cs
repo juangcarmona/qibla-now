@@ -17,6 +17,7 @@ namespace QiblaNow.App
             Routing.RegisterRoute("display-settings", typeof(DisplaySettingsPage));
             Routing.RegisterRoute("language-settings", typeof(LanguageSettingsPage));
             Routing.RegisterRoute("about", typeof(AboutPage));
+            Routing.RegisterRoute("prayer-alert", typeof(PrayerAlertPage));
         }
     }
 }

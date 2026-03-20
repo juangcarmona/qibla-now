@@ -18,6 +18,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<QiblaViewModel>();
         services.AddTransient<MapViewModel>();
+        services.AddTransient<PrayerAlertViewModel>();
 
         return services;
     }

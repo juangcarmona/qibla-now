@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="QiblaNow.App.Pages.PrayerAlertPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodels="clr-namespace:QiblaNow.Presentation.ViewModels;assembly=QiblaNow.Presentation"
+    xmlns:admob="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"
+    xmlns:loc="clr-namespace:QiblaNow.App.Resources.Localization"
+    x:DataType="viewmodels:PrayerAlertViewModel"
+    Title="{x:Static loc:AppResources.PrayerAlertPage_Title}"
+    BackgroundColor="{StaticResource AppBackgroundLight}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            Text="{x:Static loc:AppResources.PrayerAlertPage_Home}"
+            Order="Primary"
+            Priority="0"
+            Command="{Binding GoHomeCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView Grid.Row="0">
+            <VerticalStackLayout Padding="20,16,20,20" Spacing="14">
+                <Border Padding="18,16"
+                        BackgroundColor="{StaticResource White}"
+                        StrokeThickness="0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="18" />
+                    </Border.StrokeShape>
+
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="{x:Static loc:AppResources.PrayerAlertPage_ItIsTimeToPray}"
+                               HorizontalTextAlignment="Center"
+                               FontSize="{OnIdiom Default=22, Tablet=28}"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource OnSurfaceLight}" />
+
+                        <Label Text="{Binding PrayerName}"
+                               HorizontalTextAlignment="Center"
+                               FontSize="{OnIdiom Default=28, Tablet=36}"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource Tertiary}" />
+
+                        <Label Text="{Binding PrayerTime}"
+                               HorizontalTextAlignment="Center"
+                               FontSize="{OnIdiom Default=36, Tablet=44}"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource OnSurfaceLight}" />
+
+                        <Label Text="{Binding CurrentTime, StringFormat='{x:Static loc:AppResources.PrayerAlertPage_CurrentTimeFormat}'}"
+                               HorizontalTextAlignment="Center"
+                               FontSize="{OnIdiom Default=14, Tablet=18}"
+                               Opacity="0.75"
+                               TextColor="{StaticResource OnSurfaceLight}" />
+
+                        <Image Source="appicon.png"
+                               WidthRequest="120"
+                               HeightRequest="120"
+                               HorizontalOptions="Center"
+                               Aspect="AspectFit"
+                               Margin="0,8,0,4" />
+
+                        <Grid ColumnDefinitions="*,*"
+                              ColumnSpacing="10"
+                              Margin="0,8,0,0">
+                            <Button
+                                Text="{x:Static loc:AppResources.HomePage_NavQibla}"
+                                HeightRequest="52"
+                                FontAttributes="Bold"
+                                BackgroundColor="{StaticResource Primary}"
+                                TextColor="{StaticResource OnPrimary}"
+                                Command="{Binding GoQiblaCommand}" />
+
+                            <Button Grid.Column="1"
+                                    Text="{x:Static loc:AppResources.HomePage_NavMap}"
+                                    HeightRequest="52"
+                                    BackgroundColor="{StaticResource Primary}"
+                                    TextColor="{StaticResource OnPrimary}"
+                                    Command="{Binding GoMapCommand}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Border Grid.Row="1"
+                BackgroundColor="{StaticResource White}"
+                StrokeThickness="0"
+                Padding="0,4">
+            <admob:MTAdView
+                x:Name="BottomBanner"
+                HorizontalOptions="Center" />
+        </Border>
+    </Grid>
+</ContentPage>
