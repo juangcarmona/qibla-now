@@ -11,8 +11,10 @@ using QiblaNow.Presentation.ViewModels;
 namespace QiblaNow.App
 {
     [Activity(Theme = "@style/Maui.SplashTheme", MainLauncher = true, LaunchMode = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
-    public class MainActivity : MauiAppCompatActivity
-    {
+public class MainActivity : MauiAppCompatActivity
+{
+        private const int ShellInitializationDelayMs = 150;
+
         protected override async void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -79,19 +81,39 @@ namespace QiblaNow.App
 
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                await Task.Delay(150);
+                await Task.Delay(ShellInitializationDelayMs);
 
                 if (global::Microsoft.Maui.Controls.Application.Current?.Windows.FirstOrDefault()?.Page is not global::Microsoft.Maui.Controls.Shell shell)
+                {
+                    System.Diagnostics.Debug.WriteLine("Prayer alert navigation skipped: Shell is not ready.");
                     return;
+                }
 
                 var services = IPlatformApplication.Current?.Services;
-                var page = services?.GetService(typeof(PrayerAlertPage)) as PrayerAlertPage;
-                var viewModel = services?.GetService(typeof(PrayerAlertViewModel)) as PrayerAlertViewModel;
-                if (page == null && viewModel != null)
+                if (services == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("Prayer alert navigation skipped: service provider unavailable.");
+                    return;
+                }
+
+                var page = services.GetService(typeof(PrayerAlertPage)) as PrayerAlertPage;
+                if (page == null)
+                {
+                    var viewModel = services.GetService(typeof(PrayerAlertViewModel)) as PrayerAlertViewModel;
+                    if (viewModel == null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Prayer alert navigation skipped: PrayerAlertViewModel could not be resolved.");
+                        return;
+                    }
+
                     page = new PrayerAlertPage(viewModel);
+                }
 
                 if (page == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("Prayer alert navigation skipped: PrayerAlertPage could not be resolved.");
                     return;
+                }
 
                 page.Configure(prayerName, prayerTime, currentTime);
                 await shell.Navigation.PushAsync(page);
