@@ -36,6 +36,8 @@ public static class MauiProgram
 #endif
 
         builder.Services.AddSingleton<ISettingsStore, SettingsStore>();
+        builder.Services.AddSingleton<ISavedLocationStore>(sp => (ISavedLocationStore)sp.GetRequiredService<ISettingsStore>());
+        builder.Services.AddSingleton<IReverseGeocodingService, GoogleReverseGeocodingService>();
         builder.Services.AddSingleton<ILocationService, LocationService>();
         builder.Services.AddSingleton<IPrayerTimesCalculator, PrayerTimesCalculator>();
 

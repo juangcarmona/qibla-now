@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Controls;
 using QiblaNow.Core.Abstractions;
 using QiblaNow.Core.Models;
+using System.Collections.ObjectModel;
+using System.Globalization;
 
 namespace QiblaNow.Presentation.ViewModels;
 
@@ -23,6 +25,9 @@ public sealed partial class SettingsViewModel : ObservableObject
     [ObservableProperty] private bool   _isLoading;
     [ObservableProperty] private PrayerCalculationSettings  _calculationSettings;
     [ObservableProperty] private PrayerNotificationSettings _notificationSettings;
+    [ObservableProperty] private SavedLocation? _selectedRecentLocation;
+
+    public ObservableCollection<SavedLocation> RecentLocations { get; } = new();
 
     public bool IsNotSaving     => !IsSaving;
     public bool IsNotLoading    => !IsLoading;
@@ -254,6 +259,8 @@ public sealed partial class SettingsViewModel : ObservableObject
         if (saved?.Label != null)
             LocationName = saved.Label;
 
+        ReloadRecentLocations();
+
         // Fire summary notifications for properties not covered by generated setters
         OnPropertyChanged(nameof(LocationSummary));
         OnPropertyChanged(nameof(CalculationSummary));
@@ -298,6 +305,8 @@ public sealed partial class SettingsViewModel : ObservableObject
         // Restore location name if a GPS snapshot with a label was persisted
         if (saved?.Label != null)
             _locationName = saved.Label;
+
+        ReloadRecentLocations();
     }
 
     partial void OnLocationModeChanged(LocationMode value)
@@ -343,15 +352,25 @@ public sealed partial class SettingsViewModel : ObservableObject
 
     partial void OnLongitudeChanged(string value) => OnPropertyChanged(nameof(LocationSummary));
 
+    partial void OnSelectedRecentLocationChanged(SavedLocation? value)
+    {
+        if (value is null)
+            return;
+
+        Latitude = value.Latitude.ToString(CultureInfo.InvariantCulture);
+        Longitude = value.Longitude.ToString(CultureInfo.InvariantCulture);
+        LocationName = value.Name;
+    }
+
     [RelayCommand]
-    private Task SaveManualLocationAsync()
+    private async Task SaveManualLocationAsync()
     {
         ErrorMessage = string.Empty;
 
         if (string.IsNullOrWhiteSpace(Latitude) || string.IsNullOrWhiteSpace(Longitude))
         {
             ErrorMessage = "Please enter both latitude and longitude";
-            return Task.CompletedTask;
+            return;
         }
 
         if (!double.TryParse(Latitude, System.Globalization.NumberStyles.Float,
@@ -360,26 +379,27 @@ public sealed partial class SettingsViewModel : ObservableObject
                 System.Globalization.CultureInfo.InvariantCulture, out var lon))
         {
             ErrorMessage = "Latitude and longitude must be valid numbers";
-            return Task.CompletedTask;
+            return;
         }
 
         if (lat is < -90 or > 90)
-        { ErrorMessage = "Latitude must be between -90 and 90"; return Task.CompletedTask; }
+        { ErrorMessage = "Latitude must be between -90 and 90"; return; }
 
         if (lon is < -180 or > 180)
-        { ErrorMessage = "Longitude must be between -180 and 180"; return Task.CompletedTask; }
+        { ErrorMessage = "Longitude must be between -180 and 180"; return; }
 
         IsSaving = true;
         try
         {
+            var snapshot = await _locationService.SaveManualLocationAsync(lat, lon);
             _settingsStore.SetLocationMode(LocationMode.Manual);
-            _settingsStore.SaveSnapshot(new LocationSnapshot(LocationMode.Manual, lat, lon));
-            Latitude  = string.Empty;
-            Longitude = string.Empty;
+            _settingsStore.SaveSnapshot(snapshot);
+            LocationName = !string.IsNullOrWhiteSpace(snapshot.Label)
+                ? snapshot.Label
+                : ReverseGeocodingHelper.FormatCoordinates(snapshot.Latitude, snapshot.Longitude);
+            ReloadRecentLocations();
         }
         finally { IsSaving = false; }
-
-        return Task.CompletedTask;
     }
 
     [RelayCommand]
@@ -403,9 +423,48 @@ public sealed partial class SettingsViewModel : ObservableObject
             LocationName = !string.IsNullOrEmpty(location.Label)
                 ? location.Label
                 : $"{location.Latitude:F4}, {location.Longitude:F4}";
+            ReloadRecentLocations();
         }
         catch (Exception ex) { ErrorMessage = $"Error requesting location: {ex.Message}"; }
         finally { IsSaving = false; }
+    }
+
+    [RelayCommand]
+    private async Task UseSelectedRecentLocationAsync()
+    {
+        ErrorMessage = string.Empty;
+        if (SelectedRecentLocation is null)
+        {
+            ErrorMessage = "Please select a saved location";
+            return;
+        }
+
+        IsSaving = true;
+        try
+        {
+            var snapshot = await _locationService.SelectRecentLocationAsync(
+                SelectedRecentLocation.Latitude,
+                SelectedRecentLocation.Longitude);
+
+            if (snapshot is null)
+            {
+                ErrorMessage = "Unable to apply saved location";
+                return;
+            }
+
+            _settingsStore.SetLocationMode(LocationMode.Manual);
+            _settingsStore.SaveSnapshot(snapshot);
+            Latitude = snapshot.Latitude.ToString(CultureInfo.InvariantCulture);
+            Longitude = snapshot.Longitude.ToString(CultureInfo.InvariantCulture);
+            LocationName = !string.IsNullOrWhiteSpace(snapshot.Label)
+                ? snapshot.Label
+                : ReverseGeocodingHelper.FormatCoordinates(snapshot.Latitude, snapshot.Longitude);
+            ReloadRecentLocations();
+        }
+        finally
+        {
+            IsSaving = false;
+        }
     }
 
     [RelayCommand]
@@ -440,5 +499,14 @@ public sealed partial class SettingsViewModel : ObservableObject
         OnPropertyChanged(nameof(IshaEnabled));
         OnPropertyChanged(nameof(AnyNotificationEnabled));
         OnPropertyChanged(nameof(NotificationSummary));
+    }
+
+    private void ReloadRecentLocations()
+    {
+        RecentLocations.Clear();
+        foreach (var item in _locationService.GetRecentLocations())
+            RecentLocations.Add(item);
+
+        OnPropertyChanged(nameof(RecentLocations));
     }
 }

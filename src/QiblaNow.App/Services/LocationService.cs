@@ -1,4 +1,6 @@
-﻿using QiblaNow.Core.Abstractions;
+using System.Globalization;
+using QiblaNow.App;
+using QiblaNow.Core.Abstractions;
 using QiblaNow.Core.Models;
 
 namespace QiblaNow.App.Services;
@@ -6,10 +8,17 @@ namespace QiblaNow.App.Services;
 public sealed class LocationService : ILocationService
 {
     private readonly ISettingsStore _settings;
+    private readonly IReverseGeocodingService _reverseGeocodingService;
+    private readonly ISavedLocationStore _savedLocationStore;
 
-    public LocationService(ISettingsStore settings)
+    public LocationService(
+        ISettingsStore settings,
+        IReverseGeocodingService reverseGeocodingService,
+        ISavedLocationStore savedLocationStore)
     {
         _settings = settings;
+        _reverseGeocodingService = reverseGeocodingService;
+        _savedLocationStore = savedLocationStore;
     }
 
     public Task<LocationSnapshot?> GetCurrentLocationAsync()
@@ -42,7 +51,7 @@ public sealed class LocationService : ILocationService
             if (loc is null)
                 return null;
 
-            var label = await TryReverseGeocodeAsync(loc.Latitude, loc.Longitude);
+            var label = await ResolveLocationLabelAsync(loc.Latitude, loc.Longitude);
 
             var snap = new LocationSnapshot(LocationMode.GPS, loc.Latitude, loc.Longitude, label)
             {
@@ -51,6 +60,7 @@ public sealed class LocationService : ILocationService
 
             _settings.SaveSnapshot(snap);
             _settings.SetLocationMode(LocationMode.GPS);
+            _savedLocationStore.UpsertRecentLocation(new SavedLocation(label, loc.Latitude, loc.Longitude, DateTimeOffset.UtcNow));
 
             return snap;
         }
@@ -93,13 +103,14 @@ public sealed class LocationService : ILocationService
 
                 if (loc is not null)
                 {
-                    var label = await TryReverseGeocodeAsync(loc.Latitude, loc.Longitude);
+                    var label = await ResolveLocationLabelAsync(loc.Latitude, loc.Longitude);
                     var snap = new LocationSnapshot(LocationMode.GPS, loc.Latitude, loc.Longitude, label)
                     {
                         Timestamp = DateTimeOffset.UtcNow
                     };
                     _settings.SaveSnapshot(snap);
                     _settings.SetLocationMode(LocationMode.GPS);
+                    _savedLocationStore.UpsertRecentLocation(new SavedLocation(label, loc.Latitude, loc.Longitude, DateTimeOffset.UtcNow));
                     return snap;
                 }
             }
@@ -113,28 +124,54 @@ public sealed class LocationService : ILocationService
         return _settings.GetLastSnapshot();
     }
 
-    private static async Task<string?> TryReverseGeocodeAsync(double lat, double lon)
+    public async Task<LocationSnapshot> SaveManualLocationAsync(double latitude, double longitude)
     {
-        try
+        var label = await ResolveLocationLabelAsync(latitude, longitude);
+        var snapshot = new LocationSnapshot(LocationMode.Manual, latitude, longitude, label)
         {
-            var placemarks = await Geocoding.Default.GetPlacemarksAsync(lat, lon);
-            var p = placemarks?.FirstOrDefault();
-            if (p is null) return null;
+            Timestamp = DateTimeOffset.UtcNow
+        };
+        _settings.SetLocationMode(LocationMode.Manual);
+        _settings.SaveSnapshot(snapshot);
+        _savedLocationStore.UpsertRecentLocation(new SavedLocation(label, latitude, longitude, DateTimeOffset.UtcNow));
+        return snapshot;
+    }
 
-            // Keep it deterministic and short
-            // Example: "Paracuellos de Jarama, Community of Madrid"
-            var parts = new[]
-            {
-                p.Locality,
-                p.AdminArea
-            }.Where(s => !string.IsNullOrWhiteSpace(s));
+    public IReadOnlyList<SavedLocation> GetRecentLocations() => _savedLocationStore.GetRecentLocations();
 
-            var s = string.Join(", ", parts);
-            return string.IsNullOrWhiteSpace(s) ? null : s;
-        }
-        catch
-        {
+    public async Task<LocationSnapshot?> SelectRecentLocationAsync(double latitude, double longitude)
+    {
+        var existing = _savedLocationStore.GetRecentLocations()
+            .FirstOrDefault(x =>
+                ReverseGeocodingHelper.RoundCoordinate(x.Latitude) == ReverseGeocodingHelper.RoundCoordinate(latitude) &&
+                ReverseGeocodingHelper.RoundCoordinate(x.Longitude) == ReverseGeocodingHelper.RoundCoordinate(longitude));
+
+        if (existing is null)
             return null;
-        }
+
+        var label = string.IsNullOrWhiteSpace(existing.Name)
+            ? await ResolveLocationLabelAsync(latitude, longitude)
+            : existing.Name;
+
+        var snapshot = new LocationSnapshot(LocationMode.Manual, latitude, longitude, label)
+        {
+            Timestamp = DateTimeOffset.UtcNow
+        };
+
+        _settings.SetLocationMode(LocationMode.Manual);
+        _settings.SaveSnapshot(snapshot);
+        _savedLocationStore.UpsertRecentLocation(new SavedLocation(label, latitude, longitude, DateTimeOffset.UtcNow));
+
+        return snapshot;
+    }
+
+    private async Task<string> ResolveLocationLabelAsync(double lat, double lon)
+    {
+        var language = LocalizationHelper.GetSavedLanguageCode();
+        if (string.IsNullOrWhiteSpace(language))
+            language = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+
+        var place = await _reverseGeocodingService.ReverseGeocodeAsync(lat, lon, language);
+        return ReverseGeocodingHelper.SelectDisplayName(place, lat, lon);
     }
 }

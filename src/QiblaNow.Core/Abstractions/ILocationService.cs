@@ -24,4 +24,10 @@ public interface ILocationService
     /// Returns null only when no location has ever been captured.
     /// </summary>
     Task<LocationSnapshot?> TryGetGpsLocationAsync(TimeSpan timeout);
+
+    Task<LocationSnapshot> SaveManualLocationAsync(double latitude, double longitude);
+
+    IReadOnlyList<SavedLocation> GetRecentLocations();
+
+    Task<LocationSnapshot?> SelectRecentLocationAsync(double latitude, double longitude);
 }

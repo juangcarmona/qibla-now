@@ -1,6 +1,8 @@
 using Microsoft.Maui.Storage;
 using QiblaNow.Core.Abstractions;
 using QiblaNow.Core.Models;
+using System.Globalization;
+using System.Text.Json;
 
 namespace QiblaNow.App.Services;
 
@@ -8,7 +10,7 @@ namespace QiblaNow.App.Services;
 /// Implementation of ISettingsStore using MAUI Preferences.
 /// Key names follow the naming convention defined in DATA_MODEL.md.
 /// </summary>
-public sealed class SettingsStore : ISettingsStore
+public sealed class SettingsStore : ISettingsStore, ISavedLocationStore
 {
     // ── Location keys ────────────────────────────────────────────────────────
     private const string KeyLocationMode  = "location_mode";
@@ -18,6 +20,8 @@ public sealed class SettingsStore : ISettingsStore
     private const string KeyLastLon       = "last.lon";
     private const string KeyLastLabel     = "last.label";
     private const string KeyLastTimestamp = "last.timestampUtc";
+    private const string KeyRecentLocations = "recent.locations";
+    private const int RecentLocationsLimit = 10;
 
     // ── Scheduling recovery keys (DATA_MODEL.md) ──────────────────────────────
     private const string KeySchedPrayer    = "scheduling.lastPlannedPrayer";
@@ -228,5 +232,77 @@ public sealed class SettingsStore : ISettingsStore
                 Preferences.Default.Set(KeySchedReconcile, state.LastReconciledUtc.Value);
         }
         catch { /* ignore */ }
+    }
+
+    public IReadOnlyList<SavedLocation> GetRecentLocations()
+    {
+        try
+        {
+            var raw = Preferences.Default.Get(KeyRecentLocations, string.Empty);
+            if (string.IsNullOrWhiteSpace(raw))
+                return Array.Empty<SavedLocation>();
+
+            var dtos = JsonSerializer.Deserialize<List<SavedLocationDto>>(raw) ?? new List<SavedLocationDto>();
+            return dtos
+                .Select(d => d.ToModel())
+                .OrderByDescending(x => x.LastUsedUtc)
+                .Take(RecentLocationsLimit)
+                .ToList();
+        }
+        catch
+        {
+            return Array.Empty<SavedLocation>();
+        }
+    }
+
+    public void UpsertRecentLocation(SavedLocation location)
+    {
+        try
+        {
+            var all = GetRecentLocations().ToList();
+            var lat = ReverseGeocodingHelper.RoundCoordinate(location.Latitude);
+            var lon = ReverseGeocodingHelper.RoundCoordinate(location.Longitude);
+
+            all.RemoveAll(x =>
+                ReverseGeocodingHelper.RoundCoordinate(x.Latitude) == lat &&
+                ReverseGeocodingHelper.RoundCoordinate(x.Longitude) == lon);
+
+            all.Add(new SavedLocation(location.Name, location.Latitude, location.Longitude, location.LastUsedUtc));
+
+            var serialized = JsonSerializer.Serialize(
+                all.OrderByDescending(x => x.LastUsedUtc)
+                   .Take(RecentLocationsLimit)
+                   .Select(SavedLocationDto.FromModel)
+                   .ToList());
+            Preferences.Default.Set(KeyRecentLocations, serialized);
+        }
+        catch
+        {
+            // ignore storage errors
+        }
+    }
+
+    private sealed class SavedLocationDto
+    {
+        public string Name { get; set; } = string.Empty;
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public string LastUsedUtc { get; set; } = string.Empty;
+
+        public SavedLocation ToModel()
+        {
+            if (!DateTimeOffset.TryParse(LastUsedUtc, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var ts))
+                ts = DateTimeOffset.UtcNow;
+
+            return new SavedLocation(Name, Latitude, Longitude, ts);
+        }
+
+        public static SavedLocationDto FromModel(SavedLocation model) => new()
+        {
+            Name = model.Name,
+            Latitude = model.Latitude,
+            Longitude = model.Longitude,
+            LastUsedUtc = model.LastUsedUtc.ToString("o", CultureInfo.InvariantCulture)
+        };
     }
 }
