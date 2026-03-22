@@ -13,6 +13,9 @@ const { lang } = Astro.params as { lang: string };
 
 const { frontmatter: fm, isFallback } = await getPageContent(lang, "home");
 const ui = getUI(lang);
+
+const PLAY_STORE_URL =
+  "https://play.google.com/store/apps/details?id=com.jgcarmona.qiblanow";
 ---
 
 <BaseLayout title={fm.title ?? "Qibla Now"} description={fm.description} lang={lang}>
@@ -31,14 +34,21 @@ const ui = getUI(lang);
     eyebrow={fm.hero_eyebrow}
     headline={fm.hero_headline ?? "Prayer times and Qibla direction"}
     lead={fm.hero_lead}
-    ctaPrimaryHref={`/${lang}/features`}
-    ctaPrimaryLabel={fm.hero_cta_primary ?? "See features"}
-    ctaSecondaryHref={`/${lang}/privacy`}
-    ctaSecondaryLabel={fm.hero_cta_secondary ?? "Privacy first"}
+    ctaPrimaryHref={PLAY_STORE_URL}
+    ctaPrimaryLabel={fm.hero_cta_primary ?? "Get it on Google Play"}
+    ctaSecondaryHref={`/${lang}/features`}
+    ctaSecondaryLabel={fm.hero_cta_secondary ?? "See features"}
     points={[fm.hero_point1, fm.hero_point2, fm.hero_point3].filter(Boolean)}
   />
 
-  <!-- Feature cards -->
+  <section class="section">
+    <div class="hero-store-link">
+      <a class="store-btn" href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer">
+        {fm.store_cta ?? "Get Qibla Now on Google Play"}
+      </a>
+    </div>
+  </section>
+
   <section class="section">
     <div class="grid-3">
       <article class="card info-card">
@@ -56,7 +66,6 @@ const ui = getUI(lang);
     </div>
   </section>
 
-  <!-- Why different -->
   <section class="section">
     <div class="grid-2">
       <div>
@@ -86,7 +95,6 @@ const ui = getUI(lang);
     </div>
   </section>
 
-  <!-- Trust model -->
   <section class="section">
     <div class="card trust-card">
       <div class="grid-2 trust-grid">
@@ -118,6 +126,29 @@ const ui = getUI(lang);
 </BaseLayout>
 
 <style>
+  .hero-store-link {
+    display: flex;
+    justify-content: center;
+  }
+
+  .store-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.85rem 1.15rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--text);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .store-btn:hover {
+    opacity: 0.92;
+  }
+
   .info-card {
     padding: 1.5rem;
   }
