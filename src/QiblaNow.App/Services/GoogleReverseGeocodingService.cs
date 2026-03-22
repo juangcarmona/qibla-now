@@ -7,14 +7,22 @@ namespace QiblaNow.App.Services;
 
 public sealed class GoogleReverseGeocodingService : IReverseGeocodingService
 {
-    private static readonly HttpClient Http = new();
+    private static readonly HttpClient Http = new()
+    {
+        Timeout = TimeSpan.FromSeconds(10)
+    };
+
     private static readonly TimeSpan CacheTtl = TimeSpan.FromHours(24);
     private const int CacheSizeLimit = 200;
 
     private readonly Dictionary<string, CacheEntry> _cache = new();
     private readonly object _cacheLock = new();
 
-    public async Task<ResolvedPlace?> ReverseGeocodeAsync(double latitude, double longitude, string language)
+    public async Task<ResolvedPlace?> ReverseGeocodeAsync(
+    double latitude,
+    double longitude,
+    string language,
+    CancellationToken cancellationToken = default)
     {
         var key = ReverseGeocodingHelper.BuildCacheKey(latitude, longitude, language);
         var now = DateTimeOffset.UtcNow;
@@ -32,7 +40,10 @@ public sealed class GoogleReverseGeocodingService : IReverseGeocodingService
 
         var apiKey = GoogleApiConfig.GeocodingApiKey;
         if (string.IsNullOrWhiteSpace(apiKey))
+        {
+            System.Diagnostics.Debug.WriteLine("Reverse geocoding: API key is empty.");
             return null;
+        }
 
         var normalizedLanguage = string.IsNullOrWhiteSpace(language)
             ? CultureInfo.CurrentUICulture.TwoLetterISOLanguageName
@@ -43,17 +54,29 @@ public sealed class GoogleReverseGeocodingService : IReverseGeocodingService
 
         try
         {
-            using var response = await Http.GetAsync(url);
+            System.Diagnostics.Debug.WriteLine($"Reverse geocoding request: {latitude}, {longitude}, lang={normalizedLanguage}");
+
+            using var response = await Http.GetAsync(url, cancellationToken);
+            var body = await response.Content.ReadAsStringAsync(cancellationToken);
+
+            System.Diagnostics.Debug.WriteLine($"Reverse geocoding HTTP {(int)response.StatusCode}");
+            System.Diagnostics.Debug.WriteLine(body);
+
             if (!response.IsSuccessStatusCode)
                 return null;
 
-            await using var stream = await response.Content.ReadAsStreamAsync();
-            using var json = await JsonDocument.ParseAsync(stream);
-
+            using var json = JsonDocument.Parse(body);
             var root = json.RootElement;
+
             var status = root.TryGetProperty("status", out var statusElement)
                 ? statusElement.GetString()
                 : null;
+
+            var errorMessage = root.TryGetProperty("error_message", out var errorElement)
+                ? errorElement.GetString()
+                : null;
+
+            System.Diagnostics.Debug.WriteLine($"Geocoding status={status}, error={errorMessage}");
 
             if (string.Equals(status, "ZERO_RESULTS", StringComparison.OrdinalIgnoreCase))
                 return null;
@@ -61,7 +84,9 @@ public sealed class GoogleReverseGeocodingService : IReverseGeocodingService
             if (!string.Equals(status, "OK", StringComparison.OrdinalIgnoreCase))
                 return null;
 
-            if (!root.TryGetProperty("results", out var results) || results.ValueKind != JsonValueKind.Array || results.GetArrayLength() == 0)
+            if (!root.TryGetProperty("results", out var results) ||
+                results.ValueKind != JsonValueKind.Array ||
+                results.GetArrayLength() == 0)
                 return null;
 
             var first = results[0];
@@ -71,7 +96,8 @@ public sealed class GoogleReverseGeocodingService : IReverseGeocodingService
             string? adminArea = null;
             string? country = null;
 
-            if (first.TryGetProperty("address_components", out var components) && components.ValueKind == JsonValueKind.Array)
+            if (first.TryGetProperty("address_components", out var components) &&
+                components.ValueKind == JsonValueKind.Array)
             {
                 foreach (var component in components.EnumerateArray())
                 {
@@ -79,7 +105,8 @@ public sealed class GoogleReverseGeocodingService : IReverseGeocodingService
                     if (string.IsNullOrWhiteSpace(longName))
                         continue;
 
-                    if (!component.TryGetProperty("types", out var types) || types.ValueKind != JsonValueKind.Array)
+                    if (!component.TryGetProperty("types", out var types) ||
+                        types.ValueKind != JsonValueKind.Array)
                         continue;
 
                     var tags = types.EnumerateArray()
@@ -112,17 +139,29 @@ public sealed class GoogleReverseGeocodingService : IReverseGeocodingService
             lock (_cacheLock)
             {
                 _cache[key] = new CacheEntry(place, now);
+
                 if (_cache.Count > CacheSizeLimit)
                 {
-                    foreach (var stale in _cache.OrderBy(x => x.Value.TimestampUtc).Take(_cache.Count - CacheSizeLimit).Select(x => x.Key).ToList())
+                    foreach (var stale in _cache.OrderBy(x => x.Value.TimestampUtc)
+                                 .Take(_cache.Count - CacheSizeLimit)
+                                 .Select(x => x.Key)
+                                 .ToList())
+                    {
                         _cache.Remove(stale);
+                    }
                 }
             }
 
             return place;
         }
-        catch
+        catch (TaskCanceledException ex)
         {
+            System.Diagnostics.Debug.WriteLine($"Reverse geocoding timeout/cancelled: {ex}");
+            return null;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Reverse geocoding failed: {ex}");
             return null;
         }
     }

@@ -4,5 +4,5 @@ namespace QiblaNow.Core.Abstractions;
 
 public interface IReverseGeocodingService
 {
-    Task<ResolvedPlace?> ReverseGeocodeAsync(double latitude, double longitude, string language);
+    Task<ResolvedPlace?> ReverseGeocodeAsync(double latitude, double longitude, string language, CancellationToken cancellationToken);
 }
