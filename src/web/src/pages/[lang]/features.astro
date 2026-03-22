@@ -13,12 +13,57 @@ const { lang } = Astro.params as { lang: string };
 const { frontmatter: fm, isFallback } = await getPageContent(lang, "features");
 const ui = getUI(lang);
 
-const featureRows = [
-  { h: fm.feature1_h, p: fm.feature1_p, img: "/screenshots/home.png", alt: "Prayer times screen" },
-  { h: fm.feature2_h, p: fm.feature2_p, img: "/screenshots/map.png", alt: "Qibla map screen" },
-  { h: fm.feature3_h, p: fm.feature3_p, img: "/screenshots/notification-settings.png", alt: "Notification settings" },
-  { h: fm.feature4_h, p: fm.feature4_p, img: "/screenshots/location-settings.png", alt: "Location settings" },
-  { h: fm.feature5_h, p: fm.feature5_p, img: null, alt: "" },
+const PLAY_STORE_URL =
+  "https://play.google.com/store/apps/details?id=com.jgcarmona.qiblanow";
+
+type FeatureRow = {
+  h?: string;
+  p?: string;
+  alt?: string;
+  images?: { src: string; alt: string }[];
+};
+
+const featureRows: FeatureRow[] = [
+  {
+    h: fm.feature1_h,
+    p: fm.feature1_p,
+    alt: "Prayer times home screen",
+    images: [{ src: "/screenshots/home.png", alt: "Prayer times home screen" }],
+  },
+  {
+    h: fm.feature2_h,
+    p: fm.feature2_p,
+    alt: "Qibla direction screens",
+    images: [
+      { src: "/screenshots/qibla.png", alt: "Qibla direction screen" },
+      { src: "/screenshots/map.png", alt: "Qibla map screen" },
+    ],
+  },
+  {
+    h: fm.feature3_h,
+    p: fm.feature3_p,
+    alt: "Notification settings",
+    images: [{ src: "/screenshots/notification-settings.png", alt: "Notification settings" }],
+  },
+  {
+    h: fm.feature4_h,
+    p: fm.feature4_p,
+    alt: "Location settings and saved locations",
+    images: [
+      { src: "/screenshots/location-settings.png", alt: "Location settings" },
+      { src: "/screenshots/select-saved-location.png", alt: "Saved locations selector" },
+    ],
+  },
+  {
+    h: fm.feature5_h,
+    p: fm.feature5_p,
+    alt: "App settings",
+    images: [
+      { src: "/screenshots/settings.png", alt: "General settings" },
+      { src: "/screenshots/display-settings.png", alt: "Display settings" },
+      { src: "/screenshots/calculation-settings.png", alt: "Calculation settings" },
+    ],
+  },
 ];
 ---
 
@@ -39,7 +84,7 @@ const featureRows = [
   }
 
   <section class="section">
-    <p class="eyebrow">Features</p>
+    <p class="eyebrow">{fm.page_eyebrow ?? "Features"}</p>
     <h1>{fm.headline ?? "Focused capabilities for daily prayer use."}</h1>
     {fm.intro && <p class="lead">{fm.intro}</p>}
   </section>
@@ -50,23 +95,37 @@ const featureRows = [
       .map((row, i) => (
         <section class="section">
           <div class={`grid-2 feature-row${i % 2 === 1 ? " reverse" : ""}`}>
-            <div>
+            <div class="feature-copy">
               <h2>{row.h}</h2>
               <p>{row.p}</p>
             </div>
-            {row.img ? (
-              <img src={row.img} alt={row.alt} class="feature-img" loading="lazy" />
-            ) : (
-              <div class="settings-gallery">
-                <img src="/screenshots/display-settings.png" alt="Display settings" loading="lazy" />
-                <img src="/screenshots/calculation-settings.png" alt="Calculation settings" loading="lazy" />
-                <img src="/screenshots/settings.png" alt="General settings" loading="lazy" />
-              </div>
-            )}
+
+            <div class={`feature-visuals ${row.images && row.images.length > 1 ? "gallery" : "single"}`}>
+              {row.images?.map((image) => (
+                <figure class="shot">
+                  <img src={image.src} alt={image.alt} class="feature-img" loading="lazy" />
+                </figure>
+              ))}
+            </div>
           </div>
         </section>
       ))
   }
+
+  <section class="section">
+    <div class="card cta-card">
+      <p class="eyebrow">{fm.cta_eyebrow ?? "Android"}</p>
+      <h2>{fm.cta_headline ?? "Get Qibla Now on Google Play"}</h2>
+      <p class="cta-text">
+        {fm.cta_text ?? "Install the app and start using prayer times, Qibla direction, reminders, and location-aware settings on your device."}
+      </p>
+      <div class="cta-actions">
+        <a class="store-btn" href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer">
+          {fm.cta_btn ?? "Get it on Google Play"}
+        </a>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
@@ -76,35 +135,109 @@ const featureRows = [
     max-width: 60ch;
   }
 
+  .feature-copy h2 {
+    margin-bottom: 0.75rem;
+  }
+
+  .feature-copy p {
+    color: var(--muted);
+    max-width: 62ch;
+  }
+
+  .feature-visuals.single {
+    display: flex;
+    justify-content: center;
+  }
+
+  .feature-visuals.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.9rem;
+    align-items: start;
+  }
+
+  .shot {
+    margin: 0;
+  }
+
   .feature-img {
+    display: block;
     width: 100%;
     max-width: 360px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+  }
+
+  .feature-visuals.gallery .feature-img {
+    max-width: 220px;
+  }
+
+  .cta-card {
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .cta-text {
+    max-width: 56ch;
+    margin: 0 auto;
+    color: var(--muted);
+  }
+
+  .cta-actions {
+    margin-top: 1.25rem;
+  }
+
+  .store-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.85rem 1.15rem;
     border-radius: 10px;
     border: 1px solid var(--border);
-    background: var(--surface-alt);
+    background: var(--text);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
   }
 
-  .settings-gallery {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    align-items: flex-start;
-  }
-
-  .settings-gallery img {
-    width: 120px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--surface-alt);
+  .store-btn:hover {
+    opacity: 0.92;
   }
 
   @media (min-width: 860px) {
+    .feature-row {
+      align-items: center;
+      gap: 2rem;
+    }
+
     .feature-row.reverse {
       direction: rtl;
     }
 
     .feature-row.reverse > * {
       direction: ltr;
+    }
+
+    .feature-visuals.gallery {
+      justify-items: start;
+    }
+
+    .feature-row.reverse .feature-visuals.gallery {
+      justify-items: end;
+    }
+  }
+
+  @media (max-width: 859px) {
+    .feature-row {
+      gap: 1.25rem;
+    }
+
+    .feature-visuals.single,
+    .feature-visuals.gallery {
+      justify-items: center;
     }
   }
 </style>
