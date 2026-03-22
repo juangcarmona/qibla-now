@@ -59,6 +59,19 @@
 
                         <!-- Manual section -->
                         <VerticalStackLayout IsVisible="{Binding IsManualLocation}" Spacing="12">
+                            <Label Text="Saved locations"
+                                   FontSize="14"
+                                   TextColor="{StaticResource OnSurfaceLight}" />
+
+                            <Picker ItemsSource="{Binding RecentLocations}"
+                                    SelectedItem="{Binding SelectedRecentLocation}"
+                                    ItemDisplayBinding="{Binding Name}"
+                                    Title="Select saved location" />
+
+                            <Button Text="Use saved location"
+                                    Command="{Binding UseSelectedRecentLocationCommand}"
+                                    IsEnabled="{Binding IsNotSaving}"
+                                    HorizontalOptions="Fill" />
 
                             <Grid ColumnDefinitions="Auto,*"
                               ColumnSpacing="12"

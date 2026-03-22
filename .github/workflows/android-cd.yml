@@ -70,6 +70,7 @@ jobs:
           <Project>
             <PropertyGroup>
               <MapsApiKey>${{ secrets.MAPS_API_KEY }}</MapsApiKey>
+              <GoogleGeocodingApiKey>${{ secrets.GEOCODING_API_KEY }}</GoogleGeocodingApiKey>
               <AdMobAppId>${{ secrets.ADMOB_APP_ID }}</AdMobAppId>
               <AdMobBannerTest>${{ secrets.ADMOB_BANNER_TEST }}</AdMobBannerTest>
               <AdMobBannerProd>${{ secrets.ADMOB_BANNER_PROD }}</AdMobBannerProd>

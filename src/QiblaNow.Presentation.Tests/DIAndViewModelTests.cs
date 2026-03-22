@@ -54,6 +54,11 @@ public class DIAndViewModelTests
         public Task<LocationSnapshot?> GetCurrentLocationAsync() => Task.FromResult<LocationSnapshot?>(null);
         public Task<LocationSnapshot?> RequestGpsLocationAsync() => Task.FromResult<LocationSnapshot?>(null);
         public Task<LocationSnapshot?> TryGetGpsLocationAsync(TimeSpan timeout) => Task.FromResult<LocationSnapshot?>(null);
+        public Task<LocationSnapshot> SaveManualLocationAsync(double latitude, double longitude)
+            => Task.FromResult(new LocationSnapshot(LocationMode.Manual, latitude, longitude));
+        public IReadOnlyList<SavedLocation> GetRecentLocations() => Array.Empty<SavedLocation>();
+        public Task<LocationSnapshot?> SelectRecentLocationAsync(double latitude, double longitude)
+            => Task.FromResult<LocationSnapshot?>(new LocationSnapshot(LocationMode.Manual, latitude, longitude));
     }
 
     private static IServiceProvider BuildServices()

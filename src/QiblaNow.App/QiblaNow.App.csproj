@@ -165,6 +165,10 @@
 			<_Parameter1>AdMobBannerId</_Parameter1>
 			<_Parameter2>$(AdMobBannerId)</_Parameter2>
 		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+			<_Parameter1>GoogleGeocodingApiKey</_Parameter1>
+			<_Parameter2>$(GoogleGeocodingApiKey)</_Parameter2>
+		</AssemblyAttribute>
 	</ItemGroup>
 
 	<ItemGroup>
