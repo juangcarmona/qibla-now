@@ -13,9 +13,9 @@ const ui = getUI(lang);
 const navItems = [
   { href: `/${lang}`, label: ui?.nav?.home ?? "Home" },
   { href: `/${lang}/features`, label: ui?.nav?.features ?? "Features" },
-  { href: `/${lang}/privacy`, label: ui?.nav?.privacy ?? "Privacy" },
-  { href: `/${lang}/support`, label: ui?.nav?.support ?? "Support" },
-  { href: `/${lang}/about`, label: ui?.nav?.about ?? "About" },
+  // { href: `/${lang}/privacy`, label: ui?.nav?.privacy ?? "Privacy" },
+  // { href: `/${lang}/support`, label: ui?.nav?.support ?? "Support" },
+  // { href: `/${lang}/about`, label: ui?.nav?.about ?? "About" },
 ];
 
 const currentPath = Astro.url.pathname;
@@ -28,14 +28,15 @@ function isActive(href: string) {
 }
 ---
 
-<header class="site-header">
+<header class="site-header" id="site-header">
   <div class="container inner">
     <a href={`/${lang}`} class="brand" aria-label="Qibla Now home">
       <img src="/appicon.png" alt="Qibla Now logo" class="brand-logo" />
       <span class="brand-text">Qibla Now</span>
     </a>
 
-    <nav aria-label="Primary">
+    <!-- Desktop nav — in normal document flow -->
+    <nav aria-label="Primary" class="desktop-nav">
       <ul>
         {
           navItems.map((item) => (
@@ -56,14 +57,95 @@ function isActive(href: string) {
         toggleDarkLabel={ui?.theme?.toggleDark ?? "Switch to dark mode"}
       />
     </div>
+
+    <!-- Hamburger — mobile only -->
+    <button
+      class="nav-toggle"
+      aria-label="Toggle navigation menu"
+      aria-expanded="false"
+      aria-controls="mobile-nav"
+    >
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
   </div>
 </header>
 
+<!-- Mobile overlay drawer — position:fixed, lives outside the header inner layout -->
+<div class="mobile-nav" id="mobile-nav" aria-hidden="true">
+  <nav aria-label="Mobile primary">
+    <ul>
+      {
+        navItems.map((item) => (
+          <li>
+            <a href={item.href} class={isActive(item.href) ? "active" : undefined}>
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <div class="mobile-controls">
+    <LanguageSwitcher lang={lang} selectLabel={ui?.lang?.select ?? "Language"} />
+    <ThemeToggle
+      toggleLightLabel={ui?.theme?.toggleLight ?? "Switch to light mode"}
+      toggleDarkLabel={ui?.theme?.toggleDark ?? "Switch to dark mode"}
+    />
+  </div>
+</div>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>(".nav-toggle");
+  const mobileNav = document.getElementById("mobile-nav");
+
+  function openNav() {
+    toggle?.setAttribute("aria-expanded", "true");
+    mobileNav?.classList.add("is-open");
+    mobileNav?.setAttribute("aria-hidden", "false");
+    document.body.classList.add("nav-open");
+  }
+
+  function closeNav() {
+    toggle?.setAttribute("aria-expanded", "false");
+    mobileNav?.classList.remove("is-open");
+    mobileNav?.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("nav-open");
+  }
+
+  toggle?.addEventListener("click", () => {
+    toggle.getAttribute("aria-expanded") === "true" ? closeNav() : openNav();
+  });
+
+  // Close when a nav link is clicked
+  mobileNav?.querySelectorAll("nav a").forEach((link) => {
+    link.addEventListener("click", closeNav);
+  });
+
+  // Close when clicking the backdrop (the ::before pseudo-element area)
+  mobileNav?.addEventListener("click", (e) => {
+    if (e.target === mobileNav) closeNav();
+  });
+
+  // Escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeNav();
+  });
+</script>
+
 <style>
+  /* ── body state — scroll lock only, no layout change ─ */
+  :global(body.nav-open) {
+    overflow: hidden;
+  }
+
+  /* ── Header bar ───────────────────────────────────── */
   .site-header {
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 200;
     background: var(--header-bg);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
@@ -77,6 +159,7 @@ function isActive(href: string) {
     gap: 1rem;
   }
 
+  /* ── Brand ────────────────────────────────────────── */
   .brand {
     display: inline-flex;
     align-items: center;
@@ -100,17 +183,17 @@ function isActive(href: string) {
     font-weight: 800;
   }
 
-  nav ul {
+  /* ── Desktop nav ──────────────────────────────────── */
+  .desktop-nav ul {
     list-style: none;
     display: flex;
     gap: 0.15rem;
     margin: 0;
     padding: 0;
     flex-wrap: wrap;
-    justify-content: flex-end;
   }
 
-  nav a {
+  .desktop-nav a {
     display: inline-flex;
     min-height: 38px;
     align-items: center;
@@ -123,16 +206,17 @@ function isActive(href: string) {
     transition: color 0.15s, border-color 0.15s;
   }
 
-  nav a:hover {
+  .desktop-nav a:hover {
     color: var(--text);
     text-decoration: none;
   }
 
-  nav a.active {
+  .desktop-nav a.active {
     color: var(--brand-dark);
     border-bottom-color: var(--brand);
   }
 
+  /* ── Controls (desktop) ───────────────────────────── */
   .header-controls {
     display: flex;
     align-items: center;
@@ -140,21 +224,151 @@ function isActive(href: string) {
     flex-shrink: 0;
   }
 
+  /* ── Hamburger button ─────────────────────────────── */
+  .nav-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    padding: 6px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .nav-toggle:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+  }
+
+  .bar {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+
+  .nav-toggle[aria-expanded="true"] .bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .nav-toggle[aria-expanded="true"] .bar:nth-child(2) {
+    opacity: 0;
+  }
+  .nav-toggle[aria-expanded="true"] .bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  /* ── Mobile overlay drawer ────────────────────────── */
+  .mobile-nav {
+    display: none; /* not rendered at all on desktop */
+  }
+
+  /* ── Mobile breakpoint ────────────────────────────── */
   @media (max-width: 760px) {
     .inner {
-      padding-top: 0.65rem;
-      padding-bottom: 0.65rem;
-      align-items: flex-start;
-      flex-direction: column;
-      gap: 0.5rem;
+      min-height: 60px;
     }
 
-    nav ul {
-      justify-content: flex-start;
-    }
-
+    /* Hide desktop nav and controls from the header bar */
+    .desktop-nav,
     .header-controls {
-      align-self: flex-end;
+      display: none;
+    }
+
+    /* Show hamburger */
+    .nav-toggle {
+      display: flex;
+    }
+
+    /* ── Overlay drawer ─────────────────────────────── */
+    .mobile-nav {
+      /* Always in the DOM and rendered; position removes it from flow */
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+
+      position: fixed;
+      inset: 0;
+      z-index: 199; /* below header (200) so hamburger stays clickable */
+
+      background: var(--bg);
+      padding-top: 68px; /* clear the sticky header */
+      overflow-y: auto;
+
+      /* Slide off-screen to the right by default */
+      transform: translateX(100%);
+      transition: transform 0.28s ease;
+    }
+
+    .mobile-nav.is-open {
+      transform: translateX(0);
+    }
+
+    /* Semi-transparent backdrop rendered behind the drawer panel */
+    .mobile-nav::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.28s ease;
+      pointer-events: none;
+    }
+
+    .mobile-nav.is-open::before {
+      opacity: 1;
+    }
+
+    /* Nav links */
+    .mobile-nav nav ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 0;
+      padding: 0.75rem 0;
+    }
+
+    .mobile-nav nav a {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 0.85rem 1.25rem;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: color 0.15s, background 0.15s, border-color 0.15s;
+    }
+
+    .mobile-nav nav a:hover {
+      background: var(--surface);
+      color: var(--text);
+      border-left-color: var(--border);
+    }
+
+    .mobile-nav nav a.active {
+      color: var(--brand-dark);
+      background: var(--surface);
+      border-left-color: var(--brand);
+    }
+
+    /* Language + theme controls inside drawer */
+    .mobile-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--border);
+      margin-top: auto;
     }
   }
 </style>

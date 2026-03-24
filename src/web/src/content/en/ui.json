@@ -21,5 +21,15 @@
   "lang": {
     "name": "English",
     "select": "Language"
+  },
+  "testerCta": {
+    "eyebrow": "Early access",
+    "title": "Help make prayer times more accurate",
+    "bodyPara1": "I'm building Qibla Now to give Muslims reliable prayer times and Qibla direction — no tracking, no ads, no noise. I need a handful of people to try it in different places and settings and tell me if it works.",
+    "bodyPara2": "If you pray regularly and can install an app once, your feedback matters a lot.",
+    "primaryLabel": "I want to test the app",
+    "emailAlt": "Prefer to reach out by email?",
+    "microNote": "Takes under 2 minutes. No account, no sign-up.",
+    "mailtoBody": "Hi, I'd like to test the app."
   }
 }

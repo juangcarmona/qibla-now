@@ -1,21 +1,46 @@
 ---
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import { LOCALES } from "../lib/i18n";
 import "../styles/global.css";
 
 interface Props {
   title: string;
   description?: string;
   lang?: string;
+  ogImage?: string;
 }
 
 const {
   title,
   description = "Qibla Now is an offline-first Islamic utility for accurate prayer times, precise Qibla direction, local alarms, and privacy-first daily use.",
   lang = "en",
+  ogImage = "/screenshots/og_image.png",
 } = Astro.props;
 
 const dir = ["ar", "ur", "fa"].includes(lang) ? "rtl" : "ltr";
+
+// OG locale codes per language
+const OG_LOCALE: Record<string, string> = {
+  en: "en_US",
+  es: "es_ES",
+  fr: "fr_FR",
+  ar: "ar_AR",
+  ur: "ur_PK",
+  bn: "bn_BD",
+  id: "id_ID",
+  tr: "tr_TR",
+  fa: "fa_IR",
+};
+
+// Build absolute URLs
+const siteUrl = (Astro.site?.href ?? "https://qibla-now.com").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const ogImageUrl = `${siteUrl}${ogImage}`;
+
+// Compute the path segment after the lang prefix, e.g. "" for /en, "/features" for /en/features
+const pathParts = Astro.url.pathname.split("/").filter(Boolean);
+const pageSuffix = pathParts.length > 1 ? "/" + pathParts.slice(1).join("/") : "";
 ---
 
 <!doctype html>
@@ -23,9 +48,41 @@ const dir = ["ar", "ur", "fa"].includes(lang) ? "rtl" : "ltr";
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <meta name="description" content={description} />
+
+    <!-- Primary meta -->
     <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Canonical & hreflang -->
+    <link rel="canonical" href={canonicalUrl} />
+    {LOCALES.map((l) => (
+      <link rel="alternate" hreflang={l} href={`${siteUrl}/${l}${pageSuffix}`} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={`${siteUrl}/en${pageSuffix}`} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Qibla Now" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:locale" content={OG_LOCALE[lang] ?? "en_US"} />
+    {LOCALES.filter((l) => l !== lang).map((l) => (
+      <meta property="og:locale:alternate" content={OG_LOCALE[l] ?? "en_US"} />
+    ))}
+
+    <!-- Twitter / X Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/appicon.png" />
+
     <!-- Anti-flash theme script: runs synchronously before render -->
     <script is:inline>
       (function () {

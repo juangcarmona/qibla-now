@@ -21,5 +21,15 @@
   "lang": {
     "name": "Français",
     "select": "Langue"
+  },
+  "testerCta": {
+    "eyebrow": "Accès anticipé",
+    "title": "Aidez à améliorer la précision des horaires de prière",
+    "bodyPara1": "Je développe Qibla Now pour offrir des horaires de prière et une direction de la Qibla fiables — sans suivi, sans publicité, sans distraction. J'ai besoin de quelques personnes pour l'essayer dans différents endroits et voir si tout fonctionne bien.",
+    "bodyPara2": "Si vous priez régulièrement et pouvez installer une application une seule fois, votre retour compte vraiment.",
+    "primaryLabel": "Je veux tester l'app",
+    "emailAlt": "Vous préférez écrire par e-mail ?",
+    "microNote": "Moins de 2 minutes. Aucun compte, aucune inscription.",
+    "mailtoBody": "Bonjour, je souhaite tester l'application."
   }
 }

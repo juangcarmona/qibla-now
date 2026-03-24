@@ -21,5 +21,15 @@
   "lang": {
     "name": "Indonesia",
     "select": "Bahasa"
+  },
+  "testerCta": {
+    "eyebrow": "Akses Awal",
+    "title": "Bantu jadikan waktu salat lebih akurat",
+    "bodyPara1": "Saya membangun Qibla Now agar waktu salat dan arah kiblat bisa diandalkan — tanpa pelacakan, iklan, atau gangguan. Saya butuh beberapa orang yang mau mencobanya di berbagai lokasi dan pengaturan, lalu memberi tahu saya apakah semuanya berjalan dengan baik.",
+    "bodyPara2": "Kalau Anda salat setiap hari dan bisa memasang satu aplikasi, bantuan Anda sangat berarti.",
+    "primaryLabel": "Saya mau coba aplikasinya",
+    "emailAlt": "Lebih nyaman lewat email?",
+    "microNote": "Kurang dari 2 menit. Tanpa akun atau pendaftaran.",
+    "mailtoBody": "Halo, saya ingin mencoba aplikasinya."
   }
 }

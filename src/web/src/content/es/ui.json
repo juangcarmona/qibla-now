@@ -21,5 +21,15 @@
   "lang": {
     "name": "Español",
     "select": "Idioma"
+  },
+  "testerCta": {
+    "eyebrow": "Acceso anticipado",
+    "title": "Ayuda a mejorar la precisión de los horarios de oración",
+    "bodyPara1": "Estoy desarrollando Qibla Now para ofrecer horarios de oración y dirección de la Qibla fiables, sin rastreo ni distracciones. Necesito algunas personas que puedan probarla en distintos lugares y configuraciones para validar que todo funcione correctamente.",
+    "bodyPara2": "Si rezas con regularidad y puedes instalar la app una vez, tu ayuda es muy valiosa.",
+    "primaryLabel": "Quiero probar la app",
+    "emailAlt": "¿Prefieres escribir por correo?",
+    "microNote": "No lleva más de 2 minutos. Sin cuentas ni registro.",
+    "mailtoBody": "Hola, me gustaría probar la aplicación."
   }
 }

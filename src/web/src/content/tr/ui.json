@@ -21,5 +21,15 @@
   "lang": {
     "name": "Türkçe",
     "select": "Dil"
+  },
+  "testerCta": {
+    "eyebrow": "Erken Erişim",
+    "title": "Namaz vakitlerinin doğruluğunu iyileştirmeye yardım edin",
+    "bodyPara1": "Qibla Now’u takip, reklam veya kalabalık olmadan güvenilir namaz vakitleri ve kıble yönü sunmak için geliştiriyorum. Farklı yerlerde ve ayarlarda deneyip her şeyin düzgün çalışıp çalışmadığını söyleyecek birkaç kişiye ihtiyacım var.",
+    "bodyPara2": "Düzenli namaz kılıyor ve bir uygulama kurabiliyorsanız, katkınız gerçekten önemli.",
+    "primaryLabel": "Uygulamayı denemek istiyorum",
+    "emailAlt": "E-posta ile ulaşmayı tercih eder misiniz?",
+    "microNote": "2 dakikadan az sürer. Hesap veya kayıt gerekmez.",
+    "mailtoBody": "Merhaba, uygulamayı test etmek istiyorum."
   }
 }

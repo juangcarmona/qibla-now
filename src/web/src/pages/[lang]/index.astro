@@ -4,6 +4,7 @@ import { getPageContent, getUI } from "../../lib/content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import FallbackNotice from "../../components/FallbackNotice.astro";
 import HeroSection from "../../components/HeroSection.astro";
+import TesterCta from "../../components/TesterCta.astro";
 
 export function getStaticPaths() {
   return LOCALES.map((lang) => ({ params: { lang } }));
@@ -28,7 +29,18 @@ const PLAY_STORE_URL =
         helpTranslate={ui?.fallback?.helpTranslate ?? "Help translate this page."}
       />
     )
-  }
+  }  
+
+  <TesterCta
+    eyebrow={ui?.testerCta?.eyebrow}
+    title={ui?.testerCta?.title ?? "Help improve prayer accuracy worldwide"}
+    bodyPara1={ui?.testerCta?.bodyPara1 ?? "I'm building Qibla Now to provide reliable prayer times and Qibla direction without tracking or noise. I need a small group of testers to validate accuracy across different locations and methods."}
+    bodyPara2={ui?.testerCta?.bodyPara2 ?? "If you pray regularly and can install the app once, your help matters."}
+    primaryLabel={ui?.testerCta?.primaryLabel ?? "Join as a tester"}
+    emailAlt={ui?.testerCta?.emailAlt}
+    microNote={ui?.testerCta?.microNote}
+    mailtoBody={ui?.testerCta?.mailtoBody}
+  />
 
   <HeroSection
     eyebrow={fm.hero_eyebrow}
