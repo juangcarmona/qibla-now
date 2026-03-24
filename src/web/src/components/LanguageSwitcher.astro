@@ -17,13 +17,13 @@ const hrefFor = (targetLang: string) =>
 ---
 
 <div class="lang-switcher">
-  <button class="lang-btn" aria-haspopup="listbox" aria-label={selectLabel} id="lang-btn">
+  <button class="lang-btn" aria-haspopup="listbox" aria-label={selectLabel} aria-expanded="false">
     <span class="lang-current">{LOCALE_NAMES[lang as keyof typeof LOCALE_NAMES] ?? lang}</span>
     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
       <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </button>
-  <ul class="lang-dropdown" id="lang-dropdown" role="listbox" aria-label={selectLabel}>
+  <ul class="lang-dropdown" role="listbox" aria-label={selectLabel}>
     {
       LOCALES.map((locale) => (
         <li role="option" aria-selected={locale === lang}>
@@ -41,18 +41,22 @@ const hrefFor = (targetLang: string) =>
 </div>
 
 <script>
-  const btn = document.getElementById('lang-btn');
-  const dropdown = document.getElementById('lang-dropdown');
+  // Scoped per-instance: each .lang-switcher is wired independently
+  document.querySelectorAll<HTMLElement>('.lang-switcher').forEach((switcher) => {
+    const btn = switcher.querySelector<HTMLButtonElement>('.lang-btn');
+    const dropdown = switcher.querySelector<HTMLElement>('.lang-dropdown');
 
-  btn?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const open = dropdown?.classList.toggle('open');
-    btn.setAttribute('aria-expanded', String(open));
+    btn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const open = dropdown?.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(open ?? false));
+    });
   });
 
+  // Close all dropdowns on outside click
   document.addEventListener('click', () => {
-    dropdown?.classList.remove('open');
-    btn?.setAttribute('aria-expanded', 'false');
+    document.querySelectorAll('.lang-dropdown').forEach((d) => d.classList.remove('open'));
+    document.querySelectorAll('.lang-btn').forEach((b) => b.setAttribute('aria-expanded', 'false'));
   });
 </script>
 

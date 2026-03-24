@@ -1,5 +1,6 @@
 ---
 import { getUI } from "../lib/content";
+import { LOCALES, LOCALE_NAMES } from "../lib/i18n";
 import LanguageSwitcher from "./LanguageSwitcher.astro";
 import ThemeToggle from "./ThemeToggle.astro";
 
@@ -17,6 +18,11 @@ const navItems = [
   // { href: `/${lang}/support`, label: ui?.nav?.support ?? "Support" },
   // { href: `/${lang}/about`, label: ui?.nav?.about ?? "About" },
 ];
+
+const pathParts = Astro.url.pathname.split('/').filter(Boolean);
+const currentPage = pathParts.slice(1).join('/') || '';
+const hrefFor = (targetLang: string) =>
+  currentPage ? `/${targetLang}/${currentPage}` : `/${targetLang}`;
 
 const currentPath = Astro.url.pathname;
 
@@ -74,6 +80,23 @@ function isActive(href: string) {
 
 <!-- Mobile overlay drawer — position:fixed, lives outside the header inner layout -->
 <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
+  <div class="mobile-controls">
+    <div class="mobile-language">
+      <label for="mobile-lang-select" class="sr-only">{ui?.lang?.select ?? "Language"}</label>
+      <select id="mobile-lang-select" class="mobile-lang-select">
+        {LOCALES.map((locale) => (
+          <option value={hrefFor(locale)} selected={locale === lang}>
+            {LOCALE_NAMES[locale]}
+          </option>
+        ))}
+      </select>
+    </div>
+    <ThemeToggle
+      toggleLightLabel={ui?.theme?.toggleLight ?? "Switch to light mode"}
+      toggleDarkLabel={ui?.theme?.toggleDark ?? "Switch to dark mode"}
+    />
+  </div>
+
   <nav aria-label="Mobile primary">
     <ul>
       {
@@ -87,14 +110,6 @@ function isActive(href: string) {
       }
     </ul>
   </nav>
-
-  <div class="mobile-controls">
-    <LanguageSwitcher lang={lang} selectLabel={ui?.lang?.select ?? "Language"} />
-    <ThemeToggle
-      toggleLightLabel={ui?.theme?.toggleLight ?? "Switch to light mode"}
-      toggleDarkLabel={ui?.theme?.toggleDark ?? "Switch to dark mode"}
-    />
-  </div>
 </div>
 
 <script>
@@ -132,6 +147,12 @@ function isActive(href: string) {
   // Escape key
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeNav();
+  });
+
+  // Native language select — navigate on change
+  document.getElementById("mobile-lang-select")?.addEventListener("change", (e) => {
+    const href = (e.target as HTMLSelectElement).value;
+    if (href) window.location.href = href;
   });
 </script>
 
@@ -366,9 +387,45 @@ function isActive(href: string) {
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      padding: 1rem 1.25rem;
-      border-top: 1px solid var(--border);
-      margin-top: auto;
+      padding: 0.75rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Native language select */
+    .mobile-language {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .mobile-lang-select {
+      width: 100%;
+      min-height: 44px;
+      padding: 0.5rem 2rem 0.5rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      appearance: auto;
+    }
+
+    .mobile-lang-select:focus-visible {
+      outline: 2px solid var(--brand);
+      outline-offset: 2px;
     }
   }
 </style>

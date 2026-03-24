@@ -9,7 +9,6 @@ const { toggleLightLabel = 'Switch to light mode', toggleDarkLabel = 'Switch to 
 ---
 
 <button
-  id="theme-toggle"
   class="theme-btn"
   aria-label={toggleDarkLabel}
   data-light-label={toggleLightLabel}
@@ -35,38 +34,35 @@ const { toggleLightLabel = 'Switch to light mode', toggleDarkLabel = 'Switch to 
 </button>
 
 <script>
-  const btn = document.getElementById('theme-toggle') as HTMLButtonElement | null;
-
-  function applyTheme(theme: string) {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-    if (btn) {
-      const isDark = theme === 'dark';
+  function syncAllToggleButtons() {
+    const theme = document.documentElement.getAttribute('data-theme') ?? 'light';
+    const isDark = theme === 'dark';
+    document.querySelectorAll<HTMLButtonElement>('.theme-btn').forEach((btn) => {
       btn.setAttribute(
         'aria-label',
         isDark
           ? (btn.dataset.lightLabel ?? 'Switch to light mode')
           : (btn.dataset.darkLabel ?? 'Switch to dark mode')
       );
-    }
+    });
   }
 
-  // Sync button state on load
-  const current = document.documentElement.getAttribute('data-theme') ?? 'light';
-  if (btn) {
-    const isDark = current === 'dark';
-    btn.setAttribute(
-      'aria-label',
-      isDark
-        ? (btn.dataset.lightLabel ?? 'Switch to light mode')
-        : (btn.dataset.darkLabel ?? 'Switch to dark mode')
-    );
+  function applyTheme(theme: string) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    syncAllToggleButtons();
   }
 
-  btn?.addEventListener('click', () => {
-    const next =
-      document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    applyTheme(next);
+  // Sync on load
+  syncAllToggleButtons();
+
+  // Wire every instance (desktop + mobile)
+  document.querySelectorAll<HTMLButtonElement>('.theme-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const next =
+        document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      applyTheme(next);
+    });
   });
 </script>
 
